@@ -1,9 +1,9 @@
 # WIP
 
 ## TODOS
-- [ ] Setup watch method
+- [x] Setup watch method
 - [ ] Setup eslint
-- [ ] Setup tailwind? Styled components?
+- [x] Setup Styled components
 - [ ] Alias imports for components
 
 

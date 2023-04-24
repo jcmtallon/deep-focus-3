@@ -3,11 +3,17 @@
 
 import { Logo } from '../../components'
 import "./App.css";
+import styled from 'styled-components'
+
+
+const Title = styled.h1`
+  color: blue;
+`
 
 function App() {
   return (
     <div className="App">
-      <h1>DEEP FOCUS</h1>
+      <Title>Deep Focus</Title>
         <Logo />
         <input type="text" placeholder="site" />
         <button>Add URL</button>
