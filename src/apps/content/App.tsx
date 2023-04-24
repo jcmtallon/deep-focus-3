@@ -1,7 +1,7 @@
 /// <reference types="chrome" />
 /// <reference types="vite-plugin-svgr/client" />
 
-import { Logo } from '../../components'
+import { Logo } from 'components'
 import "./App.css";
 
 function App() {
