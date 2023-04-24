@@ -1,15 +1,16 @@
 /// <reference types="chrome" />
 /// <reference types="vite-plugin-svgr/client" />
 
-import Logo from "./Logo";
+import { Logo } from '../../components'
 import "./App.css";
 
 function App() {
   return (
     <div className="App">
-      <h1>Some title</h1>
+      <h1>DEEP FOCUS</h1>
+        <Logo />
         <input type="text" placeholder="site" />
-        <button>Add input</button>
+        <button>Add URL</button>
         <button>Reset list</button>
         <ul></ul>
     </div>

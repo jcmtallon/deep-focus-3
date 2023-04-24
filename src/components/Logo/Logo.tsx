@@ -2,9 +2,9 @@
 /// <reference types="vite-plugin-svgr/client" />
 
 type LogoProps = {
-  className: string;
-  id: string;
-  title: string;
+  className?: string;
+  id?: string;
+  title?: string;
 };
 
 function Logo({ className, id, title }: LogoProps) {
@@ -26,4 +26,4 @@ function Logo({ className, id, title }: LogoProps) {
   );
 }
 
-export default Logo;
+export {Logo};

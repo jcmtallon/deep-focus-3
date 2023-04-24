@@ -1,17 +1,17 @@
 {
   "manifest_version": 3,
-  "name": "Deep Focus 2",
-  "version": "1.0.0",
+  "name": "Deep Focus",
+  "version": "0.0.1",
   "action": {
     "default_title": "Popup",
-    "default_popup": "index.html",
+    "default_popup": "src/apps/popup/index.html",
     "default_icon": "logo192.png"
   },
   "icons": {},
   "content_scripts": [
     {
       "matches": ["https://blank.org/*"],
-      "js": ["content-script/src/main.tsx"],
+      "js": ["src/apps/content/main.tsx"],
       "media": []
     }
   ]
