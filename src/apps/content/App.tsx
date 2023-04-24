@@ -1,8 +1,9 @@
 /// <reference types="chrome" />
 /// <reference types="vite-plugin-svgr/client" />
 
+import React from 'react'
 import { Logo } from 'components'
-import "./App.css";
+import './App.css'
 
 function App() {
   return (
@@ -12,7 +13,7 @@ function App() {
         <p>Mission Control Dashboard 2</p>
       </header>
     </div>
-  );
+  )
 }
 
-export default App;
+export default App

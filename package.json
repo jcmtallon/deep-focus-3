@@ -16,16 +16,34 @@
     "styled-components": "^5.3.10"
   },
   "devDependencies": {
+    "@jcmtallon/eslint-config-glamping-react-ts": "^0.0.18",
+    "@jcmtallon/prettier-config": "^0.0.1",
     "@crxjs/vite-plugin": "@crxjs/vite-plugin@2.0.0-beta.11",
     "@types/chrome": "^0.0.197",
     "@types/node": "^18.8.3",
     "@types/react": "^18.0.17",
     "@types/react-dom": "^18.0.6",
     "@vitejs/plugin-react": "^2.1.0",
+    "@typescript-eslint/eslint-plugin": "^5.31.0",
+    "@typescript-eslint/parser": "^5.31.0",
+    "eslint": "^8.20.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-jsx-a11y": "^6.6.1",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-react": "^7.30.1",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "prettier": "^2.7.1",
     "typescript": "^4.6.4",
     "vite": "^3.1.0",
     "vite-plugin-svgr": "^2.2.1",
     "vite-tsconfig-paths": "^4.2.0"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
   },
   "resolutions": {
     "styled-components": "^5"
