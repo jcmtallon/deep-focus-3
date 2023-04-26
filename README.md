@@ -2,9 +2,9 @@
 
 ## TODOS
 - [x] Setup watch method
-- [ ] Setup eslint
+- [x] Setup eslint
 - [x] Setup Styled components
-- [ ] Alias imports for components
+- [x] Alias imports for components
 
 
 ## Reference
