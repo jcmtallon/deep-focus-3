@@ -8,11 +8,7 @@
     "default_icon": "logo192.png"
   },
   "icons": {},
-  "content_scripts": [
-    {
-      "matches": ["https://blank.org/*"],
-      "js": ["src/apps/content/main.tsx"],
-      "media": []
-    }
-  ]
+  "chrome_url_overrides": {
+    "newtab": "src/apps/content/index.html"
+  }
 }

@@ -2,17 +2,18 @@
 /// <reference types="vite-plugin-svgr/client" />
 
 import React from 'react'
-import { Logo } from 'components'
-import './App.css'
+import { GlobalStyles, ThemeProvider } from 'theme'
+import { ErrorBoundary } from '../../components'
+import { Routes } from './Routes'
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <Logo />
-        <p>Mission Control Dashboard 2</p>
-      </header>
-    </div>
+    <ThemeProvider>
+      <GlobalStyles />
+      <ErrorBoundary error={<div>ERROR!</div>}>
+        <Routes />
+      </ErrorBoundary>
+    </ThemeProvider>
   )
 }
 
