@@ -1,5 +1,5 @@
 import React from 'react'
-import { sendMessage } from 'services/ChromeMessages'
+import { sendMessage } from 'services/actions'
 
 function Header() {
   const handleDebugClick = () => {

@@ -1,23 +1,33 @@
 import { FooterNav, Header, PageLayout } from 'apps/popup/components'
-import React, { useState } from 'react'
-import { sendMessage } from 'services/ChromeMessages'
+import React, { useEffect, useState } from 'react'
+import { sendMessage } from 'services/actions'
+import { getFocusModeDetails } from 'services/store'
 import * as S from './FocusMode.styles'
 
 function FocusMode() {
-  const [isFocusModeOn, setIsFocusModeOn] = useState(false)
+  const [isFocusModeOn, setIsFocusModeOn] = useState<boolean | null>(null)
+
+  useEffect(() => {
+    const getFocusModeStatus = async () => {
+      const status = await getFocusModeDetails()
+      setIsFocusModeOn(status)
+    }
+
+    getFocusModeStatus()
+  }, [])
 
   const handleStartFocusClick = () => {
     sendMessage('startFocusMode')
     setIsFocusModeOn(true)
-
-    // IF goes ok
-    // window.close()
+    window.close()
   }
 
   const handleEndFocusClick = () => {
     sendMessage('stopFocusMode')
     setIsFocusModeOn(false)
   }
+
+  if (isFocusModeOn === null) return <>Loading</>
 
   return (
     <PageLayout footer={<FooterNav activeElement="focusMode" />} header={<Header />}>
