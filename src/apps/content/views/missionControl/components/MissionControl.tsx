@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 
 const Wrapper = styled.div`
@@ -12,7 +12,15 @@ const Wrapper = styled.div`
 `
 
 function MissionControl() {
-  return <Wrapper>Mission Control</Wrapper>
+  const [type, setType] = useState<string | null>()
+
+  useEffect(() => {
+    const queryParams = new URLSearchParams(window.location.search)
+    const blockType = queryParams.get('blockType')
+    if (blockType) setType(blockType)
+  }, [])
+
+  return <Wrapper>{type === 'site' ? 'Blocked' : 'Mission Control'}</Wrapper>
 }
 
 export { MissionControl }
