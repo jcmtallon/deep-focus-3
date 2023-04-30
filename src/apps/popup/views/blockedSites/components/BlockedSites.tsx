@@ -3,7 +3,7 @@ import React from 'react'
 
 function BlockedSites() {
   return (
-    <PageLayout footer={<FooterNav activeElement="asteroids" />} header={<>Header</>}>
+    <PageLayout footer={<FooterNav activeElement="asteroids" />} header={<></>}>
       <>
         <span>Asteroids!</span>
         Some form

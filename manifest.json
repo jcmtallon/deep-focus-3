@@ -8,7 +8,17 @@
     "default_icon": "logo192.png"
   },
   "icons": {},
+  "background": {
+    "service_worker": "src/background.ts"
+  },
   "chrome_url_overrides": {
     "newtab": "src/apps/content/index.html"
-  }
+  },
+  "permissions": [
+    "declarativeNetRequest",
+    "declarativeNetRequestFeedback"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ]
 }
