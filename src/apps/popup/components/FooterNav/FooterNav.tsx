@@ -12,6 +12,12 @@ function FooterNav(props: FooterNavProps) {
   const { activeElement, asteroidButtonProps } = props
   const navigate = useNavigate()
 
+  const handleMissionControlClick = () => {
+    // TODO: Extract constant for this?
+    const url = `chrome-extension://${chrome.runtime.id}/src/apps/content/index.html?`
+    window.open(url, '_blank')
+  }
+
   return (
     <S.Nav>
       <S.Button
@@ -24,8 +30,8 @@ function FooterNav(props: FooterNavProps) {
       <S.Button active={activeElement === 'focusMode'} onClick={() => navigate('/')} type="button">
         Focus Mode
       </S.Button>
-      <S.Button active={activeElement === 'dashboard'} type="button">
-        Dashboard
+      <S.Button active={activeElement === 'dashboard'} onClick={handleMissionControlClick} type="button">
+        Mission Control
       </S.Button>
     </S.Nav>
   )
