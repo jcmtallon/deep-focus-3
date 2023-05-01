@@ -1,3 +1,5 @@
+// Reference: https://developer.chrome.com/docs/extensions/reference/declarativeNetRequest/#method-setExtensionActionOptions
+
 function addRule(urlFilter: string) {
   chrome.storage.local.get(['deepFocus_rules']).then(result => {
     const rules = result.deepFocus_rules ? JSON.parse(result.deepFocus_rules) : []
@@ -11,7 +13,6 @@ function removeRule() {
 }
 
 function disableRules() {
-  console.log('disableRules')
   chrome.declarativeNetRequest.getDynamicRules(previousRules => {
     const previousRuleIds = previousRules.map(rule => rule.id)
     chrome.declarativeNetRequest.updateDynamicRules({

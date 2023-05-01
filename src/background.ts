@@ -1,14 +1,19 @@
 import { listenToMessages } from 'services/actions'
 import { disableRules, enableRules, debugRules } from 'services/siteBlocker'
-import { setFocusModeDetails } from 'services/store'
+import { createDatabase, addBlockedSite as addBlockedSiteToStore, setFocusModeDetails } from 'services/store'
 
 chrome.runtime.onInstalled.addListener(() => {
+  createDatabase() // TODO: Setup Store better? Make agnostic
   chrome.action.setBadgeText({ text: 'OFF' })
   chrome.action.setBadgeBackgroundColor({ color: '#100229' })
 })
 
 // TODO: Execute when uninstalled:
 // https://stackoverflow.com/a/72958868
+
+function addBlockedSite(payload: any) {
+  addBlockedSiteToStore(payload.urlFilter ?? 'bbc') // TODO: Temp implementation
+}
 
 function startFocusMode() {
   chrome.action.setBadgeText({ text: 'ON' })
@@ -29,6 +34,7 @@ function debug() {
 }
 
 listenToMessages({
+  addBlockedSite: payload => addBlockedSite(payload),
   startFocusMode: () => startFocusMode(),
   stopFocusMode: () => stopFocusMode(),
   debug: () => debug(),

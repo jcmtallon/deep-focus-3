@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { getFocusModeDetails } from 'services/store'
 import styled from 'styled-components'
 
 const Wrapper = styled.div`
@@ -13,6 +14,7 @@ const Wrapper = styled.div`
 
 function MissionControl() {
   const [type, setType] = useState<string | null>()
+  const [isFocusModeOn, setIsFocusModeOn] = useState<boolean | null>(null)
 
   useEffect(() => {
     const queryParams = new URLSearchParams(window.location.search)
@@ -20,7 +22,51 @@ function MissionControl() {
     if (blockType) setType(blockType)
   }, [])
 
-  return <Wrapper>{type === 'site' ? 'Blocked' : 'Mission Control'}</Wrapper>
+  useEffect(() => {
+    const getFocusModeStatus = async () => {
+      const status = await getFocusModeDetails()
+      setIsFocusModeOn(status)
+    }
+
+    getFocusModeStatus()
+  }, [])
+
+  useEffect(() => {
+    // TODO: Listen to messages from background so it can respond
+    // to popup actions.
+    // chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+    // })
+  }, [])
+
+  return (
+    <Wrapper>
+      <span>{type === 'site' ? 'Blocked' : 'Mission Control'}</span>
+      <span>{isFocusModeOn === true ? 'Focus Mode ON' : 'Focus Mode OFF'}</span>
+    </Wrapper>
+  )
 }
 
 export { MissionControl }
+
+// chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+//   console.log({fg_messageReceived: request.message })
+
+//   if (request.message === "showFocusDialog") {
+//     chrome.storage.local.get(["deepFocus_focusModeOn"]).then((result) => {
+//       const isFocusOn = result["deepFocus_focusModeOn"];
+
+//       console.log(isFocusOn)
+
+//       if (isFocusOn){
+//         showEndFocusModeDialog();
+//       }else{
+//         showStartFocusModeDialog();
+//       }
+
+//       sendResponse({ message: "success" });
+
+//     }).catch(err => console.log(err));
+
+//     console.log('fg_end')
+//   }
+// });

@@ -1,17 +1,47 @@
 // TODO: Consider a different naming. So popup is agnostic about chrome.runtime
 // TODO: Abstract files
 
-type Action = 'startFocusMode' | 'stopFocusMode' | 'debug'
+// TODO: Typesafe actions
 
-function sendMessage(action: Action) {
-  chrome.runtime.sendMessage({ action })
+// interface BlockedSite {
+//   urlFilter: string
+// }
+
+// interface StartFocusModeAction {
+//   actionName: 'startFocusMode'
+//   payload: undefined
+// }
+
+// interface DebugAction {
+//   actionName: 'debug'
+//   payload: undefined
+// }
+
+// interface StopFocusModeAction {
+//   actionName: 'stopFocusMode'
+//   payload: undefined
+// }
+
+// interface AddBlockedSiteAction {
+//   actionName: 'addBlockedSite'
+//   payload: BlockedSite
+// }
+
+type Action = 'startFocusMode' | 'stopFocusMode' | 'debug' | 'addBlockedSite'
+
+function sendMessage(action: Action, payload?: unknown) {
+  chrome.runtime.sendMessage({ action, payload })
 }
 
-type MessageCallbacks = Record<Partial<Action>, () => void>
+type MessageCallbacks = Record<Partial<Action>, (payload?: any) => void>
 
 function listenToMessages(callbacks: MessageCallbacks) {
   chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     switch (request.action) {
+      case 'addBlockedSite':
+        callbacks.addBlockedSite(request.payload)
+        break
+
       case 'startFocusMode':
         callbacks.startFocusMode()
         break
