@@ -1,3 +1,4 @@
+import { initBadge, showFocusModeBadge, showIdleModeBadge } from 'services/actionBadge'
 import { listenToMessages } from 'services/actions'
 import { disableRules, enableRules, debugRules } from 'services/siteBlocker'
 import {
@@ -9,8 +10,7 @@ import {
 
 chrome.runtime.onInstalled.addListener(() => {
   createDatabase() // TODO: Setup Store better? Make agnostic
-  chrome.action.setBadgeText({ text: 'OFF' })
-  chrome.action.setBadgeBackgroundColor({ color: '#100229' })
+  initBadge()
 })
 
 // TODO: Execute when uninstalled:
@@ -21,17 +21,15 @@ function addBlockedSite(payload: any) {
 }
 
 function startFocusMode() {
-  chrome.action.setBadgeText({ text: 'ON' })
-  chrome.action.setBadgeBackgroundColor({ color: '#E5541E' })
   enableRules()
   setFocusModeDetails(true)
+  showFocusModeBadge()
 }
 
 function stopFocusMode() {
-  chrome.action.setBadgeText({ text: 'OFF' })
-  chrome.action.setBadgeBackgroundColor({ color: '#100229' })
   disableRules()
   setFocusModeDetails(false)
+  showIdleModeBadge()
 }
 
 async function debug() {
