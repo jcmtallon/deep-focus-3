@@ -30,7 +30,15 @@ function FocusMode() {
   if (isFocusModeOn === null) return <>Loading</>
 
   return (
-    <PageLayout footer={<FooterNav activeElement="focusMode" />} header={<Header />}>
+    <PageLayout
+      footer={
+        <FooterNav
+          activeElement="focusMode"
+          // TODO: Replace with a proper disabled prop
+          asteroidButtonProps={{ disabled: isFocusModeOn === true }}
+        />
+      }
+      header={<Header />}>
       <S.Wrapper>
         <S.Timer>15:00</S.Timer>
         {!isFocusModeOn && <S.Button onClick={handleStartFocusClick}>Start Focus Session</S.Button>}
