@@ -1,5 +1,7 @@
 // Reference: https://developer.chrome.com/docs/extensions/reference/declarativeNetRequest/#method-setExtensionActionOptions
 
+import { listBlockedSites } from 'services/store'
+
 function addRule(urlFilter: string) {
   chrome.storage.local.get(['deepFocus_rules']).then(result => {
     const rules = result.deepFocus_rules ? JSON.parse(result.deepFocus_rules) : []
@@ -21,25 +23,24 @@ function disableRules() {
   })
 }
 
-function enableRules() {
+async function enableRules() {
+  const storedRules = await listBlockedSites()
   chrome.declarativeNetRequest.getDynamicRules(previousRules => {
     const previousRuleIds = previousRules.map(rule => rule.id)
-    const newRules: chrome.declarativeNetRequest.Rule[] = ['youtube', 'espinof', 'elpais'].map(
-      (res, indx) => {
-        return {
-          id: indx + 1,
-          priority: 1,
-          action: {
-            type: chrome.declarativeNetRequest.RuleActionType.REDIRECT,
-            redirect: { extensionPath: `/src/apps/content/index.html?site=${res}&blockType=site` },
-          },
-          condition: {
-            urlFilter: res,
-            resourceTypes: ['main_frame'],
-          },
-        }
-      },
-    )
+    const newRules: chrome.declarativeNetRequest.Rule[] = storedRules.map((rule, indx) => {
+      return {
+        id: indx + 1,
+        priority: 1,
+        action: {
+          type: chrome.declarativeNetRequest.RuleActionType.REDIRECT,
+          redirect: { extensionPath: `/src/apps/content/index.html?site=${rule.id}&blockType=site` },
+        },
+        condition: {
+          urlFilter: rule.url,
+          resourceTypes: ['main_frame'],
+        },
+      }
+    })
 
     chrome.declarativeNetRequest
       .updateDynamicRules({

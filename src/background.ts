@@ -1,6 +1,11 @@
 import { listenToMessages } from 'services/actions'
 import { disableRules, enableRules, debugRules } from 'services/siteBlocker'
-import { createDatabase, addBlockedSite as addBlockedSiteToStore, setFocusModeDetails } from 'services/store'
+import {
+  createDatabase,
+  addBlockedSite as addBlockedSiteToStore,
+  setFocusModeDetails,
+  debugDatabase,
+} from 'services/store'
 
 chrome.runtime.onInstalled.addListener(() => {
   createDatabase() // TODO: Setup Store better? Make agnostic
@@ -29,8 +34,9 @@ function stopFocusMode() {
   setFocusModeDetails(false)
 }
 
-function debug() {
+async function debug() {
   debugRules()
+  debugDatabase()
 }
 
 listenToMessages({

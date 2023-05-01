@@ -42,18 +42,13 @@ function createDatabase() {
 }
 
 function addBlockedSite(urlFilter: string) {
-  console.log('db')
   if (!db)
     return new Promise((resolve, reject) => {
       reject(new Error('Bla')) // TODO: Error handling?
     })
 
-  console.log('db is defined')
-
   const transaction = db.transaction('blockedSites', 'readwrite')
   const objectStore = transaction.objectStore('blockedSites')
-
-  console.log('object store')
 
   return new Promise((resolve, reject) => {
     transaction.oncomplete = () => {
@@ -69,4 +64,52 @@ function addBlockedSite(urlFilter: string) {
   })
 }
 
-export { createDatabase, addBlockedSite }
+function listBlockedSites(): Promise<{ url: string; id: number }[]> {
+  if (!db)
+    return new Promise((resolve, reject) => {
+      reject(new Error('Bla')) // TODO: Error handling?
+    })
+
+  const transaction = db.transaction('blockedSites', 'readonly')
+  const objectStore = transaction.objectStore('blockedSites')
+
+  return new Promise((resolve, reject) => {
+    transaction.oncomplete = () => {
+      console.log('completed')
+    }
+
+    transaction.onerror = () => {
+      reject()
+    }
+
+    const request = objectStore.getAll()
+    request.onsuccess = function (event) {
+      if (!(event.target instanceof IDBRequest)) return // TODO: Error handling?
+      console.log('success')
+      resolve(event.target.result)
+    }
+  })
+}
+
+async function debugDatabase() {
+  const results = await listBlockedSites()
+  // eslint-disable-next-line no-console -- Necessary for debugging
+  console.log(results)
+}
+
+function deleteBlockedSite(id: number) {
+  if (!db)
+    return new Promise((resolve, reject) => {
+      reject(new Error('Bla')) // TODO: Error handling?
+    })
+
+  const request = db.transaction('blockedSites', 'readwrite').objectStore('blockedSites').delete(id)
+
+  return new Promise((resolve, reject) => {
+    request.onsuccess = event => {
+      resolve(true)
+    }
+  })
+}
+
+export { createDatabase, addBlockedSite, listBlockedSites, debugDatabase, deleteBlockedSite }
