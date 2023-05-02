@@ -8,8 +8,10 @@ import {
   debugDatabase,
 } from 'services/store'
 
+// TODO: Setup Store better? Make agnostic
+createDatabase()
+
 chrome.runtime.onInstalled.addListener(() => {
-  createDatabase() // TODO: Setup Store better? Make agnostic
   initBadge()
 })
 
@@ -20,16 +22,32 @@ function addBlockedSite(payload: any) {
   addBlockedSiteToStore(payload.urlFilter ?? 'bbc') // TODO: Temp implementation
 }
 
-function startFocusMode() {
+// Gets active tab id
+function getActiveTabId(): Promise<number> {
+  return new Promise(resolve => {
+    chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
+      // TODO: Error handling
+      if (tabs[0].id) resolve(tabs[0].id)
+    })
+  })
+}
+
+async function startFocusMode() {
   enableRules()
   setFocusModeDetails(true)
   showFocusModeBadge()
+
+  const tabId = await getActiveTabId()
+  chrome.tabs.sendMessage(tabId, { message: 'focusModeOn' })
 }
 
-function stopFocusMode() {
+async function stopFocusMode() {
   disableRules()
   setFocusModeDetails(false)
   showIdleModeBadge()
+
+  const tabId = await getActiveTabId()
+  chrome.tabs.sendMessage(tabId, { message: 'focusModeOff' })
 }
 
 async function debug() {

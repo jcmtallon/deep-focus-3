@@ -34,9 +34,16 @@ function MissionControl() {
   useEffect(() => {
     // TODO: Listen to messages from background so it can respond
     // to popup actions.
-    // chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-    // })
-  }, [])
+    chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+      if (request.message === 'focusModeOn') {
+        setIsFocusModeOn(true)
+      }
+
+      if (request.message === 'focusModeOff') {
+        setIsFocusModeOn(false)
+      }
+    })
+  }, [setIsFocusModeOn])
 
   return (
     <Wrapper>
