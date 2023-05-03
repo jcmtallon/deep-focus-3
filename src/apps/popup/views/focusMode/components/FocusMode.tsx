@@ -27,23 +27,19 @@ function FocusMode() {
     setIsFocusModeOn(false)
   }
 
-  if (isFocusModeOn === null) return <>Loading</>
-
   return (
     <PageLayout
+      header={<Header />}
       footer={
-        <FooterNav
-          activeElement="focusMode"
-          // TODO: Replace with a proper disabled prop
-          asteroidButtonProps={{ disabled: isFocusModeOn === true }}
-        />
-      }
-      header={<Header />}>
-      <S.Wrapper>
-        <S.Timer>15:00</S.Timer>
-        {!isFocusModeOn && <S.Button onClick={handleStartFocusClick}>Start Focus Session</S.Button>}
-        {isFocusModeOn && <S.Button onClick={handleEndFocusClick}>All work done</S.Button>}
-      </S.Wrapper>
+        <FooterNav activeElement="focusMode" asteroidButtonProps={{ disabled: isFocusModeOn === true }} />
+      }>
+      {isFocusModeOn !== null && (
+        <S.Wrapper>
+          <S.Timer>15:00</S.Timer>
+          {!isFocusModeOn && <S.Button onClick={handleStartFocusClick}>Start Focus Session</S.Button>}
+          {isFocusModeOn && <S.Button onClick={handleEndFocusClick}>All work done</S.Button>}
+        </S.Wrapper>
+      )}
     </PageLayout>
   )
 }

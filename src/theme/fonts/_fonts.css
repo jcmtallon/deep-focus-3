@@ -1,0 +1,17 @@
+@font-face {
+  font-family: 'Maison Neue Demi';
+  src: url("./assets/woff/MaisonNeue-Demi.woff2") format('woff2');
+  font-weight: normal;
+}
+
+@font-face {
+  font-family: 'Maison Neue Book';
+  src: url("./assets/woff/MaisonNeue-Book.woff2") format('woff2');
+  font-weight: normal;
+}
+
+@font-face {
+  font-family: 'Maison Neue Medium';
+  src: url("./assets/woff/MaisonNeue-Book.woff2") format('woff2');
+  font-weight: 700;
+}

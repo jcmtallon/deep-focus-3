@@ -11,13 +11,13 @@ const Wrapper = styled.div`
 
 const Timer = styled.div`
   font-size: 70px;
-  font-weight: bold;
+  font-weight: 700;
 `
 
 const Button = styled.button`
   background-color: #27b2f7;
-  font-size: 16px;
-  font-weight: bold;
+  font-size: 18px;
+  font-weight: 700;
   color: white;
   border-radius: 6px;
   padding: 7px 28px;

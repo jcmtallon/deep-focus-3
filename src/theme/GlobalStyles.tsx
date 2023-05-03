@@ -1,6 +1,7 @@
 import { createGlobalStyle } from 'styled-components'
 import { CssNormalize } from './CssNormalize'
 import { getTheme } from './theme'
+import './fonts/_fonts.css'
 
 const theme = getTheme()
 
@@ -115,8 +116,8 @@ const GlobalStyles = createGlobalStyle`
   }
 
   body {
-    font-family: 'Lato', sans-serif;
-    font-weight: 400;
+    font-family: "Maison Neue Book","Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-weight: normal;
     font-size: 16px;
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;

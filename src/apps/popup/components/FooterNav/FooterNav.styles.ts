@@ -8,6 +8,7 @@ const Nav = styled.nav`
 `
 
 const Button = styled.button<{ active?: boolean }>`
+  font-weight: 700;
   padding: 12px 18px;
   border-radius: 4px;
   background-color: #15043b;

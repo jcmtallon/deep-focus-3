@@ -1,5 +1,6 @@
 import React, { ReactNode } from 'react'
 import * as S from './PageLayout.styles'
+import { PageBackground } from './PageBackground'
 
 interface PageLayoutProps {
   children: ReactNode
@@ -11,11 +12,11 @@ function PageLayout(props: PageLayoutProps) {
   const { children, footer, header } = props
 
   return (
-    <S.Wrapper>
+    <PageBackground>
       <header>{header}</header>
       <S.Page>{children}</S.Page>
       <footer>{footer}</footer>
-    </S.Wrapper>
+    </PageBackground>
   )
 }
 
