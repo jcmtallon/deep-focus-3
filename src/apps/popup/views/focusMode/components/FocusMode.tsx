@@ -2,7 +2,9 @@ import { FooterNav, Header, PageLayout } from 'apps/popup/components'
 import React, { useEffect, useState } from 'react'
 import { sendMessage } from 'services/actions'
 import { getFocusModeDetails } from 'services/store'
-import * as S from './FocusMode.styles'
+import { FocusModeLayout } from './FocusModeLayout'
+import { FocusModesStats } from './FocusModeStats/FocusModeStats'
+import { FocusModeActions } from './FocusModeActions/FocusModeActions'
 
 function FocusMode() {
   const [isFocusModeOn, setIsFocusModeOn] = useState<boolean | null>(null)
@@ -19,7 +21,6 @@ function FocusMode() {
   const handleStartFocusClick = () => {
     sendMessage('startFocusMode')
     setIsFocusModeOn(true)
-    window.close()
   }
 
   const handleEndFocusClick = () => {
@@ -34,11 +35,17 @@ function FocusMode() {
         <FooterNav activeElement="focusMode" asteroidButtonProps={{ disabled: isFocusModeOn === true }} />
       }>
       {isFocusModeOn !== null && (
-        <S.Wrapper>
-          <S.Timer>15:00</S.Timer>
-          {!isFocusModeOn && <S.Button onClick={handleStartFocusClick}>Start Focus Session</S.Button>}
-          {isFocusModeOn && <S.Button onClick={handleEndFocusClick}>All work done</S.Button>}
-        </S.Wrapper>
+        <FocusModeLayout
+          topSlot={<FocusModesStats focusModeActive={isFocusModeOn} />}
+          centerSlot={<></>}
+          bottomSlot={
+            <FocusModeActions
+              focusModeActive={isFocusModeOn}
+              onAbortFocusMode={handleEndFocusClick}
+              onFocusModeStart={handleStartFocusClick}
+            />
+          }
+        />
       )}
     </PageLayout>
   )

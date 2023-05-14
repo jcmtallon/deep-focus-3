@@ -38,7 +38,10 @@ async function startFocusMode() {
   showFocusModeBadge()
 
   const tabId = await getActiveTabId()
-  chrome.tabs.sendMessage(tabId, { message: 'focusModeOn' })
+  chrome.tabs
+    .sendMessage(tabId, { message: 'focusModeOn' })
+    .then(() => {})
+    .catch(() => {})
 }
 
 async function stopFocusMode() {
@@ -47,7 +50,10 @@ async function stopFocusMode() {
   showIdleModeBadge()
 
   const tabId = await getActiveTabId()
-  chrome.tabs.sendMessage(tabId, { message: 'focusModeOff' })
+  chrome.tabs
+    .sendMessage(tabId, { message: 'focusModeOff' })
+    .then(() => {})
+    .catch(() => {})
 }
 
 async function debug() {

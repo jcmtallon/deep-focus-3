@@ -1,5 +1,6 @@
 import React from 'react'
 import { sendMessage } from 'services/actions'
+import * as S from './Header.styles'
 
 function Header() {
   const handleDebugClick = () => {
@@ -7,11 +8,10 @@ function Header() {
   }
 
   return (
-    <div>
-      <button type="button" onClick={handleDebugClick}>
-        Debug
-      </button>
-    </div>
+    <S.Wrapper>
+      <S.Question />
+      <S.Gear onClick={handleDebugClick} role="button" aria-label="options" />
+    </S.Wrapper>
   )
 }
 
