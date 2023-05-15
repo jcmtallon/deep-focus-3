@@ -27,10 +27,21 @@
 //   payload: BlockedSite
 // }
 
+async function sendMessagePromise(action: Action, payload?: unknown) {
+  return new Promise(resolve => {
+    chrome.runtime.sendMessage({ action, payload }, response => {
+      // console.log('lastError', chrome.runtime.lastError)
+      resolve(response)
+      // reject(response.error)
+    })
+  })
+}
+
 type Action = 'startFocusMode' | 'stopFocusMode' | 'debug' | 'addBlockedSite'
 
-function sendMessage(action: Action, payload?: unknown) {
-  chrome.runtime.sendMessage({ action, payload })
+async function sendMessage(action: Action, payload?: unknown) {
+  const response = await sendMessagePromise(action, payload)
+  return response
 }
 
 type MessageCallbacks = Record<Partial<Action>, (payload?: any) => void>
@@ -39,11 +50,11 @@ function listenToMessages(callbacks: MessageCallbacks) {
   chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     switch (request.action) {
       case 'addBlockedSite':
-        callbacks.addBlockedSite(request.payload)
+        callbacks.addBlockedSite({ payload: request.payload, sender, sendResponse })
         break
 
       case 'startFocusMode':
-        callbacks.startFocusMode()
+        callbacks.startFocusMode({ payload: request.payload, sender, sendResponse })
         break
 
       case 'stopFocusMode':
@@ -57,6 +68,9 @@ function listenToMessages(callbacks: MessageCallbacks) {
       default:
         break
     }
+
+    // See https://stackoverflow.com/a/56483156
+    return true
   })
 }
 

@@ -45,7 +45,7 @@ interface FocusModeActionsProps {
   focusModeActive?: boolean
   allSessionGoalsCompleted?: boolean
 
-  onFocusModeStart?: () => void
+  onFocusModeStart?: (taskTitle: string) => void
   onAbortFocusMode?: () => void
 }
 
@@ -53,6 +53,10 @@ function FocusModeActions(props: FocusModeActionsProps) {
   const { focusModeActive, allSessionGoalsCompleted = false, onFocusModeStart, onAbortFocusMode } = props
 
   const [input, setInput] = useState<string>('')
+
+  const handleFocusModeStart = () => {
+    onFocusModeStart?.(input.trim())
+  }
 
   if (!focusModeActive) {
     return (
@@ -64,7 +68,7 @@ function FocusModeActions(props: FocusModeActionsProps) {
           value={input}
           onChange={e => setInput(e.target.value)}
         />
-        <Button disabled={input.length === 0} onClick={onFocusModeStart}>
+        <Button disabled={input.length === 0} onClick={handleFocusModeStart}>
           Start Focus Session
         </Button>
       </Wrapper>

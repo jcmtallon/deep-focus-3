@@ -5,22 +5,33 @@ import { getFocusModeDetails } from 'services/store'
 import { FocusModeLayout } from './FocusModeLayout'
 import { FocusModesStats } from './FocusModeStats/FocusModeStats'
 import { FocusModeActions } from './FocusModeActions/FocusModeActions'
+import { FocusModeTasks } from './FocusModeTasks/FocusModeTasks'
+
+// TODO: Decide where common types should go
+interface Task {
+  id: string
+  title: string
+  status: 'PENDING' | 'COMPLETED'
+}
 
 function FocusMode() {
   const [isFocusModeOn, setIsFocusModeOn] = useState<boolean | null>(null)
+  const [tasks, setTasks] = useState<Task[]>([])
 
   useEffect(() => {
     const getFocusModeStatus = async () => {
-      const status = await getFocusModeDetails()
-      setIsFocusModeOn(status)
+      const focusModeDetails = await getFocusModeDetails()
+      setIsFocusModeOn(focusModeDetails !== undefined)
     }
-
     getFocusModeStatus()
   }, [])
 
-  const handleStartFocusClick = () => {
-    sendMessage('startFocusMode')
+  const handleStartFocusClick = async (taskTitle: string) => {
+    // TODO: Properly type sendMessage response
+    const response: any = await sendMessage('startFocusMode', { taskTitle })
+    if (!response) return
     setIsFocusModeOn(true)
+    setTasks(response.tasks as Task[])
   }
 
   const handleEndFocusClick = () => {
@@ -37,7 +48,7 @@ function FocusMode() {
       {isFocusModeOn !== null && (
         <FocusModeLayout
           topSlot={<FocusModesStats focusModeActive={isFocusModeOn} />}
-          centerSlot={<></>}
+          centerSlot={<FocusModeTasks tasks={tasks} onChange={tasks => setTasks(tasks)} />}
           bottomSlot={
             <FocusModeActions
               focusModeActive={isFocusModeOn}
