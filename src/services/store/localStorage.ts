@@ -40,7 +40,7 @@ interface Task {
 }
 
 interface SessionDetails {
-  startTime: string
+  startDateIso: string
   tasks: Task[]
   stats: { impacts: number }
 }
@@ -56,7 +56,7 @@ async function getFocusModeDetails() {
 
 async function initiateFocusMode(props: { taskTitle: string }) {
   const payload: SessionDetails = {
-    startTime: new Date().toISOString(),
+    startDateIso: new Date().toISOString(),
     tasks: [{ id: uniqueId(), title: props.taskTitle, status: 'PENDING' }],
     stats: { impacts: 0 },
   }

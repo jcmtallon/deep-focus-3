@@ -56,6 +56,7 @@ function FocusModeActions(props: FocusModeActionsProps) {
 
   const handleFocusModeStart = () => {
     onFocusModeStart?.(input.trim())
+    setInput('')
   }
 
   if (!focusModeActive) {

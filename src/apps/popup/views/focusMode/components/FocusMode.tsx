@@ -16,6 +16,7 @@ interface Task {
 
 function FocusMode() {
   const [isFocusModeOn, setIsFocusModeOn] = useState<boolean | null>(null)
+  const [startDateIso, setStartDateIso] = useState<string | null>(null)
   const [tasks, setTasks] = useState<Task[]>([])
 
   useEffect(() => {
@@ -31,12 +32,14 @@ function FocusMode() {
     const response: any = await sendMessage('startFocusMode', { taskTitle })
     if (!response) return
     setIsFocusModeOn(true)
+    setStartDateIso(response.startDateIso)
     setTasks(response.tasks as Task[])
   }
 
   const handleEndFocusClick = () => {
     sendMessage('stopFocusMode')
     setIsFocusModeOn(false)
+    setStartDateIso(null)
   }
 
   return (
@@ -47,7 +50,13 @@ function FocusMode() {
       }>
       {isFocusModeOn !== null && (
         <FocusModeLayout
-          topSlot={<FocusModesStats focusModeActive={isFocusModeOn} />}
+          topSlot={
+            <FocusModesStats
+              taskCount={tasks.length}
+              focusModeActive={isFocusModeOn}
+              sessionStartDateIso={startDateIso ?? undefined}
+            />
+          }
           centerSlot={<FocusModeTasks tasks={tasks} onChange={tasks => setTasks(tasks)} />}
           bottomSlot={
             <FocusModeActions

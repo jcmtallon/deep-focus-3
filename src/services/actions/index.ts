@@ -30,7 +30,6 @@
 async function sendMessagePromise(action: Action, payload?: unknown) {
   return new Promise(resolve => {
     chrome.runtime.sendMessage({ action, payload }, response => {
-      // console.log('lastError', chrome.runtime.lastError)
       resolve(response)
       // reject(response.error)
     })

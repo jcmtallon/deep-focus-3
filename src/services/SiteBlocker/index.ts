@@ -48,22 +48,20 @@ async function enableRules() {
         addRules: newRules,
       })
       .then(() => {
-        console.log('Rules updated successfully')
+        console.log('Background rule manager: Rules updated successfully')
       })
   })
 }
 
 async function debugRules() {
   const count = await chrome.declarativeNetRequest.getAvailableStaticRuleCount()
-  console.log('getAvailableStaticRuleCount', count)
+  console.log('Debugger: GetAvailableStaticRuleCount: ', count)
 
   chrome.declarativeNetRequest.getMatchedRules({}, details => {
-    console.log(details)
+    console.log('Debugger: Matched Rules: ', details)
   })
 
-  chrome.declarativeNetRequest.getDynamicRules(rules => console.log(rules))
+  chrome.declarativeNetRequest.getDynamicRules(rules => console.log('Debugger: Dynamic Rules: ', rules))
 }
-
-// TODO: Rename functions to be more descriptive
 
 export { addRule, removeRule, disableRules, enableRules, debugRules }

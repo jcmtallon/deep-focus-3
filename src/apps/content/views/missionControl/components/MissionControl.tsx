@@ -56,24 +56,15 @@ function MissionControl() {
 export { MissionControl }
 
 // chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-//   console.log({fg_messageReceived: request.message })
-
 //   if (request.message === "showFocusDialog") {
 //     chrome.storage.local.get(["deepFocus_focusModeOn"]).then((result) => {
 //       const isFocusOn = result["deepFocus_focusModeOn"];
-
-//       console.log(isFocusOn)
-
 //       if (isFocusOn){
 //         showEndFocusModeDialog();
 //       }else{
 //         showStartFocusModeDialog();
 //       }
-
 //       sendResponse({ message: "success" });
-
-//     }).catch(err => console.log(err));
-
-//     console.log('fg_end')
+//     }).catch(err => {});
 //   }
 // });

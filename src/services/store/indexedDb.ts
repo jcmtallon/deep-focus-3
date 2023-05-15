@@ -9,7 +9,7 @@ function createDatabase() {
 
   request.onerror = event => {
     // eslint-disable-next-line no-console -- Necessary for debugging
-    console.log('Problem opening DB.', event)
+    console.log('IndexedDb: Problem opening DB :', event)
   }
 
   request.onupgradeneeded = event => {
@@ -32,11 +32,11 @@ function createDatabase() {
     db = event.target.result
 
     // eslint-disable-next-line no-console -- Necessary for debugging
-    console.log(`Database successfully opened`)
+    console.log(`IndexedDb: Database successfully opened.`)
 
     db.onerror = event => {
       // eslint-disable-next-line no-console -- Necessary for debugging
-      console.error(`Database error: ${event.target}`)
+      console.error(`IndexedDb: Database error: ${event.target}`)
     }
   }
 }
@@ -52,7 +52,7 @@ function addBlockedSite(urlFilter: string) {
 
   return new Promise((resolve, reject) => {
     transaction.oncomplete = () => {
-      console.log('completed')
+      console.log('IndexedDb: AddBlockedSite completed.')
       resolve(true)
     }
 
@@ -75,7 +75,7 @@ function listBlockedSites(): Promise<{ url: string; id: number }[]> {
 
   return new Promise((resolve, reject) => {
     transaction.oncomplete = () => {
-      console.log('completed')
+      console.log('IndexedDb: listBlockedSites completed.')
     }
 
     transaction.onerror = () => {
@@ -85,7 +85,7 @@ function listBlockedSites(): Promise<{ url: string; id: number }[]> {
     const request = objectStore.getAll()
     request.onsuccess = function (event) {
       if (!(event.target instanceof IDBRequest)) return // TODO: Error handling?
-      console.log('success')
+      console.log('IndexedDb: listBlockedSites success')
       resolve(event.target.result)
     }
   })
@@ -94,7 +94,7 @@ function listBlockedSites(): Promise<{ url: string; id: number }[]> {
 async function debugDatabase() {
   const results = await listBlockedSites()
   // eslint-disable-next-line no-console -- Necessary for debugging
-  console.log(results)
+  console.log('IndexedDb: Debugger listBlockedSites: ', results)
 }
 
 function deleteBlockedSite(id: number) {
