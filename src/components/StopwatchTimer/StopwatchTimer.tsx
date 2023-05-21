@@ -3,11 +3,11 @@ import { TimerDisplay } from 'components/TimerDisplay/TimerDisplay'
 import { useStopwatch } from './useStopwatch'
 
 interface StopwatchTimerProps {
-  startDateIso: string
+  startTimestamp: number
 }
 
 function StopwatchTimer(props: StopwatchTimerProps) {
-  const time = useStopwatch(props.startDateIso)
+  const time = useStopwatch(props.startTimestamp)
   return <TimerDisplay time={time} />
 }
 

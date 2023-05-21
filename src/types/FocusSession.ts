@@ -1,11 +1,11 @@
 import { Task } from './Task'
 
-interface Session {
+interface FocusSession {
   sessionId?: string
-  startDateIso: string
-  endDateIso?: string
+  startDate: number
+  endDate?: number
   tasks: Task[]
   stats: { impacts: number }
 }
 
-export type { Session }
+export type { FocusSession }

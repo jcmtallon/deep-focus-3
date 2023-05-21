@@ -14,8 +14,8 @@ const getElapsedTime = (startDateTime: number) => {
   return new Date().getTime() - startDateTime
 }
 
-const useStopwatch = (startDateIso: string) => {
-  const startDateTime = new Date(startDateIso).getTime()
+const useStopwatch = (startTimestamp: number) => {
+  const startDateTime = new Date(startTimestamp).getTime()
   const [countUp, setCountUp] = useState(getElapsedTime(startDateTime))
 
   useEffect(() => {

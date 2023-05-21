@@ -2,7 +2,7 @@ import { FooterNav, Header, PageLayout } from 'apps/popup/components'
 import React, { useEffect, useState } from 'react'
 import { sendMessage } from 'services/actions'
 import { getFocusModeDetails } from 'services/store'
-import { Session, Task } from 'types'
+import { FocusSession, Task } from 'types'
 import { addSession } from 'services/sessions'
 import { FocusModeLayout } from './FocusModeLayout'
 import { FocusModesStats } from './FocusModeStats/FocusModeStats'
@@ -12,7 +12,7 @@ import { FocusModeTasks } from './FocusModeTasks/FocusModeTasks'
 // TODO: Try to use FocusSession instead of Session or FocusMode
 
 function FocusMode() {
-  const [activeSession, setActiveSession] = useState<Session | null>(null)
+  const [focusSession, setFocusSession] = useState<FocusSession | null>(null)
   const [isFocusModeOn, setIsFocusModeOn] = useState<boolean | null>(null)
 
   useEffect(() => {
@@ -20,7 +20,7 @@ function FocusMode() {
       const session = await getFocusModeDetails()
       const focusModeOn = session !== undefined
       setIsFocusModeOn(focusModeOn)
-      if (focusModeOn) setActiveSession(session as Session)
+      if (focusModeOn) setFocusSession(session as FocusSession)
     }
     getFocusModeStatus()
   }, [])
@@ -29,27 +29,27 @@ function FocusMode() {
     const response = await sendMessage('startFocusMode', { taskTitle })
     if (!response) return // TODO: handle possible error
     setIsFocusModeOn(true)
-    setActiveSession(response as Session)
+    setFocusSession(response as FocusSession)
   }
 
   const handleAbortSession = async () => {
     sendMessage('stopFocusMode')
     setIsFocusModeOn(false)
-    setActiveSession(null)
+    setFocusSession(null)
   }
 
   const handleExtendSession = async (taskTitle: string) => {
     const response = await sendMessage('extendFocusSession', { taskTitle })
     if (!response) return // TODO: handle possible error
-    setActiveSession(response as Session)
+    setFocusSession(response as FocusSession)
   }
 
   const handleFinishSession = async () => {
     // Temp
-    addSession(activeSession!)
+    addSession(focusSession!)
     sendMessage('stopFocusMode')
     setIsFocusModeOn(false)
-    setActiveSession(null)
+    setFocusSession(null)
     // Stop focus mode.
     // Store info in database.
   }
@@ -57,7 +57,7 @@ function FocusMode() {
   const handleTaskStatusChange = async (tasks: Task[]) => {
     const response = await sendMessage('updateTasks', { tasks })
     if (!response) return // TODO: handle possible error
-    setActiveSession(prev => (prev ? { ...prev, tasks } : prev))
+    setFocusSession(prev => (prev ? { ...prev, tasks } : prev))
   }
 
   return (
@@ -70,15 +70,15 @@ function FocusMode() {
         <FocusModeLayout
           topSlot={
             <FocusModesStats
-              taskCount={activeSession?.tasks.filter(t => t.status === 'COMPLETED').length}
+              taskCount={focusSession?.tasks.filter(t => t.status === 'COMPLETED').length}
               focusModeActive={isFocusModeOn}
-              sessionStartDateIso={activeSession?.startDateIso ?? undefined}
+              sessionStart={focusSession?.startDate ?? undefined}
             />
           }
-          centerSlot={<FocusModeTasks tasks={activeSession?.tasks} onChange={handleTaskStatusChange} />}
+          centerSlot={<FocusModeTasks tasks={focusSession?.tasks} onChange={handleTaskStatusChange} />}
           bottomSlot={
             <FocusModeActions
-              session={activeSession ?? undefined}
+              session={focusSession ?? undefined}
               onStartSession={handleStartSession}
               onAbortSession={handleAbortSession}
               onExtendSession={handleExtendSession}

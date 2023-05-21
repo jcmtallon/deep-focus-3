@@ -1,7 +1,7 @@
 // chrome.storage.local cannot be natively explored via chrome dev tools.
 // Alternative (not tested): https://chrome.google.com/webstore/detail/storage-area-explorer/ocfjjjjhkpapocigimmppepjgfdecjkb
 import { uniqueId } from 'lodash'
-import { Session, Task } from 'types'
+import { FocusSession, Task } from 'types'
 
 const readLocalStorage = async (key: string) => {
   return new Promise((resolve, reject) => {
@@ -35,7 +35,7 @@ const KEY = {
   ACTIVE_FOCUS_SESSION: 'deepFocusChromeExtension_activeFocusSession',
 }
 
-async function getFocusModeDetails(): Promise<Session | undefined> {
+async function getFocusModeDetails(): Promise<FocusSession | undefined> {
   try {
     const focusMode = await readLocalStorage(KEY.ACTIVE_FOCUS_SESSION)
     return focusMode !== undefined ? JSON.parse(focusMode as string) : undefined
@@ -45,8 +45,8 @@ async function getFocusModeDetails(): Promise<Session | undefined> {
 }
 
 async function initiateFocusMode(props: { taskTitle: string }) {
-  const payload: Session = {
-    startDateIso: new Date().toISOString(),
+  const payload: FocusSession = {
+    startDate: new Date().getTime(),
     tasks: [{ id: uniqueId(), title: props.taskTitle, status: 'PENDING' }],
     stats: { impacts: 0 },
   }
@@ -57,8 +57,8 @@ async function initiateFocusMode(props: { taskTitle: string }) {
 
 async function addTask(props: { taskTitle: string }) {
   const response = (await readLocalStorage(KEY.ACTIVE_FOCUS_SESSION)) as string
-  const existingSession = JSON.parse(response) as Session
-  const payload: Session = {
+  const existingSession = JSON.parse(response) as FocusSession
+  const payload: FocusSession = {
     ...existingSession,
     tasks: [...existingSession.tasks, { id: uniqueId(), title: props.taskTitle, status: 'PENDING' }],
   }
@@ -69,8 +69,8 @@ async function addTask(props: { taskTitle: string }) {
 
 async function updateTasks(props: { tasks: Task[] }) {
   const response = (await readLocalStorage(KEY.ACTIVE_FOCUS_SESSION)) as string
-  const existingSession = JSON.parse(response) as Session
-  const payload: Session = {
+  const existingSession = JSON.parse(response) as FocusSession
+  const payload: FocusSession = {
     ...existingSession,
     tasks: props.tasks,
   }

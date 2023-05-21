@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { ListSessions } from 'services/sessions'
 import { getFocusModeDetails } from 'services/store'
 import styled from 'styled-components'
-import { Session } from 'types'
+import { FocusSession } from 'types'
 
 const Wrapper = styled.div`
   width: 100%;
@@ -17,7 +17,7 @@ const Wrapper = styled.div`
 function MissionControl() {
   const [type, setType] = useState<string | null>()
   const [isFocusModeOn, setIsFocusModeOn] = useState<boolean | null>(null)
-  const [focusSessions, setFocusSession] = useState<Session[]>([])
+  const [focusSessions, setFocusSession] = useState<FocusSession[]>([])
 
   useEffect(() => {
     const queryParams = new URLSearchParams(window.location.search)

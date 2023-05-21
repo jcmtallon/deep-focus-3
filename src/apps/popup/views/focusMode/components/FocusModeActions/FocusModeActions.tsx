@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
-import { Session } from 'types'
+import { FocusSession } from 'types'
 
 const Wrapper = styled.div`
   display: flex;
@@ -48,7 +48,7 @@ const Input = styled.input`
 `
 
 interface FocusModeActionsProps {
-  session?: Session
+  session?: FocusSession
 
   onStartSession?: (taskTitle: string) => void
   onExtendSession?: (taskTitle: string) => void

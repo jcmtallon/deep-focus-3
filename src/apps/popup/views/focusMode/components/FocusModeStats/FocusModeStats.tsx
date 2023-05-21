@@ -7,7 +7,7 @@ interface FocusModeStatsProps {
   impactCount?: number
   taskCount?: number
   sessionCount?: number
-  sessionStartDateIso?: string
+  sessionStart?: number
 }
 
 const Wrapper = styled.div`
@@ -48,20 +48,14 @@ const Impacts = styled.div`
 `
 
 function FocusModesStats(props: FocusModeStatsProps) {
-  const {
-    focusModeActive = false,
-    impactCount = 0,
-    taskCount = 0,
-    sessionCount = 0,
-    sessionStartDateIso,
-  } = props
+  const { focusModeActive = false, impactCount = 0, taskCount = 0, sessionCount = 0, sessionStart } = props
 
   return (
     <Wrapper>
       {/* TODO: Calculate session number */}
       <Date>{focusModeActive ? 'Session 1' : '02/05/2023'}</Date>
-      {focusModeActive && sessionStartDateIso ? (
-        <StopwatchTimer startDateIso={sessionStartDateIso} />
+      {focusModeActive && sessionStart ? (
+        <StopwatchTimer startTimestamp={sessionStart} />
       ) : (
         <TimerDisplay time={{ minutes: 0, hours: 0, seconds: 0 }} />
       )}

@@ -1,17 +1,17 @@
-import { Session } from 'types'
+import { FocusSession } from 'types'
 import { COLLECTION_NAME } from '../constants'
 
-const { SESSIONS } = COLLECTION_NAME
+const { FOCUS_SESSIONS } = COLLECTION_NAME
 
-const addSession =
+const addFocusSession =
   (db: IDBDatabase) =>
-  (session: Session): Promise<Session> => {
-    const request = db.transaction(SESSIONS, 'readwrite').objectStore(SESSIONS).add(session)
+  (focusSession: FocusSession): Promise<FocusSession> => {
+    const request = db.transaction(FOCUS_SESSIONS, 'readwrite').objectStore(FOCUS_SESSIONS).add(focusSession)
 
     return new Promise((resolve, reject) => {
       request.onsuccess = () => {
         resolve({
-          ...session,
+          ...focusSession,
           sessionId: request.result.toString(),
         })
       }
@@ -21,8 +21,8 @@ const addSession =
     })
   }
 
-const listSessions = (db: IDBDatabase) => (): Promise<Session[]> => {
-  const request = db.transaction(SESSIONS, 'readonly').objectStore(SESSIONS).getAll()
+const listFocusSessions = (db: IDBDatabase) => (): Promise<FocusSession[]> => {
+  const request = db.transaction(FOCUS_SESSIONS, 'readonly').objectStore(FOCUS_SESSIONS).getAll()
 
   return new Promise((resolve, reject) => {
     request.onsuccess = event => {
@@ -38,10 +38,16 @@ const listSessions = (db: IDBDatabase) => (): Promise<Session[]> => {
   })
 }
 
+// const querySessions = (db: IDBDatabase) => (fromDateIso: string, toDateIso: string): Promise<Session[]> => {
+//   const objectStore = db.transaction(SESSIONS, 'readonly').objectStore(SESSIONS)
+//   const index = store.index("created");
+
+// }
+
 interface SessionEndpoints {
-  add: (session: Session) => Promise<Session>
-  list: () => Promise<Session[]>
+  add: (focusSession: FocusSession) => Promise<FocusSession>
+  list: () => Promise<FocusSession[]>
 }
 
-export { addSession, listSessions }
+export { addFocusSession, listFocusSessions }
 export type { SessionEndpoints }

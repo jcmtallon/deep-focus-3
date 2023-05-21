@@ -1,16 +1,16 @@
 import { indexedDb } from 'services/store'
-import { Session } from 'types'
+import { FocusSession } from 'types'
 
-async function addSession(session: Session): Promise<Session> {
+async function addSession(session: FocusSession): Promise<FocusSession> {
   const database = await indexedDb.getInstance()
-  const sessions = await database.sessions.add(session)
-  return sessions
+  const response = await database.focusSessions.add(session)
+  return response
 }
 
-async function ListSessions(): Promise<Session[]> {
+async function ListSessions(): Promise<FocusSession[]> {
   const database = await indexedDb.getInstance()
-  const sessions = await database.sessions.list()
-  return sessions
+  const response = await database.focusSessions.list()
+  return response
 }
 
 export { addSession, ListSessions }
