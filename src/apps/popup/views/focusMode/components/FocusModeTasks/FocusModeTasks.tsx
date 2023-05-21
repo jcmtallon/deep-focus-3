@@ -1,14 +1,8 @@
 import React from 'react'
-
-// TODO: Add proper type
-interface Task {
-  id: string
-  title: string
-  status: 'PENDING' | 'COMPLETED'
-}
+import { Task } from 'types'
 
 interface FocusModeTasksProps {
-  tasks: Task[]
+  tasks?: Task[]
   onChange: (tasks: Task[]) => void
 }
 

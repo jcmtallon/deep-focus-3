@@ -1,6 +1,7 @@
 // chrome.storage.local cannot be natively explored via chrome dev tools.
 // Alternative (not tested): https://chrome.google.com/webstore/detail/storage-area-explorer/ocfjjjjhkpapocigimmppepjgfdecjkb
 import { uniqueId } from 'lodash'
+import { Session, Task } from 'types'
 
 const readLocalStorage = async (key: string) => {
   return new Promise((resolve, reject) => {
@@ -28,26 +29,15 @@ const setLocalStorage = async (payload: Record<string, any>) => {
   })
 }
 
-const keys = {
-  focusMode: 'deepFocusChromeExtension_focusMode',
+// TODO: Separate localStorage and FocusSessionService
+
+const KEY = {
+  ACTIVE_FOCUS_SESSION: 'deepFocusChromeExtension_activeFocusSession',
 }
 
-// TODO: Abstract some sort of Task Factory
-interface Task {
-  id: string
-  title: string
-  status: 'PENDING' | 'COMPLETED'
-}
-
-interface SessionDetails {
-  startDateIso: string
-  tasks: Task[]
-  stats: { impacts: number }
-}
-
-async function getFocusModeDetails() {
+async function getFocusModeDetails(): Promise<Session | undefined> {
   try {
-    const focusMode = await readLocalStorage(keys.focusMode)
+    const focusMode = await readLocalStorage(KEY.ACTIVE_FOCUS_SESSION)
     return focusMode !== undefined ? JSON.parse(focusMode as string) : undefined
   } catch (error) {
     return undefined
@@ -55,20 +45,43 @@ async function getFocusModeDetails() {
 }
 
 async function initiateFocusMode(props: { taskTitle: string }) {
-  const payload: SessionDetails = {
+  const payload: Session = {
     startDateIso: new Date().toISOString(),
     tasks: [{ id: uniqueId(), title: props.taskTitle, status: 'PENDING' }],
     stats: { impacts: 0 },
   }
 
-  await setLocalStorage({ [keys.focusMode]: JSON.stringify(payload) })
+  await setLocalStorage({ [KEY.ACTIVE_FOCUS_SESSION]: JSON.stringify(payload) })
+  return payload
+}
+
+async function addTask(props: { taskTitle: string }) {
+  const response = (await readLocalStorage(KEY.ACTIVE_FOCUS_SESSION)) as string
+  const existingSession = JSON.parse(response) as Session
+  const payload: Session = {
+    ...existingSession,
+    tasks: [...existingSession.tasks, { id: uniqueId(), title: props.taskTitle, status: 'PENDING' }],
+  }
+
+  await setLocalStorage({ [KEY.ACTIVE_FOCUS_SESSION]: JSON.stringify(payload) })
+  return payload
+}
+
+async function updateTasks(props: { tasks: Task[] }) {
+  const response = (await readLocalStorage(KEY.ACTIVE_FOCUS_SESSION)) as string
+  const existingSession = JSON.parse(response) as Session
+  const payload: Session = {
+    ...existingSession,
+    tasks: props.tasks,
+  }
+  await setLocalStorage({ [KEY.ACTIVE_FOCUS_SESSION]: JSON.stringify(payload) })
   return payload
 }
 
 async function abortFocusMode() {
   // TODO: Turn into promise-type function
-  chrome.storage.local.remove([keys.focusMode])
+  chrome.storage.local.remove([KEY.ACTIVE_FOCUS_SESSION])
   // const results = await setLocalStorage({ [keys.focusMode]: undefined })
   // return results
 }
-export { getFocusModeDetails, initiateFocusMode, abortFocusMode }
+export { getFocusModeDetails, initiateFocusMode, abortFocusMode, addTask, updateTasks }

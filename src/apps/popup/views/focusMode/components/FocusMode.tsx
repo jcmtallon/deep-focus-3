@@ -2,44 +2,62 @@ import { FooterNav, Header, PageLayout } from 'apps/popup/components'
 import React, { useEffect, useState } from 'react'
 import { sendMessage } from 'services/actions'
 import { getFocusModeDetails } from 'services/store'
+import { Session, Task } from 'types'
+import { addSession } from 'services/sessions'
 import { FocusModeLayout } from './FocusModeLayout'
 import { FocusModesStats } from './FocusModeStats/FocusModeStats'
 import { FocusModeActions } from './FocusModeActions/FocusModeActions'
 import { FocusModeTasks } from './FocusModeTasks/FocusModeTasks'
 
-// TODO: Decide where common types should go
-interface Task {
-  id: string
-  title: string
-  status: 'PENDING' | 'COMPLETED'
-}
+// TODO: Try to use FocusSession instead of Session or FocusMode
 
 function FocusMode() {
+  const [activeSession, setActiveSession] = useState<Session | null>(null)
   const [isFocusModeOn, setIsFocusModeOn] = useState<boolean | null>(null)
-  const [startDateIso, setStartDateIso] = useState<string | null>(null)
-  const [tasks, setTasks] = useState<Task[]>([])
 
   useEffect(() => {
     const getFocusModeStatus = async () => {
-      const focusModeDetails = await getFocusModeDetails()
-      setIsFocusModeOn(focusModeDetails !== undefined)
+      const session = await getFocusModeDetails()
+      const focusModeOn = session !== undefined
+      setIsFocusModeOn(focusModeOn)
+      if (focusModeOn) setActiveSession(session as Session)
     }
     getFocusModeStatus()
   }, [])
 
-  const handleStartFocusClick = async (taskTitle: string) => {
-    // TODO: Properly type sendMessage response
-    const response: any = await sendMessage('startFocusMode', { taskTitle })
-    if (!response) return
+  const handleStartSession = async (taskTitle: string) => {
+    const response = await sendMessage('startFocusMode', { taskTitle })
+    if (!response) return // TODO: handle possible error
     setIsFocusModeOn(true)
-    setStartDateIso(response.startDateIso)
-    setTasks(response.tasks as Task[])
+    setActiveSession(response as Session)
   }
 
-  const handleEndFocusClick = () => {
+  const handleAbortSession = async () => {
     sendMessage('stopFocusMode')
     setIsFocusModeOn(false)
-    setStartDateIso(null)
+    setActiveSession(null)
+  }
+
+  const handleExtendSession = async (taskTitle: string) => {
+    const response = await sendMessage('extendFocusSession', { taskTitle })
+    if (!response) return // TODO: handle possible error
+    setActiveSession(response as Session)
+  }
+
+  const handleFinishSession = async () => {
+    // Temp
+    addSession(activeSession!)
+    sendMessage('stopFocusMode')
+    setIsFocusModeOn(false)
+    setActiveSession(null)
+    // Stop focus mode.
+    // Store info in database.
+  }
+
+  const handleTaskStatusChange = async (tasks: Task[]) => {
+    const response = await sendMessage('updateTasks', { tasks })
+    if (!response) return // TODO: handle possible error
+    setActiveSession(prev => (prev ? { ...prev, tasks } : prev))
   }
 
   return (
@@ -52,17 +70,19 @@ function FocusMode() {
         <FocusModeLayout
           topSlot={
             <FocusModesStats
-              taskCount={tasks.length}
+              taskCount={activeSession?.tasks.filter(t => t.status === 'COMPLETED').length}
               focusModeActive={isFocusModeOn}
-              sessionStartDateIso={startDateIso ?? undefined}
+              sessionStartDateIso={activeSession?.startDateIso ?? undefined}
             />
           }
-          centerSlot={<FocusModeTasks tasks={tasks} onChange={tasks => setTasks(tasks)} />}
+          centerSlot={<FocusModeTasks tasks={activeSession?.tasks} onChange={handleTaskStatusChange} />}
           bottomSlot={
             <FocusModeActions
-              focusModeActive={isFocusModeOn}
-              onAbortFocusMode={handleEndFocusClick}
-              onFocusModeStart={handleStartFocusClick}
+              session={activeSession ?? undefined}
+              onStartSession={handleStartSession}
+              onAbortSession={handleAbortSession}
+              onExtendSession={handleExtendSession}
+              onFinishSession={handleFinishSession}
             />
           }
         />

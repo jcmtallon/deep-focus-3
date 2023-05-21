@@ -1,7 +1,7 @@
 import { FooterNav, PageLayout } from 'apps/popup/components'
 import React, { useCallback, useEffect, useState } from 'react'
 import { sendMessage } from 'services/actions'
-import { deleteBlockedSite, listBlockedSites } from 'services/store'
+import { listBlockedSites, deleteBlockedSite } from 'services/blockedSites'
 import * as S from './BlockedSites.styles'
 
 function BlockedSites() {
@@ -9,6 +9,7 @@ function BlockedSites() {
   const [blockedSites, setBlockedSites] = useState<{ url: string; id: number }[]>([])
 
   const fetchData = useCallback(async () => {
+    // TODO: Leave this to the BE?
     const blockedSites = await listBlockedSites()
     setBlockedSites(blockedSites)
   }, [setBlockedSites])

@@ -1,51 +1,84 @@
-import { addBlockedSite } from './blockedSites'
+import {
+  BlockedSiteEndpoints,
+  addBlockedSite,
+  deleteBlockedSite,
+  listBlockedSites,
+} from './resources/blockedSites'
+import { addSession, listSessions, SessionEndpoints } from './resources/sessions'
 import { COLLECTION_NAME, DATABASE_NAME } from './constants'
-import { DatabaseError } from './utils'
 
-function database() {
-  let db: IDBDatabase | null = null
+interface IndexedDbInstance {
+  blockedSites: BlockedSiteEndpoints
+  sessions: SessionEndpoints
+}
 
-  const createDatabase = () => {
-    const request = indexedDB.open(DATABASE_NAME)
+interface IndexedDb {
+  getInstance: () => Promise<IndexedDbInstance>
+}
 
-    request.onerror = event => {
-      throw new DatabaseError(event)
-    }
+const indexedDb = (function (): IndexedDb {
+  let instance: IndexedDbInstance | null = null
 
-    request.onupgradeneeded = event => {
-      if (!(event.target instanceof IDBOpenDBRequest)) return
-      db = event.target.result
-      const objectStore = db.createObjectStore(COLLECTION_NAME.BLOCKED_SITES, {
-        keyPath: 'id',
-        autoIncrement: true,
-      })
-      objectStore.transaction.oncomplete = event => {
+  async function init(): Promise<IndexedDbInstance> {
+    let db: IDBDatabase | null = null
+
+    return new Promise((resolve, reject) => {
+      const request = indexedDB.open(DATABASE_NAME, 2)
+
+      request.onerror = event => {
+        reject(event)
+      }
+
+      request.onupgradeneeded = event => {
+        console.log('onupgradeneeded', event)
+
         if (!(event.target instanceof IDBOpenDBRequest)) return
         db = event.target.result
-      }
-    }
 
-    request.onsuccess = event => {
-      if (!(event.target instanceof IDBOpenDBRequest)) return
-      db = event.target.result
-      db.onerror = event => {
-        throw new DatabaseError(event)
+        if (!db.objectStoreNames.contains(COLLECTION_NAME.BLOCKED_SITES)) {
+          db.createObjectStore(COLLECTION_NAME.BLOCKED_SITES, {
+            keyPath: 'id',
+            autoIncrement: true,
+          })
+        }
+
+        console.log('session exists', db.objectStoreNames.contains(COLLECTION_NAME.SESSIONS))
+        if (!db.objectStoreNames.contains(COLLECTION_NAME.SESSIONS)) {
+          console.log('creating session')
+          db.createObjectStore(COLLECTION_NAME.SESSIONS, {
+            keyPath: 'id',
+            autoIncrement: true,
+          })
+        }
       }
-    }
+
+      request.onsuccess = event => {
+        if (!(event.target instanceof IDBOpenDBRequest)) return
+        db = event.target.result
+
+        resolve({
+          blockedSites: {
+            add: addBlockedSite(db),
+            list: listBlockedSites(db),
+            delete: deleteBlockedSite(db),
+          },
+          sessions: {
+            add: addSession(db),
+            list: listSessions(db),
+          },
+        })
+      }
+    })
   }
 
   return {
-    init: () => {
-      createDatabase()
-    },
-
-    blockedSites: {
-      add: addBlockedSite(db!),
-      list: () => {},
-      delete: () => {},
-      update: () => {},
+    getInstance: async () => {
+      if (instance === null) {
+        instance = await init()
+      }
+      return instance
     },
   }
-}
+})()
 
-export { database }
+export { indexedDb }

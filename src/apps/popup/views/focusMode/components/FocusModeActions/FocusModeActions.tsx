@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
+import { Session } from 'types'
 
 const Wrapper = styled.div`
   display: flex;
@@ -24,6 +25,11 @@ const DangerButton = styled(Button)`
   color: #fffeb6;
 `
 
+const SuccessButton = styled(Button)`
+  background-color: #2dbe90;
+  color: white;
+`
+
 const Input = styled.input`
   width: 100%;
   background-color: transparent;
@@ -42,24 +48,37 @@ const Input = styled.input`
 `
 
 interface FocusModeActionsProps {
-  focusModeActive?: boolean
-  allSessionGoalsCompleted?: boolean
+  session?: Session
 
-  onFocusModeStart?: (taskTitle: string) => void
-  onAbortFocusMode?: () => void
+  onStartSession?: (taskTitle: string) => void
+  onExtendSession?: (taskTitle: string) => void
+  onAbortSession?: () => void
+  onFinishSession?: () => void
 }
 
 function FocusModeActions(props: FocusModeActionsProps) {
-  const { focusModeActive, allSessionGoalsCompleted = false, onFocusModeStart, onAbortFocusMode } = props
+  const { session, onStartSession, onAbortSession, onFinishSession, onExtendSession } = props
 
   const [input, setInput] = useState<string>('')
 
+  const allSessionTasksCompleted = session?.tasks.every(t => t.status === 'COMPLETED')
+
   const handleFocusModeStart = () => {
-    onFocusModeStart?.(input.trim())
+    onStartSession?.(input.trim())
     setInput('')
   }
 
-  if (!focusModeActive) {
+  const handleFinishSession = () => {
+    onFinishSession?.()
+    setInput('')
+  }
+
+  const handleExtendSession = () => {
+    onExtendSession?.(input.trim())
+    setInput('')
+  }
+
+  if (!session) {
     return (
       <Wrapper>
         {/* eslint-disable-next-line jsx-a11y/no-autofocus -- For now */}
@@ -76,17 +95,27 @@ function FocusModeActions(props: FocusModeActionsProps) {
     )
   }
 
-  if (focusModeActive && allSessionGoalsCompleted) {
+  if (allSessionTasksCompleted) {
     return (
       <Wrapper>
-        <DangerButton onClick={onAbortFocusMode}>Abort Session</DangerButton>
+        <Input
+          placeholder="Combo another quest"
+          autoFocus
+          value={input}
+          onChange={e => setInput(e.target.value)}
+        />
+        {input !== '' ? (
+          <Button onClick={handleExtendSession}>Continue the session</Button>
+        ) : (
+          <SuccessButton onClick={handleFinishSession}>Finish session</SuccessButton>
+        )}
       </Wrapper>
     )
   }
 
   return (
     <Wrapper>
-      <DangerButton onClick={onAbortFocusMode}>Abort Session</DangerButton>
+      <DangerButton onClick={onAbortSession}>Abort Session</DangerButton>
     </Wrapper>
   )
 }

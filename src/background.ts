@@ -1,16 +1,16 @@
 import { initBadge, showFocusModeBadge, showIdleModeBadge } from 'services/actionBadge'
 import { listenToMessages } from 'services/actions'
-import { disableRules, enableRules, debugRules } from 'services/siteBlocker'
+import { disableRules, enableRules, debugRules } from 'services/blockedSites'
 import {
-  createDatabase,
-  addBlockedSite as addBlockedSiteToStore,
   abortFocusMode,
   initiateFocusMode,
-  debugDatabase,
+  addTask,
+  updateTasks as taskManagerUpdateTasks,
+  indexedDb,
 } from 'services/store'
+import { Task } from 'types'
 
 // TODO: Setup Store better? Make agnostic
-createDatabase()
 
 chrome.runtime.onInstalled.addListener(() => {
   initBadge()
@@ -19,8 +19,9 @@ chrome.runtime.onInstalled.addListener(() => {
 // TODO: Execute when uninstalled:
 // https://stackoverflow.com/a/72958868
 
-function addBlockedSite(props: { payload: any }) {
-  addBlockedSiteToStore(props.payload.urlFilter ?? 'bbc') // TODO: Temp implementation
+async function addBlockedSite(props: { payload: any }) {
+  const database = await indexedDb.getInstance()
+  database.blockedSites.add(props.payload.urlFilter ?? 'bbc') // TODO: Temp implementation
 }
 
 // Gets active tab id
@@ -38,7 +39,7 @@ function getActiveTabId(): Promise<number | undefined> {
 }
 
 async function startFocusMode(props: { payload: { taskTitle: string }; sendResponse: (payload: any) => {} }) {
-  const focusModeSessionDetails = await initiateFocusMode({ taskTitle: props.payload.taskTitle })
+  const focusSession = await initiateFocusMode({ taskTitle: props.payload.taskTitle })
   enableRules()
   showFocusModeBadge()
 
@@ -50,10 +51,23 @@ async function startFocusMode(props: { payload: { taskTitle: string }; sendRespo
       .catch(() => {})
   }
 
-  props.sendResponse(focusModeSessionDetails)
+  props.sendResponse(focusSession)
 }
 
-async function stopFocusMode() {
+async function extendFocusSession(props: {
+  payload: { taskTitle: string }
+  sendResponse: (payload: any) => {}
+}) {
+  const session = await addTask({ taskTitle: props.payload.taskTitle })
+  props.sendResponse(session)
+}
+
+async function updateTasks(props: { payload: { tasks: Task[] }; sendResponse: (payload: any) => {} }) {
+  const session = await taskManagerUpdateTasks({ tasks: props.payload.tasks })
+  props.sendResponse(session)
+}
+
+async function stopFocusMode(props: { sendResponse: (payload: any) => {} }) {
   disableRules()
   abortFocusMode()
   showIdleModeBadge()
@@ -65,18 +79,22 @@ async function stopFocusMode() {
       .then(() => {})
       .catch(() => {})
   }
+
+  props.sendResponse(true)
 }
 
 async function debug() {
   debugRules()
-  debugDatabase()
+  // debugDatabase()
 }
 
 listenToMessages({
   addBlockedSite: payload => addBlockedSite(payload),
-  startFocusMode: payload => startFocusMode(payload),
-  stopFocusMode: () => stopFocusMode(),
   debug: () => debug(),
+  extendFocusSession: payload => extendFocusSession(payload),
+  startFocusMode: payload => startFocusMode(payload),
+  stopFocusMode: payload => stopFocusMode(payload),
+  updateTasks: payload => updateTasks(payload),
 })
 
 export {}

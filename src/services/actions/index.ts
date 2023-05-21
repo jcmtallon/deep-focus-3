@@ -36,8 +36,15 @@ async function sendMessagePromise(action: Action, payload?: unknown) {
   })
 }
 
-type Action = 'startFocusMode' | 'stopFocusMode' | 'debug' | 'addBlockedSite'
+type Action =
+  | 'addBlockedSite'
+  | 'debug'
+  | 'extendFocusSession'
+  | 'startFocusMode'
+  | 'stopFocusMode'
+  | 'updateTasks'
 
+// TODO: Properly type sendMessage response
 async function sendMessage(action: Action, payload?: unknown) {
   const response = await sendMessagePromise(action, payload)
   return response
@@ -52,16 +59,24 @@ function listenToMessages(callbacks: MessageCallbacks) {
         callbacks.addBlockedSite({ payload: request.payload, sender, sendResponse })
         break
 
+      case 'debug':
+        callbacks.debug()
+        break
+
+      case 'extendFocusSession':
+        callbacks.extendFocusSession({ payload: request.payload, sender, sendResponse })
+        break
+
       case 'startFocusMode':
         callbacks.startFocusMode({ payload: request.payload, sender, sendResponse })
         break
 
       case 'stopFocusMode':
-        callbacks.stopFocusMode()
+        callbacks.stopFocusMode({ sender, sendResponse })
         break
 
-      case 'debug':
-        callbacks.debug()
+      case 'updateTasks':
+        callbacks.stopFocusMode({ payload: request.payload, sender, sendResponse })
         break
 
       default:

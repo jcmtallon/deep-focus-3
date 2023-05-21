@@ -1,6 +1,18 @@
 // Reference: https://developer.chrome.com/docs/extensions/reference/declarativeNetRequest/#method-setExtensionActionOptions
 
-import { listBlockedSites } from 'services/store'
+import { indexedDb } from 'services/store'
+import { BlockedSite } from 'types'
+
+async function listBlockedSites(): Promise<BlockedSite[]> {
+  const database = await indexedDb.getInstance()
+  const blockedSites = await database.blockedSites.list()
+  return blockedSites
+}
+
+async function deleteBlockedSite(blockedSiteId: BlockedSite['id']) {
+  const database = await indexedDb.getInstance()
+  await database.blockedSites.delete(blockedSiteId)
+}
 
 function addRule(urlFilter: string) {
   chrome.storage.local.get(['deepFocus_rules']).then(result => {
@@ -24,7 +36,8 @@ function disableRules() {
 }
 
 async function enableRules() {
-  const storedRules = await listBlockedSites()
+  const database = await indexedDb.getInstance()
+  const storedRules = await database.blockedSites.list()
   chrome.declarativeNetRequest.getDynamicRules(previousRules => {
     const previousRuleIds = previousRules.map(rule => rule.id)
     const newRules: chrome.declarativeNetRequest.Rule[] = storedRules.map((rule, indx) => {
@@ -64,4 +77,4 @@ async function debugRules() {
   chrome.declarativeNetRequest.getDynamicRules(rules => console.log('Debugger: Dynamic Rules: ', rules))
 }
 
-export { addRule, removeRule, disableRules, enableRules, debugRules }
+export { addRule, removeRule, disableRules, enableRules, debugRules, listBlockedSites, deleteBlockedSite }

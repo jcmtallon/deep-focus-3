@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react'
+import { ListSessions } from 'services/sessions'
 import { getFocusModeDetails } from 'services/store'
 import styled from 'styled-components'
+import { Session } from 'types'
 
 const Wrapper = styled.div`
   width: 100%;
@@ -15,6 +17,7 @@ const Wrapper = styled.div`
 function MissionControl() {
   const [type, setType] = useState<string | null>()
   const [isFocusModeOn, setIsFocusModeOn] = useState<boolean | null>(null)
+  const [focusSessions, setFocusSession] = useState<Session[]>([])
 
   useEffect(() => {
     const queryParams = new URLSearchParams(window.location.search)
@@ -24,8 +27,11 @@ function MissionControl() {
 
   useEffect(() => {
     const getFocusModeStatus = async () => {
-      const status = await getFocusModeDetails()
-      setIsFocusModeOn(status)
+      const session = await getFocusModeDetails()
+      const focusSessions = await ListSessions()
+      const focusModeOn = session !== undefined
+      setIsFocusModeOn(focusModeOn)
+      setFocusSession(focusSessions)
     }
 
     getFocusModeStatus()
@@ -49,6 +55,11 @@ function MissionControl() {
     <Wrapper>
       <span>{type === 'site' ? 'Blocked' : 'Mission Control'}</span>
       <span>{isFocusModeOn === true ? 'Focus Mode ON' : 'Focus Mode OFF'}</span>
+      <div>
+        {focusSessions.map((focusSession, index) => (
+          <div key={focusSession.sessionId}>{`${index}-Task Count:${focusSession.tasks.length}`}</div>
+        ))}
+      </div>
     </Wrapper>
   )
 }
