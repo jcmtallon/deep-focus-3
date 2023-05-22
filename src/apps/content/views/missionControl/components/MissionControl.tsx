@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { getFocusSessionsByDay } from 'services/focusSessions'
-import { getFocusModeDetails } from 'services/store'
+import { getFocusModeDetails } from 'services/localStorage'
 import styled from 'styled-components'
 import { FocusSession } from 'types'
 

@@ -6,9 +6,9 @@ import {
   initiateFocusMode,
   addTask,
   updateTasks as taskManagerUpdateTasks,
-  indexedDb,
   debugLocalStorage,
-} from 'services/store'
+} from 'services/localStorage'
+import { indexedDb } from 'services/store'
 import { Task } from 'types'
 
 // TODO: Setup Store better? Make agnostic

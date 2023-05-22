@@ -1,7 +1,7 @@
 import { FooterNav, Header, PageLayout } from 'apps/popup/components'
 import React, { useEffect, useState } from 'react'
 import { sendMessage } from 'services/actions'
-import { getFocusModeDetails } from 'services/store'
+import { getFocusModeDetails } from 'services/localStorage'
 import { FocusSession, Task } from 'types'
 import { addFocusSession } from 'services/focusSessions'
 import { FocusModeLayout } from './FocusModeLayout'
