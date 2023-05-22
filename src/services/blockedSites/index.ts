@@ -1,6 +1,6 @@
 // Reference: https://developer.chrome.com/docs/extensions/reference/declarativeNetRequest/#method-setExtensionActionOptions
 
-import { indexedDb } from 'services/store'
+import { indexedDb } from 'services/indexedDb'
 import { BlockedSite } from 'types'
 
 async function listBlockedSites(): Promise<BlockedSite[]> {

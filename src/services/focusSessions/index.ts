@@ -1,4 +1,4 @@
-import { indexedDb } from 'services/store'
+import { indexedDb } from 'services/indexedDb'
 import { FocusSession } from 'types'
 
 async function addFocusSession(session: FocusSession): Promise<FocusSession> {

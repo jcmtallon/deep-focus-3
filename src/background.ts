@@ -8,7 +8,7 @@ import {
   updateTasks as taskManagerUpdateTasks,
   debugLocalStorage,
 } from 'services/localStorage'
-import { indexedDb } from 'services/store'
+import { indexedDb } from 'services/indexedDb'
 import { Task } from 'types'
 
 // TODO: Setup Store better? Make agnostic
