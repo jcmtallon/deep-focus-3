@@ -76,7 +76,7 @@ function listenToMessages(callbacks: MessageCallbacks) {
         break
 
       case 'updateTasks':
-        callbacks.stopFocusMode({ payload: request.payload, sender, sendResponse })
+        callbacks.updateTasks({ payload: request.payload, sender, sendResponse })
         break
 
       default:

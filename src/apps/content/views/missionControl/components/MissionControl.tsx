@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { ListSessions } from 'services/sessions'
+import { getFocusSessionsByDay } from 'services/focusSessions'
 import { getFocusModeDetails } from 'services/store'
 import styled from 'styled-components'
 import { FocusSession } from 'types'
@@ -28,7 +28,7 @@ function MissionControl() {
   useEffect(() => {
     const getFocusModeStatus = async () => {
       const session = await getFocusModeDetails()
-      const focusSessions = await ListSessions()
+      const focusSessions = await getFocusSessionsByDay(new Date())
       const focusModeOn = session !== undefined
       setIsFocusModeOn(focusModeOn)
       setFocusSession(focusSessions)
@@ -36,6 +36,18 @@ function MissionControl() {
 
     getFocusModeStatus()
   }, [])
+
+  const getDuration = (startDate: number | undefined, endDate: number | undefined): number => {
+    // Temp implementation
+    if (!startDate || !endDate) return 0
+    const date1 = new Date(startDate)
+    const date2 = new Date(endDate)
+    const diffTime = Math.abs(date2.valueOf() - date1.valueOf())
+
+    console.log(diffTime)
+    const diffDays = Math.ceil(diffTime / 1000)
+    return diffDays
+  }
 
   useEffect(() => {
     // TODO: Listen to messages from background so it can respond
@@ -53,12 +65,22 @@ function MissionControl() {
 
   return (
     <Wrapper>
-      <span>{type === 'site' ? 'Blocked' : 'Mission Control'}</span>
-      <span>{isFocusModeOn === true ? 'Focus Mode ON' : 'Focus Mode OFF'}</span>
+      <h1>{type === 'site' ? 'Blocked' : 'Mission Control'}</h1>
+      <span>{isFocusModeOn === true ? 'Focus Mode: ON' : 'Focus Mode: OFF'}</span>
+      <h2>Sessions</h2>
       <div>
-        {focusSessions.map((focusSession, index) => (
-          <div key={focusSession.sessionId}>{`${index}-Task Count:${focusSession.tasks.length}`}</div>
+        {focusSessions.map(focusSession => (
+          <div key={focusSession.sessionId}>{`${getDuration(
+            focusSession.startDate,
+            focusSession.endDate,
+          )} Impacts: ${focusSession.stats.impacts}`}</div>
         ))}
+      </div>
+      <h2>Tasks</h2>
+      <div>
+        {focusSessions.flatMap(focusSession =>
+          focusSession.tasks.map(task => <div key={task.id}>{task.title}</div>),
+        )}
       </div>
     </Wrapper>
   )

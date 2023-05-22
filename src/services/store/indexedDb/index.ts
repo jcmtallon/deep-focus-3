@@ -4,7 +4,12 @@ import {
   deleteBlockedSite,
   listBlockedSites,
 } from './resources/blockedSites'
-import { addFocusSession, listFocusSessions, SessionEndpoints } from './resources/sessions'
+import {
+  addFocusSession,
+  listFocusSessions,
+  queryFocusSessions,
+  SessionEndpoints,
+} from './resources/focusSessions'
 import { COLLECTION_NAME, DATABASE_NAME } from './constants'
 
 const { BLOCKED_SITES, FOCUS_SESSIONS } = COLLECTION_NAME
@@ -43,10 +48,11 @@ const indexedDb = (function (): IndexedDb {
         }
 
         if (!db.objectStoreNames.contains(FOCUS_SESSIONS)) {
-          db.createObjectStore(FOCUS_SESSIONS, {
+          const sessionStore = db.createObjectStore(FOCUS_SESSIONS, {
             keyPath: 'id',
             autoIncrement: true,
           })
+          sessionStore.createIndex('startDate', 'startDate', { unique: false })
         }
       }
 
@@ -63,6 +69,7 @@ const indexedDb = (function (): IndexedDb {
           focusSessions: {
             add: addFocusSession(db),
             list: listFocusSessions(db),
+            query: queryFocusSessions(db),
           },
         })
       }

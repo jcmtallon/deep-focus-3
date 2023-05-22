@@ -7,6 +7,7 @@ import {
   addTask,
   updateTasks as taskManagerUpdateTasks,
   indexedDb,
+  debugLocalStorage,
 } from 'services/store'
 import { Task } from 'types'
 
@@ -85,6 +86,7 @@ async function stopFocusMode(props: { sendResponse: (payload: any) => {} }) {
 
 async function debug() {
   debugRules()
+  debugLocalStorage()
   // debugDatabase()
 }
 

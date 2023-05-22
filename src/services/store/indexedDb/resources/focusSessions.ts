@@ -38,16 +38,37 @@ const listFocusSessions = (db: IDBDatabase) => (): Promise<FocusSession[]> => {
   })
 }
 
-// const querySessions = (db: IDBDatabase) => (fromDateIso: string, toDateIso: string): Promise<Session[]> => {
-//   const objectStore = db.transaction(SESSIONS, 'readonly').objectStore(SESSIONS)
-//   const index = store.index("created");
+const queryFocusSessions =
+  (db: IDBDatabase) =>
+  (fromDate: number, toDate: number): Promise<FocusSession[]> => {
+    const objectStore = db.transaction(FOCUS_SESSIONS, 'readonly').objectStore(FOCUS_SESSIONS)
+    const index = objectStore.index('startDate')
+    const range = IDBKeyRange.bound(fromDate, toDate)
 
-// }
+    return new Promise((resolve, reject) => {
+      const sessions: FocusSession[] = []
+
+      index.openCursor(range).onsuccess = event => {
+        const cursor = (event.target as IDBRequest).result
+        if (cursor) {
+          sessions.push(cursor.value)
+          cursor.continue()
+        } else {
+          resolve(sessions)
+        }
+      }
+
+      index.openCursor(range).onerror = e => {
+        reject(e)
+      }
+    })
+  }
 
 interface SessionEndpoints {
   add: (focusSession: FocusSession) => Promise<FocusSession>
   list: () => Promise<FocusSession[]>
+  query: (fromDate: number, toDate: number) => Promise<FocusSession[]>
 }
 
-export { addFocusSession, listFocusSessions }
+export { addFocusSession, listFocusSessions, queryFocusSessions }
 export type { SessionEndpoints }

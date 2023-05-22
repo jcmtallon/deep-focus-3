@@ -56,8 +56,8 @@ async function initiateFocusMode(props: { taskTitle: string }) {
 }
 
 async function addTask(props: { taskTitle: string }) {
-  const response = (await readLocalStorage(KEY.ACTIVE_FOCUS_SESSION)) as string
-  const existingSession = JSON.parse(response) as FocusSession
+  const response = await readLocalStorage(KEY.ACTIVE_FOCUS_SESSION)
+  const existingSession = JSON.parse(response as string) as FocusSession
   const payload: FocusSession = {
     ...existingSession,
     tasks: [...existingSession.tasks, { id: uniqueId(), title: props.taskTitle, status: 'PENDING' }],
@@ -68,8 +68,8 @@ async function addTask(props: { taskTitle: string }) {
 }
 
 async function updateTasks(props: { tasks: Task[] }) {
-  const response = (await readLocalStorage(KEY.ACTIVE_FOCUS_SESSION)) as string
-  const existingSession = JSON.parse(response) as FocusSession
+  const response = await readLocalStorage(KEY.ACTIVE_FOCUS_SESSION)
+  const existingSession = JSON.parse(response as string) as FocusSession
   const payload: FocusSession = {
     ...existingSession,
     tasks: props.tasks,
@@ -84,4 +84,9 @@ async function abortFocusMode() {
   // const results = await setLocalStorage({ [keys.focusMode]: undefined })
   // return results
 }
-export { getFocusModeDetails, initiateFocusMode, abortFocusMode, addTask, updateTasks }
+
+async function debugLocalStorage() {
+  const response = await readLocalStorage(KEY.ACTIVE_FOCUS_SESSION)
+  console.log('DEBUG: local storage', response !== undefined ? JSON.parse(response as string) : undefined)
+}
+export { getFocusModeDetails, initiateFocusMode, abortFocusMode, addTask, updateTasks, debugLocalStorage }

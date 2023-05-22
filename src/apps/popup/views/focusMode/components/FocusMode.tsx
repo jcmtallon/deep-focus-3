@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { sendMessage } from 'services/actions'
 import { getFocusModeDetails } from 'services/store'
 import { FocusSession, Task } from 'types'
-import { addSession } from 'services/sessions'
+import { addFocusSession } from 'services/focusSessions'
 import { FocusModeLayout } from './FocusModeLayout'
 import { FocusModesStats } from './FocusModeStats/FocusModeStats'
 import { FocusModeActions } from './FocusModeActions/FocusModeActions'
@@ -45,8 +45,9 @@ function FocusMode() {
   }
 
   const handleFinishSession = async () => {
-    // Temp
-    addSession(focusSession!)
+    // TODO: Everything that is creating, must be delegated to the BE.
+    // TODO: Consuming can be done via Store
+    addFocusSession(focusSession!)
     sendMessage('stopFocusMode')
     setIsFocusModeOn(false)
     setFocusSession(null)
