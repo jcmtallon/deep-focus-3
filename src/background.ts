@@ -8,8 +8,12 @@ import {
   updateTasks as taskManagerUpdateTasks,
   debugLocalStorage,
 } from 'services/localStorage'
+import {
+  addFocusSession,
+  finishFocusSession as sessionManagerFinishFocusSession,
+} from 'services/focusSessions'
 import { indexedDb } from 'services/indexedDb'
-import { Task } from 'types'
+import { FocusSession, Task } from 'types'
 
 // TODO: Setup Store better? Make agnostic
 
@@ -84,6 +88,27 @@ async function stopFocusMode(props: { sendResponse: (payload: any) => {} }) {
   props.sendResponse(true)
 }
 
+async function finishFocusSession(props: {
+  payload: { session: FocusSession }
+  sendResponse: (payload: any) => {}
+}) {
+  disableRules()
+  await addFocusSession(props.payload.session)
+  await sessionManagerFinishFocusSession()
+  showIdleModeBadge()
+
+  const tabId = await getActiveTabId()
+
+  if (tabId) {
+    chrome.tabs
+      .sendMessage(tabId, { message: 'focusModeOff' })
+      .then(() => {})
+      .catch(() => {})
+  }
+
+  props.sendResponse(true)
+}
+
 async function debug() {
   debugRules()
   debugLocalStorage()
@@ -94,6 +119,7 @@ listenToMessages({
   addBlockedSite: payload => addBlockedSite(payload),
   debug: () => debug(),
   extendFocusSession: payload => extendFocusSession(payload),
+  finishFocusSession: payload => finishFocusSession(payload),
   startFocusMode: payload => startFocusMode(payload),
   stopFocusMode: payload => stopFocusMode(payload),
   updateTasks: payload => updateTasks(payload),

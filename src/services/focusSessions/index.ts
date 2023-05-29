@@ -1,5 +1,13 @@
 import { indexedDb } from 'services/indexedDb'
+import { LOCAL_STORAGE_KEY, readLocalStorage, removeStorage } from 'services/localStorage'
 import { FocusSession } from 'types'
+
+const { ACTIVE_FOCUS_SESSION } = LOCAL_STORAGE_KEY
+
+async function getActiveFocusSession(): Promise<FocusSession | undefined> {
+  const focusMode = await readLocalStorage(ACTIVE_FOCUS_SESSION)
+  return focusMode !== undefined ? JSON.parse(focusMode as string) : undefined
+}
 
 async function addFocusSession(session: FocusSession): Promise<FocusSession> {
   const database = await indexedDb.getInstance()
@@ -25,4 +33,19 @@ async function getFocusSessionsByDay(date: Date): Promise<FocusSession[]> {
   return response
 }
 
-export { addFocusSession, listFocusSessions, getFocusSessionsByDay }
+async function finishFocusSession(): Promise<boolean> {
+  try {
+    await removeStorage(LOCAL_STORAGE_KEY.ACTIVE_FOCUS_SESSION)
+    return true
+  } catch (_) {
+    throw new Error('Failed to remove active focus session from local storage')
+  }
+}
+
+export {
+  addFocusSession,
+  finishFocusSession,
+  getActiveFocusSession,
+  getFocusSessionsByDay,
+  listFocusSessions,
+}

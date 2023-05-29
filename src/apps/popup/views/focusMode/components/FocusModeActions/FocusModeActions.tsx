@@ -53,7 +53,7 @@ interface FocusModeActionsProps {
   onStartSession?: (taskTitle: string) => void
   onExtendSession?: (taskTitle: string) => void
   onAbortSession?: () => void
-  onFinishSession?: () => void
+  onFinishSession?: (session: FocusSession) => void
 }
 
 function FocusModeActions(props: FocusModeActionsProps) {
@@ -68,8 +68,8 @@ function FocusModeActions(props: FocusModeActionsProps) {
     setInput('')
   }
 
-  const handleFinishSession = () => {
-    onFinishSession?.()
+  const handleFinishSession = (finishedSessions: FocusSession) => {
+    onFinishSession?.(finishedSessions)
     setInput('')
   }
 
@@ -107,7 +107,7 @@ function FocusModeActions(props: FocusModeActionsProps) {
         {input !== '' ? (
           <Button onClick={handleExtendSession}>Continue the session</Button>
         ) : (
-          <SuccessButton onClick={handleFinishSession}>Finish session</SuccessButton>
+          <SuccessButton onClick={() => handleFinishSession(session)}>Finish session</SuccessButton>
         )}
       </Wrapper>
     )

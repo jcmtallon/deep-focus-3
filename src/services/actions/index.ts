@@ -40,8 +40,9 @@ type Action =
   | 'addBlockedSite'
   | 'debug'
   | 'extendFocusSession'
+  | 'finishFocusSession'
   | 'startFocusMode'
-  | 'stopFocusMode'
+  | 'stopFocusMode' // TODO: deprecate
   | 'updateTasks'
 
 // TODO: Properly type sendMessage response
@@ -65,6 +66,10 @@ function listenToMessages(callbacks: MessageCallbacks) {
 
       case 'extendFocusSession':
         callbacks.extendFocusSession({ payload: request.payload, sender, sendResponse })
+        break
+
+      case 'finishFocusSession':
+        callbacks.finishFocusSession({ payload: request.payload, sender, sendResponse })
         break
 
       case 'startFocusMode':

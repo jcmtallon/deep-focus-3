@@ -1,13 +1,15 @@
 import { StopwatchTimer, TimerDisplay } from 'components'
 import React from 'react'
 import styled from 'styled-components'
+import { FocusSession } from 'types'
 
 interface FocusModeStatsProps {
   focusModeActive?: boolean
   impactCount?: number
   taskCount?: number
-  sessionCount?: number
   sessionStart?: number
+
+  completedSessions?: FocusSession[]
 }
 
 const Wrapper = styled.div`
@@ -48,12 +50,21 @@ const Impacts = styled.div`
 `
 
 function FocusModesStats(props: FocusModeStatsProps) {
-  const { focusModeActive = false, impactCount = 0, taskCount = 0, sessionCount = 0, sessionStart } = props
+  const {
+    completedSessions = [],
+    focusModeActive = false,
+    impactCount = 0,
+    sessionStart,
+    taskCount = 0,
+  } = props
+
+  const sessionCount = completedSessions.length
+  const questsCount = completedSessions.flatMap(s => s.tasks.map(t => t.status === 'COMPLETED')).length
 
   return (
     <Wrapper>
       {/* TODO: Calculate session number */}
-      <Date>{focusModeActive ? 'Session 1' : '02/05/2023'}</Date>
+      <Date>{focusModeActive ? `Session ${sessionCount + 1}` : '02/05/2023'}</Date>
       {focusModeActive && sessionStart ? (
         <StopwatchTimer startTimestamp={sessionStart} />
       ) : (
@@ -61,7 +72,7 @@ function FocusModesStats(props: FocusModeStatsProps) {
       )}
       <StatsWrapper endAlign={focusModeActive}>
         {!focusModeActive && <Sessions>{`${sessionCount} sessions`}</Sessions>}
-        <Quests>{`${taskCount} quests`}</Quests>
+        <Quests>{`${questsCount} quests`}</Quests>
         <Impacts>{`${impactCount} impacts`}</Impacts>
       </StatsWrapper>
     </Wrapper>
