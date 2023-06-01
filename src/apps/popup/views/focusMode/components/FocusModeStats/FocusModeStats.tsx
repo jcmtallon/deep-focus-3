@@ -4,11 +4,8 @@ import styled from 'styled-components'
 import { FocusSession } from 'types'
 
 interface FocusModeStatsProps {
-  focusModeActive?: boolean
   impactCount?: number
-  taskCount?: number
-  sessionStart?: number
-
+  activeFocusSession: FocusSession | null
   completedSessions?: FocusSession[]
 }
 
@@ -50,30 +47,33 @@ const Impacts = styled.div`
 `
 
 function FocusModesStats(props: FocusModeStatsProps) {
-  const {
-    completedSessions = [],
-    focusModeActive = false,
-    impactCount = 0,
-    sessionStart,
-    taskCount = 0,
-  } = props
+  const { completedSessions = [], impactCount = 0, activeFocusSession } = props
 
   const sessionCount = completedSessions.length
   const questsCount = completedSessions.flatMap(s => s.tasks.map(t => t.status === 'COMPLETED')).length
+  // TODO: Time count
+
+  if (!activeFocusSession) {
+    return (
+      <Wrapper>
+        <Date>02/05/2023</Date>
+        <TimerDisplay time={{ minutes: 0, hours: 0, seconds: 0 }} />
+        <StatsWrapper endAlign={false}>
+          <Sessions>{`${sessionCount} sessions`}</Sessions>
+          <Quests>{`${questsCount} quests`}</Quests>
+          <Impacts>{`${impactCount} impacts`}</Impacts>
+        </StatsWrapper>
+      </Wrapper>
+    )
+  }
 
   return (
     <Wrapper>
-      {/* TODO: Calculate session number */}
-      <Date>{focusModeActive ? `Session ${sessionCount + 1}` : '02/05/2023'}</Date>
-      {focusModeActive && sessionStart ? (
-        <StopwatchTimer startTimestamp={sessionStart} />
-      ) : (
-        <TimerDisplay time={{ minutes: 0, hours: 0, seconds: 0 }} />
-      )}
-      <StatsWrapper endAlign={focusModeActive}>
-        {!focusModeActive && <Sessions>{`${sessionCount} sessions`}</Sessions>}
-        <Quests>{`${questsCount} quests`}</Quests>
-        <Impacts>{`${impactCount} impacts`}</Impacts>
+      <Date>{`Session ${sessionCount + 1}`}</Date>
+      <StopwatchTimer startTimestamp={activeFocusSession.startDate} />
+      <StatsWrapper endAlign>
+        <Quests>{`${activeFocusSession?.tasks.filter(t => t.status === 'COMPLETED').length} quests`}</Quests>
+        <Impacts>{`${activeFocusSession.stats.impacts} impacts`}</Impacts>
       </StatsWrapper>
     </Wrapper>
   )

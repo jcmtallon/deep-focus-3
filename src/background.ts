@@ -10,6 +10,7 @@ import {
 } from 'services/localStorage'
 import {
   addFocusSession,
+  addImpactToActiveFocusSessions,
   finishFocusSession as sessionManagerFinishFocusSession,
 } from 'services/focusSessions'
 import { indexedDb } from 'services/indexedDb'
@@ -41,6 +42,11 @@ function getActiveTabId(): Promise<number | undefined> {
       }
     })
   })
+}
+
+async function addImpact(props: { payload: { siteId: string }; sendResponse: (payload: any) => {} }) {
+  await addImpactToActiveFocusSessions()
+  props.sendResponse(true)
 }
 
 async function startFocusMode(props: { payload: { taskTitle: string }; sendResponse: (payload: any) => {} }) {
@@ -117,6 +123,7 @@ async function debug() {
 
 listenToMessages({
   addBlockedSite: payload => addBlockedSite(payload),
+  addImpact: payload => addImpact(payload),
   debug: () => debug(),
   extendFocusSession: payload => extendFocusSession(payload),
   finishFocusSession: payload => finishFocusSession(payload),

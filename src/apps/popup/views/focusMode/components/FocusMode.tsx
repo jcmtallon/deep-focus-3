@@ -66,12 +66,7 @@ function FocusMode() {
       {isFirstLoadCompleted && (
         <FocusModeLayout
           topSlot={
-            <FocusModesStats
-              taskCount={activeFocusSession?.tasks.filter(t => t.status === 'COMPLETED').length}
-              focusModeActive={isFocusSessionOn}
-              sessionStart={activeFocusSession?.startDate ?? undefined}
-              completedSessions={completedSessions}
-            />
+            <FocusModesStats activeFocusSession={activeFocusSession} completedSessions={completedSessions} />
           }
           centerSlot={<FocusModeTasks tasks={activeFocusSession?.tasks} onChange={handleTaskStatusChange} />}
           bottomSlot={

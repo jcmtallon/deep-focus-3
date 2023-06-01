@@ -1,18 +1,30 @@
 import { indexedDb } from 'services/indexedDb'
-import { LOCAL_STORAGE_KEY, readLocalStorage, removeStorage } from 'services/localStorage'
+import { LOCAL_STORAGE_KEY, readLocalStorage, removeStorage, setLocalStorage } from 'services/localStorage'
 import { FocusSession } from 'types'
 
 const { ACTIVE_FOCUS_SESSION } = LOCAL_STORAGE_KEY
 
 async function getActiveFocusSession(): Promise<FocusSession | undefined> {
-  const focusMode = await readLocalStorage(ACTIVE_FOCUS_SESSION)
-  return focusMode !== undefined ? JSON.parse(focusMode as string) : undefined
+  const activeFocusSession = await readLocalStorage(ACTIVE_FOCUS_SESSION)
+  return activeFocusSession !== undefined ? JSON.parse(activeFocusSession as string) : undefined
 }
 
 async function addFocusSession(session: FocusSession): Promise<FocusSession> {
   const database = await indexedDb.getInstance()
   const response = await database.focusSessions.add({ ...session, endDate: new Date().getTime() })
   return response
+}
+
+async function addImpactToActiveFocusSessions(): Promise<FocusSession> {
+  const response = await readLocalStorage(ACTIVE_FOCUS_SESSION)
+  if (!response) throw new Error('No active focus session found')
+  const existingSession = JSON.parse(response as string) as FocusSession
+  const payload: FocusSession = {
+    ...existingSession,
+    stats: { impacts: existingSession.stats.impacts + 1 },
+  }
+  await setLocalStorage({ [ACTIVE_FOCUS_SESSION]: JSON.stringify(payload) })
+  return payload
 }
 
 async function listFocusSessions(): Promise<FocusSession[]> {
@@ -43,6 +55,7 @@ async function finishFocusSession(): Promise<boolean> {
 }
 
 export {
+  addImpactToActiveFocusSessions,
   addFocusSession,
   finishFocusSession,
   getActiveFocusSession,

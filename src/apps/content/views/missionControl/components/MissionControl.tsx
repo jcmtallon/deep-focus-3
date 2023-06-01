@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { sendMessage } from 'services/actions'
 import { getFocusSessionsByDay } from 'services/focusSessions'
 import { getFocusModeDetails } from 'services/localStorage'
 import styled from 'styled-components'
@@ -22,6 +23,16 @@ function MissionControl() {
   useEffect(() => {
     const queryParams = new URLSearchParams(window.location.search)
     const blockType = queryParams.get('blockType')
+    const siteId = queryParams.get('site')?.toString()
+
+    if (blockType === 'site' && siteId) {
+      const addImpact = async () => {
+        await sendMessage('addImpact', { siteId })
+      }
+
+      addImpact()
+    }
+
     if (blockType) setType(blockType)
   }, [])
 
@@ -87,17 +98,3 @@ function MissionControl() {
 }
 
 export { MissionControl }
-
-// chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-//   if (request.message === "showFocusDialog") {
-//     chrome.storage.local.get(["deepFocus_focusModeOn"]).then((result) => {
-//       const isFocusOn = result["deepFocus_focusModeOn"];
-//       if (isFocusOn){
-//         showEndFocusModeDialog();
-//       }else{
-//         showStartFocusModeDialog();
-//       }
-//       sendResponse({ message: "success" });
-//     }).catch(err => {});
-//   }
-// });

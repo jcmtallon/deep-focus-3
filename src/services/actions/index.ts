@@ -44,6 +44,7 @@ type Action =
   | 'startFocusMode'
   | 'stopFocusMode' // TODO: deprecate
   | 'updateTasks'
+  | 'addImpact'
 
 // TODO: Properly type sendMessage response
 async function sendMessage(action: Action, payload?: unknown) {
@@ -62,6 +63,10 @@ function listenToMessages(callbacks: MessageCallbacks) {
 
       case 'debug':
         callbacks.debug()
+        break
+
+      case 'addImpact':
+        callbacks.addImpact({ payload: request.payload, sender, sendResponse })
         break
 
       case 'extendFocusSession':
