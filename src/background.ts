@@ -1,17 +1,14 @@
 import { initBadge, showFocusModeBadge, showIdleModeBadge } from 'services/actionBadge'
 import { listenToMessages } from 'services/actions'
 import { disableRules, enableRules, debugRules } from 'services/blockedSites'
-import {
-  abortFocusMode,
-  initiateFocusMode,
-  addTask,
-  updateTasks as taskManagerUpdateTasks,
-  debugLocalStorage,
-} from 'services/localStorage'
+import { debugLocalStorage } from 'services/localStorage'
 import {
   addFocusSession,
+  startActiveFocusSessions,
   addImpactToActiveFocusSessions,
-  finishFocusSession as sessionManagerFinishFocusSession,
+  addTaskToActiveFocusSessions,
+  finishActiveFocusSession,
+  updateActiveFocusSessionTasks,
 } from 'services/focusSessions'
 import { indexedDb } from 'services/indexedDb'
 import { FocusSession, Task } from 'types'
@@ -50,7 +47,7 @@ async function addImpact(props: { payload: { siteId: string }; sendResponse: (pa
 }
 
 async function startFocusMode(props: { payload: { taskTitle: string }; sendResponse: (payload: any) => {} }) {
-  const focusSession = await initiateFocusMode({ taskTitle: props.payload.taskTitle })
+  const focusSession = await startActiveFocusSessions({ taskTitle: props.payload.taskTitle })
   enableRules()
   showFocusModeBadge()
 
@@ -69,18 +66,18 @@ async function extendFocusSession(props: {
   payload: { taskTitle: string }
   sendResponse: (payload: any) => {}
 }) {
-  const session = await addTask({ taskTitle: props.payload.taskTitle })
+  const session = await addTaskToActiveFocusSessions({ taskTitle: props.payload.taskTitle })
   props.sendResponse(session)
 }
 
 async function updateTasks(props: { payload: { tasks: Task[] }; sendResponse: (payload: any) => {} }) {
-  const session = await taskManagerUpdateTasks({ tasks: props.payload.tasks })
+  const session = await updateActiveFocusSessionTasks({ tasks: props.payload.tasks })
   props.sendResponse(session)
 }
 
 async function stopFocusMode(props: { sendResponse: (payload: any) => {} }) {
   disableRules()
-  abortFocusMode()
+  await finishActiveFocusSession()
   showIdleModeBadge()
 
   const tabId = await getActiveTabId()
@@ -100,7 +97,7 @@ async function finishFocusSession(props: {
 }) {
   disableRules()
   await addFocusSession(props.payload.session)
-  await sessionManagerFinishFocusSession()
+  await finishActiveFocusSession()
   showIdleModeBadge()
 
   const tabId = await getActiveTabId()

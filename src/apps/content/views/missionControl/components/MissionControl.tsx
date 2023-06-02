@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { sendMessage } from 'services/actions'
-import { getFocusSessionsByDay } from 'services/focusSessions'
-import { getFocusModeDetails } from 'services/localStorage'
+import { getActiveFocusSession, getFocusSessionsByDay } from 'services/focusSessions'
 import styled from 'styled-components'
 import { FocusSession } from 'types'
 
@@ -38,7 +37,7 @@ function MissionControl() {
 
   useEffect(() => {
     const getFocusModeStatus = async () => {
-      const session = await getFocusModeDetails()
+      const session = await getActiveFocusSession()
       const focusSessions = await getFocusSessionsByDay(new Date())
       const focusModeOn = session !== undefined
       setIsFocusModeOn(focusModeOn)
