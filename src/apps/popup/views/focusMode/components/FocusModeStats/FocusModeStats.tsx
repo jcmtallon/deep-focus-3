@@ -1,10 +1,10 @@
 import { StopwatchTimer, TimerDisplay } from 'components'
+import { DateTime, Duration, DurationLike } from 'luxon'
 import React from 'react'
 import styled from 'styled-components'
 import { FocusSession } from 'types'
 
 interface FocusModeStatsProps {
-  impactCount?: number
   activeFocusSession: FocusSession | null
   completedSessions?: FocusSession[]
 }
@@ -47,17 +47,25 @@ const Impacts = styled.div`
 `
 
 function FocusModesStats(props: FocusModeStatsProps) {
-  const { completedSessions = [], impactCount = 0, activeFocusSession } = props
+  const { completedSessions = [], activeFocusSession } = props
 
   const sessionCount = completedSessions.length
   const questsCount = completedSessions.flatMap(s => s.tasks.map(t => t.status === 'COMPLETED')).length
-  // TODO: Time count
+  const impactCount = completedSessions.reduce((acc, session) => acc + session.stats.impacts, 0)
 
   if (!activeFocusSession) {
+    const today = DateTime.now()
+    const totalSessionTime = completedSessions.reduce((acc: DurationLike, session: FocusSession) => {
+      const start = DateTime.fromMillis(session.startDate)
+      const end = DateTime.fromMillis(session.endDate!) // TODO: Dangerous
+      const diff = end.diff(start)
+      return diff.plus(acc)
+    }, Duration.fromObject({ seconds: 0 }))
+
     return (
       <Wrapper>
-        <Date>02/05/2023</Date>
-        <TimerDisplay time={{ minutes: 0, hours: 0, seconds: 0 }} />
+        <Date>{today.toLocaleString()}</Date>
+        <TimerDisplay formattedTime={totalSessionTime.toFormat('hh:mm:ss')} />
         <StatsWrapper endAlign={false}>
           <Sessions>{`${sessionCount} sessions`}</Sessions>
           <Quests>{`${questsCount} quests`}</Quests>

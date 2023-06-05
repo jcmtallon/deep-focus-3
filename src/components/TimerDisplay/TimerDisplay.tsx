@@ -13,14 +13,20 @@ function padTime(time: number) {
   return time.toString().padStart(2, '0')
 }
 
+// TODO: Support only one format
 interface TimerDisplayProps {
-  time: { days?: number; hours: number; minutes: number; seconds: number }
+  time?: { days?: number; hours: number; minutes: number; seconds: number }
+  formattedTime?: string
 }
 
 function TimerDisplay(props: TimerDisplayProps) {
-  const { hours, minutes, seconds } = props.time
+  const { formattedTime, time = { days: 0, hours: 0, minutes: 0, seconds: 0 } } = props
 
-  return <Timer>{`${padTime(hours)}:${padTime(minutes)}:${padTime(seconds)}`}</Timer>
+  return (
+    <Timer>
+      {formattedTime ?? `${padTime(time.hours)}:${padTime(time.minutes)}:${padTime(time.seconds)}`}
+    </Timer>
+  )
 }
 
 export { TimerDisplay }
