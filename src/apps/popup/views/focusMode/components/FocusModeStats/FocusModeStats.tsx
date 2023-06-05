@@ -3,6 +3,7 @@ import { DateTime, Duration, DurationLike } from 'luxon'
 import React from 'react'
 import styled from 'styled-components'
 import { FocusSession } from 'types'
+import { FocusModeStatsProgressBar } from './FocusModeStatsProgressBar'
 
 interface FocusModeStatsProps {
   activeFocusSession: FocusSession | null
@@ -83,6 +84,7 @@ function FocusModesStats(props: FocusModeStatsProps) {
         <Quests>{`${activeFocusSession?.tasks.filter(t => t.status === 'COMPLETED').length} quests`}</Quests>
         <Impacts>{`${activeFocusSession.stats.impacts} impacts`}</Impacts>
       </StatsWrapper>
+      <FocusModeStatsProgressBar startDate={activeFocusSession.startDate} />
     </Wrapper>
   )
 }
