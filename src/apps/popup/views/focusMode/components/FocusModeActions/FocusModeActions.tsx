@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { KeyboardEventHandler, useState } from 'react'
 import styled from 'styled-components'
 import { FocusSession } from 'types'
 
@@ -78,6 +78,12 @@ function FocusModeActions(props: FocusModeActionsProps) {
     setInput('')
   }
 
+  const handleKeyDown: KeyboardEventHandler<HTMLInputElement> = event => {
+    if (event.key === 'Enter') {
+      handleFocusModeStart()
+    }
+  }
+
   if (!session) {
     return (
       <Wrapper>
@@ -86,6 +92,7 @@ function FocusModeActions(props: FocusModeActionsProps) {
           placeholder="What’s your next quest"
           autoFocus
           value={input}
+          onKeyDown={handleKeyDown}
           onChange={e => setInput(e.target.value)}
         />
         <Button disabled={input.length === 0} onClick={handleFocusModeStart}>

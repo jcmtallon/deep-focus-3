@@ -1,6 +1,6 @@
 import { initBadge, showFocusModeBadge, showIdleModeBadge } from 'services/actionBadge'
 import { listenToMessages } from 'services/actions'
-import { disableRules, enableRules, debugRules } from 'services/blockedSites'
+import { disableRules, enableRules, debugRules, addImpactToBlockedSite } from 'services/blockedSites'
 import { debugLocalStorage } from 'services/localStorage'
 import {
   addFocusSession,
@@ -43,6 +43,7 @@ function getActiveTabId(): Promise<number | undefined> {
 
 async function addImpact(props: { payload: { siteId: string }; sendResponse: (payload: any) => {} }) {
   await addImpactToActiveFocusSessions()
+  await addImpactToBlockedSite(parseInt(props.payload.siteId, 10))
   props.sendResponse(true)
 }
 

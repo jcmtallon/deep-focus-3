@@ -3,6 +3,7 @@ import {
   addBlockedSite,
   deleteBlockedSite,
   listBlockedSites,
+  addImpactToBlockedSite,
 } from './resources/blockedSites'
 import {
   addFocusSession,
@@ -63,6 +64,7 @@ const indexedDb = (function (): IndexedDb {
         resolve({
           blockedSites: {
             add: addBlockedSite(db),
+            addImpact: addImpactToBlockedSite(db),
             list: listBlockedSites(db),
             delete: deleteBlockedSite(db),
           },

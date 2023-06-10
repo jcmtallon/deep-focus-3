@@ -1,8 +1,9 @@
+import { DateTime } from 'luxon'
 import React, { useEffect, useState } from 'react'
 import { sendMessage } from 'services/actions'
-import { getActiveFocusSession, getFocusSessionsByDay } from 'services/focusSessions'
+import { listBlockedSites, getFocusSessionsByDay, getActiveFocusSession } from 'services/store'
 import styled from 'styled-components'
-import { FocusSession } from 'types'
+import { BlockedSite, FocusSession } from 'types'
 
 const Wrapper = styled.div`
   width: 100%;
@@ -18,6 +19,7 @@ function MissionControl() {
   const [type, setType] = useState<string | null>()
   const [isFocusModeOn, setIsFocusModeOn] = useState<boolean | null>(null)
   const [focusSessions, setFocusSession] = useState<FocusSession[]>([])
+  const [blockedSites, setBlockedSites] = useState<BlockedSite[]>([])
 
   useEffect(() => {
     const queryParams = new URLSearchParams(window.location.search)
@@ -44,19 +46,22 @@ function MissionControl() {
       setFocusSession(focusSessions)
     }
 
+    const getBlockedSites = async () => {
+      const blockedSites = await listBlockedSites()
+      setBlockedSites(blockedSites)
+    }
+
     getFocusModeStatus()
+    getBlockedSites()
   }, [])
 
-  const getDuration = (startDate: number | undefined, endDate: number | undefined): number => {
+  const getDuration = (startDate: number | undefined, endDate: number | undefined): string | number => {
     // Temp implementation
     if (!startDate || !endDate) return 0
-    const date1 = new Date(startDate)
-    const date2 = new Date(endDate)
-    const diffTime = Math.abs(date2.valueOf() - date1.valueOf())
-
-    console.log(diffTime)
-    const diffDays = Math.ceil(diffTime / 1000)
-    return diffDays
+    const start = DateTime.fromMillis(startDate)
+    const end = DateTime.fromMillis(endDate!) // TODO: Dangerous
+    const diff = end.diff(start)
+    return diff.toFormat('hh:mm:ss')
   }
 
   useEffect(() => {
@@ -91,6 +96,12 @@ function MissionControl() {
         {focusSessions.flatMap(focusSession =>
           focusSession.tasks.map(task => <div key={task.id}>{task.title}</div>),
         )}
+      </div>
+      <h2>Blocked Sites</h2>
+      <div>
+        {blockedSites.map(blockedSite => (
+          <div>{`${blockedSite.url}: ${blockedSite.impactCount ?? 0} impacts`}</div>
+        ))}
       </div>
     </Wrapper>
   )

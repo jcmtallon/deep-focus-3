@@ -14,12 +14,9 @@ async function deleteBlockedSite(blockedSiteId: BlockedSite['id']) {
   await database.blockedSites.delete(blockedSiteId)
 }
 
-function addRule(urlFilter: string) {
-  chrome.storage.local.get(['deepFocus_rules']).then(result => {
-    const rules = result.deepFocus_rules ? JSON.parse(result.deepFocus_rules) : []
-    rules.push(urlFilter)
-    chrome.storage.local.set({ deepFocus_rules: JSON.stringify(rules) })
-  })
+async function addImpactToBlockedSite(blockedSiteId: BlockedSite['id']): Promise<void> {
+  const database = await indexedDb.getInstance()
+  await database.blockedSites.addImpact(blockedSiteId)
 }
 
 function removeRule() {
@@ -77,4 +74,12 @@ async function debugRules() {
   chrome.declarativeNetRequest.getDynamicRules(rules => console.log('Debugger: Dynamic Rules: ', rules))
 }
 
-export { addRule, removeRule, disableRules, enableRules, debugRules, listBlockedSites, deleteBlockedSite }
+export {
+  addImpactToBlockedSite,
+  debugRules,
+  deleteBlockedSite,
+  disableRules,
+  enableRules,
+  listBlockedSites,
+  removeRule,
+}
