@@ -2,6 +2,7 @@ import { indexedDb } from 'services/indexedDb'
 import { LOCAL_STORAGE_KEY, readLocalStorage, removeStorage, setLocalStorage } from 'services/localStorage'
 import { FocusSession, Task } from 'types'
 import { uniqueId } from 'lodash'
+import { DateTime } from 'luxon'
 
 const { ACTIVE_FOCUS_SESSION } = LOCAL_STORAGE_KEY
 
@@ -81,15 +82,12 @@ async function listFocusSessions(): Promise<FocusSession[]> {
   return response
 }
 
-async function getFocusSessionsByDay(date: Date): Promise<FocusSession[]> {
-  const start = new Date(date.getTime())
-  start.setUTCHours(0, 0, 0, 0)
-
-  const end = new Date(date.getTime())
-  end.setUTCHours(23, 59, 59, 999)
-
+async function getFocusSessionsByDay(date: DateTime): Promise<FocusSession[]> {
   const database = await indexedDb.getInstance()
-  const response = await database.focusSessions.query(start.getTime(), end.getTime())
+  const response = await database.focusSessions.query(
+    date.startOf('day').toMillis(),
+    date.endOf('day').toMillis(),
+  )
   return response
 }
 

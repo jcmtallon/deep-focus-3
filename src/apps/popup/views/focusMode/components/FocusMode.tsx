@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { sendMessage } from 'services/actions'
 import { FocusSession, Task } from 'types'
 import { getActiveFocusSession, getFocusSessionsByDay } from 'services/focusSessions'
+import { DateTime } from 'luxon'
 import { FocusModeLayout } from './FocusModeLayout'
 import { FocusModesStats } from './FocusModeStats/FocusModeStats'
 import { FocusModeActions } from './FocusModeActions/FocusModeActions'
@@ -20,7 +21,7 @@ function FocusMode() {
   useEffect(() => {
     const getFocusModeStatus = async () => {
       const activeFocusSession = await getActiveFocusSession()
-      const completedSessions = await getFocusSessionsByDay(new Date())
+      const completedSessions = await getFocusSessionsByDay(DateTime.now())
       setCompletedSessions(completedSessions)
       setActiveFocusSession(activeFocusSession ?? null)
     }
@@ -46,7 +47,7 @@ function FocusMode() {
 
   const handleFinishSession = async (finishedSession: FocusSession) => {
     await sendMessage('finishFocusSession', { session: finishedSession })
-    const completedSessions = await getFocusSessionsByDay(new Date())
+    const completedSessions = await getFocusSessionsByDay(DateTime.now())
     setCompletedSessions(completedSessions)
     setActiveFocusSession(null)
   }

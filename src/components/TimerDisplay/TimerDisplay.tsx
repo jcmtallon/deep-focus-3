@@ -7,6 +7,7 @@ const Timer = styled.div`
   line-height: 1;
   border-top: 1px solid white;
   border-bottom: 1px solid white;
+  font-variant-numeric: tabular-nums;
 `
 
 function padTime(time: number) {

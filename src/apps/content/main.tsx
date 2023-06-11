@@ -8,6 +8,7 @@ const body = document.querySelector('body')
 const app = document.createElement('div')
 
 app.id = 'root'
+app.style.width = '100vw'
 
 // Make sure the element that you want to mount the app to has loaded. You can
 // also use `append` or insert the app using another method:
