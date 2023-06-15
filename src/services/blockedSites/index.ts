@@ -19,6 +19,12 @@ async function addImpactToBlockedSite(blockedSiteId: BlockedSite['id']): Promise
   await database.blockedSites.addImpact(blockedSiteId)
 }
 
+async function addImpactsToBlockedSites(impacts: Record<string, number> | undefined) {
+  const database = await indexedDb.getInstance()
+  if (!impacts) return
+  await database.blockedSites.addImpactsInBulk(impacts)
+}
+
 function removeRule() {
   // WIP
 }
@@ -75,6 +81,7 @@ async function debugRules() {
 }
 
 export {
+  addImpactsToBlockedSites,
   addImpactToBlockedSite,
   debugRules,
   deleteBlockedSite,

@@ -10,7 +10,6 @@ async function startActiveFocusSessions(props: { taskTitle: string }): Promise<F
   const payload: FocusSession = {
     startDate: new Date().getTime(),
     tasks: [{ id: uniqueId(), title: props.taskTitle, status: 'PENDING' }],
-    stats: { impacts: 0 },
   }
 
   await setLocalStorage({ [ACTIVE_FOCUS_SESSION]: JSON.stringify(payload) })
@@ -47,13 +46,13 @@ async function addTaskToActiveFocusSessions(props: { taskTitle: string }) {
   return payload
 }
 
-async function addImpactToActiveFocusSessions(): Promise<FocusSession> {
+async function addImpactToActiveFocusSessions(siteId: string): Promise<FocusSession> {
   const response = await readLocalStorage(ACTIVE_FOCUS_SESSION)
   if (!response) throw new Error('No active focus session found')
   const existingSession = JSON.parse(response as string) as FocusSession
   const payload: FocusSession = {
     ...existingSession,
-    stats: { impacts: existingSession.stats.impacts + 1 },
+    impacts: { ...existingSession.impacts, [siteId]: (existingSession.impacts?.[siteId] || 0) + 1 },
   }
   await setLocalStorage({ [ACTIVE_FOCUS_SESSION]: JSON.stringify(payload) })
   return payload

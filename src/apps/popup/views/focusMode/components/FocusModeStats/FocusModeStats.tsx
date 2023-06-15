@@ -3,6 +3,7 @@ import { DateTime, Duration, DurationLike } from 'luxon'
 import React from 'react'
 import styled from 'styled-components'
 import { FocusSession } from 'types'
+import { countFocusSessionImpacts } from 'utils'
 import { FocusModeStatsProgressBar } from './FocusModeStatsProgressBar'
 
 interface FocusModeStatsProps {
@@ -52,7 +53,10 @@ function FocusModesStats(props: FocusModeStatsProps) {
 
   const sessionCount = completedSessions.length
   const questsCount = completedSessions.flatMap(s => s.tasks.map(t => t.status === 'COMPLETED')).length
-  const impactCount = completedSessions.reduce((acc, session) => acc + session.stats.impacts, 0)
+  const impactCount = completedSessions.reduce(
+    (acc, session) => acc + countFocusSessionImpacts(session.impacts),
+    0,
+  )
 
   if (!activeFocusSession) {
     const today = DateTime.now()
@@ -82,7 +86,7 @@ function FocusModesStats(props: FocusModeStatsProps) {
       <StopwatchTimer startTimestamp={activeFocusSession.startDate} />
       <StatsWrapper endAlign>
         <Quests>{`${activeFocusSession?.tasks.filter(t => t.status === 'COMPLETED').length} quests`}</Quests>
-        <Impacts>{`${activeFocusSession.stats.impacts} impacts`}</Impacts>
+        <Impacts>{`${countFocusSessionImpacts(activeFocusSession.impacts)} impacts`}</Impacts>
       </StatsWrapper>
       <FocusModeStatsProgressBar startDate={activeFocusSession.startDate} />
     </Wrapper>

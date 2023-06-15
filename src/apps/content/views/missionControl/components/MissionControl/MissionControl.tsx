@@ -90,7 +90,7 @@ function MissionControl() {
           </S.Column>
           <S.Column>
             <S.Card title="Blocked Sites">
-              <MissionControlBlockedSites blockedSites={blockedSites} />
+              <MissionControlBlockedSites blockedSites={blockedSites} focusSessions={focusSessions} />
             </S.Card>
             <S.Card title="Quests">
               <MissionControlTasks focusSessions={focusSessions} />

@@ -1,6 +1,7 @@
 import { DateTime } from 'luxon'
 import React from 'react'
 import { FocusSession } from 'types'
+import { countFocusSessionImpacts } from 'utils'
 import * as S from './MissionControlSessions.styles'
 
 interface MissionControlSessionsProps {
@@ -26,7 +27,7 @@ function MissionControlSessions(props: MissionControlSessionsProps) {
           <S.Duration>{getDuration(focusSession.startDate, focusSession.endDate)}</S.Duration>
           <S.Awards>0 Pulsars</S.Awards>
           <S.Quests>{`${focusSession.tasks.length} quests`}</S.Quests>
-          <S.Impacts>{`${focusSession.stats.impacts} impacts`}</S.Impacts>
+          <S.Impacts>{`${countFocusSessionImpacts(focusSession.impacts)} impacts`}</S.Impacts>
         </S.ListItem>
       ))}
     </S.List>

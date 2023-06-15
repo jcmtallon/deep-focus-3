@@ -71,13 +71,44 @@ const addImpactToBlockedSite =
     })
   }
 
+const addImpactsToBlockedSitesInBulk = (db: IDBDatabase) => (impacts: Record<string, number>) => {
+  const objectStore = db.transaction(BLOCKED_SITES, 'readwrite').objectStore(BLOCKED_SITES)
+
+  const putImpact = (blockedSiteId: number, impactCount: number): Promise<void> => {
+    const request = objectStore.get(blockedSiteId)
+
+    return new Promise((resolve, _) => {
+      request.onsuccess = () => {
+        const blockedSite = request.result
+        blockedSite.impactCount = blockedSite.impactCount
+          ? blockedSite.impactCount + impactCount
+          : impactCount
+
+        const updateRequest = objectStore.put(blockedSite)
+        updateRequest.onsuccess = () => {
+          resolve()
+        }
+      }
+    })
+  }
+
+  return Promise.all([Object.keys(impacts).map(k => putImpact(Number(k), impacts[k]))])
+}
+
 // TODO: Reuse types
 interface BlockedSiteEndpoints {
   add: (urlFilter: string) => Promise<unknown>
   addImpact: (blockedSiteId: number) => Promise<void>
+  addImpactsInBulk: (impacts: Record<string, number>) => Promise<[Promise<void>[]]>
   list: () => Promise<BlockedSite[]>
   delete: (id: number) => Promise<unknown>
 }
 
 export type { BlockedSiteEndpoints }
-export { addBlockedSite, listBlockedSites, deleteBlockedSite, addImpactToBlockedSite }
+export {
+  addBlockedSite,
+  listBlockedSites,
+  deleteBlockedSite,
+  addImpactToBlockedSite,
+  addImpactsToBlockedSitesInBulk,
+}

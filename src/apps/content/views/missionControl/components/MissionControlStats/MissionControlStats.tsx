@@ -2,6 +2,7 @@ import React from 'react'
 import { FocusSession } from 'types'
 import { DateTime, Duration, DurationLike } from 'luxon'
 import { TimerDisplay } from 'components'
+import { countFocusSessionImpacts } from 'utils'
 import * as S from './MissionControlStats.styles'
 
 interface MissionControlStatsProps {
@@ -13,7 +14,10 @@ function MissionControlStats(props: MissionControlStatsProps) {
 
   const sessionCount = focusSessions.length
   const tasksCount = focusSessions.flatMap(s => s.tasks.map(t => t.status === 'COMPLETED')).length
-  const impactCount = focusSessions.reduce((acc, session) => acc + session.stats.impacts, 0)
+  const impactCount = focusSessions.reduce(
+    (acc, session) => acc + countFocusSessionImpacts(session.impacts),
+    0,
+  )
 
   // This code is also used in the FocusModeStats component. Possibly it can be abstracted.
   const today = DateTime.now()
