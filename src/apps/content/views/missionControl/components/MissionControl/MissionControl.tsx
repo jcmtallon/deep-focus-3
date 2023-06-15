@@ -18,29 +18,15 @@ function MissionControl() {
   const [blockedSites, setBlockedSites] = useState<BlockedSite[]>([])
   const [selectedDate, setSelectedDate] = useState<DateTime>(DateTime.now())
 
-  useEffect(() => {
-    const queryParams = new URLSearchParams(window.location.search)
-    const blockType = queryParams.get('blockType')
-    const siteId = queryParams.get('site')?.toString()
-
-    if (blockType === 'site' && siteId) {
-      const addImpact = async () => {
-        await sendMessage('addImpact', { siteId })
-      }
-
-      addImpact()
-    }
-
-    if (blockType) setType(blockType)
-  }, [])
-
-  const getFocusModeStatus = useCallback(async () => {
-    const session = await getActiveFocusSession()
+  const getFocusSessions = useCallback(async () => {
     const focusSessions = await getFocusSessionsByDay(selectedDate)
-    const focusModeOn = session !== undefined
-    setIsFocusModeOn(focusModeOn)
     setFocusSession(focusSessions)
   }, [selectedDate])
+
+  const getActiveFocusSessionCallback = useCallback(async () => {
+    const session = await getActiveFocusSession()
+    setIsFocusModeOn(session !== undefined)
+  }, [])
 
   const getBlockedSites = async () => {
     const blockedSites = await listBlockedSites()
@@ -48,9 +34,29 @@ function MissionControl() {
   }
 
   useEffect(() => {
-    getFocusModeStatus()
+    getFocusSessions()
+  }, [getFocusSessions])
+
+  useEffect(() => {
+    getActiveFocusSession()
+  }, [getActiveFocusSessionCallback])
+
+  useEffect(() => {
     getBlockedSites()
-  }, [getFocusModeStatus])
+  }, [])
+
+  useEffect(() => {
+    const queryParams = new URLSearchParams(window.location.search)
+    const blockType = queryParams.get('blockType')
+    const siteId = queryParams.get('site')?.toString()
+    if (blockType === 'site' && siteId) {
+      const addImpact = async () => {
+        await sendMessage('addImpact', { siteId })
+      }
+      addImpact()
+    }
+    if (blockType) setType(blockType)
+  }, [])
 
   useEffect(() => {
     // TODO: Listen to messages from background so it can respond
@@ -59,7 +65,6 @@ function MissionControl() {
       if (request.message === 'focusModeOn') {
         setIsFocusModeOn(true)
       }
-
       if (request.message === 'focusModeOff') {
         setIsFocusModeOn(false)
       }
