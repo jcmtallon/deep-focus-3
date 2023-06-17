@@ -12,7 +12,7 @@
     "service_worker": "src/background.ts"
   },
   "chrome_url_overrides": {
-    "newtab": "src/apps/content/index.html"
+    "content": "src/apps/content/index.html"
   },
   "permissions": [
     "declarativeNetRequest",
