@@ -10,6 +10,7 @@ import { MissionControlBlockedSites } from '../MissionControlBlockedSites'
 import { MissionControlTasks } from '../MissionControlTasks'
 import { MissionControlStats } from '../MissionControlStats'
 import { MissionControlHeader } from '../MissionControlHeader'
+import { MissionControlBlockedSiteBackdrop } from '../MissionControlBlockedSiteBackdrop'
 
 function MissionControl() {
   const [type, setType] = useState<string | null>()
@@ -17,6 +18,7 @@ function MissionControl() {
   const [focusSessions, setFocusSession] = useState<FocusSession[]>([])
   const [blockedSites, setBlockedSites] = useState<BlockedSite[]>([])
   const [selectedDate, setSelectedDate] = useState<DateTime>(DateTime.now())
+  const [openBackdrop, setOpenBackdrop] = useState<boolean>(false)
 
   const getFocusSessions = useCallback(async () => {
     const focusSessions = await getFocusSessionsByDay(selectedDate)
@@ -54,6 +56,7 @@ function MissionControl() {
         await sendMessage('addImpact', { siteId })
       }
       addImpact()
+      setOpenBackdrop(true)
     }
     if (blockType) setType(blockType)
   }, [])
@@ -106,6 +109,7 @@ function MissionControl() {
           </S.Column>
         </S.Body>
       </S.Wrapper>
+      <MissionControlBlockedSiteBackdrop open={openBackdrop} setIsOpen={setOpenBackdrop} />
     </PageLayout>
   )
 }
