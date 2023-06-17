@@ -70,7 +70,7 @@ async function finishActiveFocusSession(): Promise<boolean> {
 
 async function addFocusSession(session: FocusSession): Promise<FocusSession> {
   const database = await indexedDb.getInstance()
-  const response = await database.focusSessions.add({ ...session, endDate: new Date().getTime() })
+  const response = await database.focusSessions.add(session)
   return response
 }
 

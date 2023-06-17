@@ -12,7 +12,7 @@ const Backdrop = styled.div`
   left: 0;
 
   z-index: 100; // TODO: Think a proper z-index scale
-  background-color: #000000;
+  background-color: #15043B;
 
   transform: translateY(500px)
   opacity: 0;
@@ -71,10 +71,6 @@ function MissionControlBlockedSiteBackdrop(props: MissionControlBlockedSiteBackd
     transition: 'opacity 200ms ease-in, transform 200ms ease-in',
   }
 
-  const handleToggleClicked = () => {
-    setIsOpen(false)
-  }
-
   useEffect(() => {
     let timeoutId: NodeJS.Timeout
     if (open === true) timeoutId = setTimeout(() => setIsOpen(false), 1000)
@@ -84,7 +80,7 @@ function MissionControlBlockedSiteBackdrop(props: MissionControlBlockedSiteBackd
   return (
     <>
       {shouldRenderChild && (
-        <Backdrop style={open ? mountedStyle : unmountedStyle} onClick={handleToggleClicked}>
+        <Backdrop style={open ? mountedStyle : unmountedStyle}>
           <Container>
             <Title>Blocked site!</Title>
             <Count>+1 Damage</Count>
