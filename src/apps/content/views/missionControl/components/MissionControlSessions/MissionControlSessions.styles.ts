@@ -35,4 +35,9 @@ const Impacts = styled.div`
   color: #e05022;
 `
 
-export { List, ListItem, Duration, Awards, Quests, Impacts }
+const Counter = styled.div`
+  margin-top: 10px;
+  color: #a78ce1;
+`
+
+export { List, ListItem, Duration, Awards, Quests, Impacts, Counter }

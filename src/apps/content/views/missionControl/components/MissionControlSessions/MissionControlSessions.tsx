@@ -21,16 +21,19 @@ function MissionControlSessions(props: MissionControlSessionsProps) {
   }
 
   return (
-    <S.List>
-      {focusSessions.map(focusSession => (
-        <S.ListItem key={focusSession.sessionId}>
-          <S.Duration>{getDuration(focusSession.startDate, focusSession.endDate)}</S.Duration>
-          <S.Awards>0 Pulsars</S.Awards>
-          <S.Quests>{`${focusSession.tasks.length} quests`}</S.Quests>
-          <S.Impacts>{`${countFocusSessionImpacts(focusSession.impacts)} impacts`}</S.Impacts>
-        </S.ListItem>
-      ))}
-    </S.List>
+    <>
+      <S.List>
+        {focusSessions.map(focusSession => (
+          <S.ListItem key={focusSession.sessionId}>
+            <S.Duration>{getDuration(focusSession.startDate, focusSession.endDate)}</S.Duration>
+            <S.Awards>0 Pulsars</S.Awards>
+            <S.Quests>{`${focusSession.tasks.length} quests`}</S.Quests>
+            <S.Impacts>{`${countFocusSessionImpacts(focusSession.impacts)} impacts`}</S.Impacts>
+          </S.ListItem>
+        ))}
+      </S.List>
+      <S.Counter>{focusSessions.length} sessions</S.Counter>
+    </>
   )
 }
 
