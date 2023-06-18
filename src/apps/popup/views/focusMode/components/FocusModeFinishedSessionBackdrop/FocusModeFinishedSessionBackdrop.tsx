@@ -3,6 +3,7 @@ import { FocusSession } from 'types'
 import styled from 'styled-components'
 import { countFocusSessionImpacts } from 'utils'
 import { DateTime } from 'luxon'
+import { IconStar } from 'components'
 
 const Backdrop = styled.div`
   position: fixed;
@@ -34,18 +35,54 @@ const Timer = styled.div`
   margin-bottom: 60px;
 `
 
+const TimePoints = styled.div`
+  color: white;
+  white-space: nowrap;
+  font-size: 18px;
+  font-weight: 700;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+`
+
 const Quests = styled.div`
   color: #2dbe90;
   white-space: nowrap;
-  font-size: 30px;
+  font-size: 18px;
   font-weight: 700;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
 `
 
 const Impacts = styled.div`
   color: #e05022;
   white-space: nowrap;
-  font-size: 30px;
+  font-size: 18px;
   font-weight: 700;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+`
+
+const Star = styled(IconStar)`
+  fill: #2d1b6c;
+  position: absolute;
+  width: 80px;
+  height: 80px;
+`
+
+const IconWrapper = styled.div`
+  position: relative;
+  width: 240px;
+  height: 40px;
+`
+
+const TotalPoints = styled.div`
+  color: white;
+  font-size: 40px;
+  margin-top: 10px;
+  margin-bottom: 30px;
 `
 
 interface FocusModeFinishedSessionBackdropProps {
@@ -89,23 +126,41 @@ function FocusModeFinishedSessionBackdrop(props: FocusModeFinishedSessionBackdro
     const start = DateTime.fromMillis(focusSession.startDate)
     const end = DateTime.fromMillis(focusSession.endDate!) // TODO: Dangerous
     const diff = end.diff(start)
-    return diff.toFormat('hh:mm:ss')
+    return diff
   }
 
+  if (!shouldRenderChild || !focusSession) return <></>
+
+  const sessionTime = getSessionTime(focusSession)
+  const timePoints = Math.floor(0.001 * sessionTime.toMillis())
+  const questPoints = focusSession.tasks.filter(t => t.status === 'COMPLETED').length * 100
+  const impactPoints = 150
+  const totalPoints = timePoints + questPoints - impactPoints
+
   return (
-    <>
-      {shouldRenderChild && focusSession && (
-        <Backdrop style={open ? mountedStyle : unmountedStyle}>
-          <Container>
-            <Timer>{getSessionTime(focusSession)}</Timer>
-            <Quests>{`${
-              focusSession.tasks.filter(t => t.status === 'COMPLETED').length ?? 0
-            } quests`}</Quests>
-            <Impacts>{`${countFocusSessionImpacts(focusSession.impacts)} impacts`}</Impacts>
-          </Container>
-        </Backdrop>
-      )}
-    </>
+    <Backdrop style={open ? mountedStyle : unmountedStyle}>
+      <Container>
+        <Timer>{sessionTime.toFormat('hh:mm:ss')}</Timer>
+        <TimePoints>
+          <span>Time</span>
+          <span>{`${timePoints}pts`}</span>
+        </TimePoints>
+        <Quests>
+          <span>{`${focusSession.tasks.filter(t => t.status === 'COMPLETED').length ?? 0} quests`}</span>
+          <span>{`${questPoints}pts`}</span>
+        </Quests>
+        <Impacts>
+          <span>{`${countFocusSessionImpacts(focusSession.impacts)} impacts`}</span>
+          <span>{`-${impactPoints}pts`}</span>
+        </Impacts>
+        <TotalPoints>{`${totalPoints}pts`}</TotalPoints>
+        <IconWrapper>
+          <Star style={{ top: '26px', left: '0px', fill: totalPoints > 25 ? '#E8BB3F' : '#2d1b6c' }} />
+          <Star style={{ top: '0px', left: '80px', fill: totalPoints > 75 ? '#E8BB3F' : '#2d1b6c' }} />
+          <Star style={{ top: '26px', right: '0px', fill: totalPoints > 99 ? '#E8BB3F' : '#2d1b6c' }} />
+        </IconWrapper>
+      </Container>
+    </Backdrop>
   )
 }
 

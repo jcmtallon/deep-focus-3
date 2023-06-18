@@ -1,3 +1,4 @@
+import { IconStar } from 'components'
 import { DateTime } from 'luxon'
 import React, { useEffect } from 'react'
 import styled from 'styled-components'
@@ -8,19 +9,35 @@ interface FocusModeStatsProgressBarProps {
 
 const ProgressBarBackground = styled.div`
   width: 100%;
-  height: 8px;
-  background-color: transparent;
+  height: 10px;
+  background-color: #180850;
+  border-radius: 8px;
+  margin-top: 10px;
 `
 
 const ProgressBar = styled.div`
-  height: 8px;
+  height: 10px;
   background-color: #fff9b0;
-  border-radius: 6px;
+  border-radius: 8px;
+  position: relative;
 `
 
-// TODO: Revisit this amount and the calculation of the progress
-// TODO: Abstract reference value
-const total = 60_00
+const Star = styled(IconStar)`
+  fill: #2d1b6c;
+  position: absolute;
+  width: 23px;
+  height: 23px;
+`
+
+// Two hours
+const TOTAL = 72000
+
+function calculateProgress(startDate: number) {
+  const now = DateTime.now()
+  const start = DateTime.fromMillis(startDate)
+  const diff = now.diff(start)
+  return Math.min(diff.toMillis() / TOTAL, 100)
+}
 
 function FocusModeStatsProgressBar(props: FocusModeStatsProgressBarProps) {
   const { startDate } = props
@@ -28,19 +45,23 @@ function FocusModeStatsProgressBar(props: FocusModeStatsProgressBarProps) {
   const [progress, setProgress] = React.useState(0)
 
   useEffect(() => {
+    // So the bar is painted right away when the component is mounted.
+    setProgress(calculateProgress(startDate))
+
     const interval = setInterval(() => {
-      const now = DateTime.now()
-      const start = DateTime.fromMillis(startDate)
-      const diff = now.diff(start)
-      setProgress(Math.min(diff.toMillis() / total, 100))
-    }, 1000)
+      setProgress(calculateProgress(startDate))
+    }, 6000)
 
     return () => clearInterval(interval)
   }, [startDate])
 
   return (
     <ProgressBarBackground>
-      <ProgressBar style={{ width: `${progress}%` }} />
+      <ProgressBar style={{ width: `${progress}%` }}>
+        <Star style={{ left: '52px', top: '-6px', fill: progress > 1800 ? '#E8BB3F' : '#2d1b6c' }} />
+        <Star style={{ left: '150px', top: '-6px', fill: progress > 3600 ? '#E8BB3F' : '#2d1b6c' }} />
+        <Star style={{ left: '247px', top: '-6px', fill: progress > 7199 ? '#E8BB3F' : '#2d1b6c' }} />
+      </ProgressBar>
     </ProgressBarBackground>
   )
 }
