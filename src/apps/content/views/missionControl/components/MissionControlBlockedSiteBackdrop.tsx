@@ -63,17 +63,13 @@ interface MissionControlBlockedSiteBackdropProps {
 
 function MissionControlBlockedSiteBackdrop(props: MissionControlBlockedSiteBackdropProps) {
   const { open, setIsOpen } = props
-  const shouldRenderChild = useDelayUnmount(open, 200)
-  const mountedStyle = { opacity: 1, transform: 'translateY(0px)', transition: 'opacity 1000ms ease-in' }
-  const unmountedStyle = {
-    opacity: 0,
-    transform: 'translateY(-500px)',
-    transition: 'opacity 200ms ease-in, transform 200ms ease-in',
-  }
+  const shouldRenderChild = useDelayUnmount(open, 400)
+  const mountedStyle = { animation: 'slideInAnimation 400ms cubic-bezier(0.33, 1, 0.68, 1)' }
+  const unmountedStyle = { animation: 'slideOutAnimation 420ms cubic-bezier(0.32, 0, 0.67, 0)' }
 
   useEffect(() => {
     let timeoutId: NodeJS.Timeout
-    if (open === true) timeoutId = setTimeout(() => setIsOpen(false), 1000)
+    if (open === true) timeoutId = setTimeout(() => setIsOpen(false), 1500)
     return () => clearTimeout(timeoutId)
   }, [open, setIsOpen])
 
