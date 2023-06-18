@@ -78,9 +78,19 @@ function FocusModeActions(props: FocusModeActionsProps) {
     setInput('')
   }
 
-  const handleKeyDown: KeyboardEventHandler<HTMLInputElement> = event => {
+  const handleSessionStartInputKeyDown: KeyboardEventHandler<HTMLInputElement> = event => {
     if (event.key === 'Enter') {
       handleFocusModeStart()
+    }
+  }
+
+  const handleInSessionInputKeyDown: KeyboardEventHandler<HTMLInputElement> = event => {
+    if (event.key === 'Enter') {
+      if (input !== '') {
+        handleExtendSession()
+      } else {
+        handleFinishSession(session!) // TODO: Dangerous
+      }
     }
   }
 
@@ -92,7 +102,7 @@ function FocusModeActions(props: FocusModeActionsProps) {
           placeholder="What’s your next quest"
           autoFocus
           value={input}
-          onKeyDown={handleKeyDown}
+          onKeyDown={handleSessionStartInputKeyDown}
           onChange={e => setInput(e.target.value)}
         />
         <Button disabled={input.length === 0} onClick={handleFocusModeStart}>
@@ -109,6 +119,7 @@ function FocusModeActions(props: FocusModeActionsProps) {
           placeholder="Combo another quest"
           autoFocus
           value={input}
+          onKeyDown={handleInSessionInputKeyDown}
           onChange={e => setInput(e.target.value)}
         />
         {input !== '' ? (
