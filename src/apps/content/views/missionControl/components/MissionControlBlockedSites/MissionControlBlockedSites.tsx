@@ -1,5 +1,6 @@
 import React from 'react'
 import { BlockedSite, FocusSession } from 'types'
+import { countFocusSessionImpacts } from 'utils'
 import * as S from './MissionControlBlockedSites.styles'
 
 interface MissionControlBlockedSitesProps {
@@ -26,18 +27,28 @@ function MissionControlBlockedSites(props: MissionControlBlockedSitesProps) {
     })
   })
 
+  const impactCount = focusSessions.reduce(
+    (acc, session) => acc + countFocusSessionImpacts(session.impacts),
+    0,
+  )
+
   return (
-    <S.List>
-      {blockedSites.map(blockedSite => (
-        <S.ListItem>
-          <S.Site>{blockedSite.url}</S.Site>
-          <S.Bar>
-            <S.BarFill style={{ width: `${((impactRecord[blockedSite.id] ?? 0) * 100) / largestCount}%` }} />
-          </S.Bar>
-          <S.Impacts>{impactRecord[blockedSite.id] ?? 0}</S.Impacts>
-        </S.ListItem>
-      ))}
-    </S.List>
+    <>
+      <S.List>
+        {blockedSites.map(blockedSite => (
+          <S.ListItem>
+            <S.Site>{blockedSite.url}</S.Site>
+            <S.Bar>
+              <S.BarFill
+                style={{ width: `${((impactRecord[blockedSite.id] ?? 0) * 100) / largestCount}%` }}
+              />
+            </S.Bar>
+            <S.Impacts>{impactRecord[blockedSite.id] ?? 0}</S.Impacts>
+          </S.ListItem>
+        ))}
+      </S.List>
+      <S.Counter>{impactCount} impacts</S.Counter>
+    </>
   )
 }
 
