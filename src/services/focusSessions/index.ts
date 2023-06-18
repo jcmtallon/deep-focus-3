@@ -89,14 +89,24 @@ async function getFocusSessionsByDay(date: DateTime): Promise<FocusSession[]> {
   return response
 }
 
+async function getFocusSessionsByDateRange(startDate: DateTime, endDate: DateTime): Promise<FocusSession[]> {
+  const database = await indexedDb.getInstance()
+  const response = await database.focusSessions.query(
+    startDate.startOf('day').toMillis(),
+    endDate.endOf('day').toMillis(),
+  )
+  return response
+}
+
 export {
   addFocusSession,
   addImpactToActiveFocusSessions,
   addTaskToActiveFocusSessions,
   finishActiveFocusSession,
   getActiveFocusSession,
+  getFocusSessionsByDateRange,
   getFocusSessionsByDay,
   listFocusSessions,
-  updateActiveFocusSessionTasks,
   startActiveFocusSessions,
+  updateActiveFocusSessionTasks,
 }

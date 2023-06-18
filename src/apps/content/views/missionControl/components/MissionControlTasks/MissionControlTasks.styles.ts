@@ -15,4 +15,9 @@ const ListItem = styled.li`
   align-items: center;
 `
 
-export { List, ListItem }
+const Counter = styled.div`
+  margin-top: 10px;
+  color: #a78ce1;
+`
+
+export { List, ListItem, Counter }

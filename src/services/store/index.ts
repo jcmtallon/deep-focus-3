@@ -1,2 +1,6 @@
-export { getActiveFocusSession, getFocusSessionsByDay } from 'services/focusSessions'
+export {
+  getActiveFocusSession,
+  getFocusSessionsByDay,
+  getFocusSessionsByDateRange,
+} from 'services/focusSessions'
 export { listBlockedSites } from 'services/blockedSites'
