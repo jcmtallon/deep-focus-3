@@ -2,6 +2,11 @@ import { IconStar } from 'components'
 import { DateTime } from 'luxon'
 import React, { useEffect } from 'react'
 import styled from 'styled-components'
+import {
+  calculateFocusSessionProgress,
+  calculateStarLeftPosition,
+  getStarCountByFocusSessionProgress,
+} from 'utils'
 
 interface FocusModeStatsProgressBarProps {
   startDate: number
@@ -29,16 +34,6 @@ const Star = styled(IconStar)`
   height: 23px;
 `
 
-// Two hours
-const TOTAL = 72000
-
-function calculateProgress(startDate: number) {
-  const now = DateTime.now()
-  const start = DateTime.fromMillis(startDate)
-  const diff = now.diff(start)
-  return Math.min(diff.toMillis() / TOTAL, 100)
-}
-
 function FocusModeStatsProgressBar(props: FocusModeStatsProgressBarProps) {
   const { startDate } = props
 
@@ -46,21 +41,23 @@ function FocusModeStatsProgressBar(props: FocusModeStatsProgressBarProps) {
 
   useEffect(() => {
     // So the bar is painted right away when the component is mounted.
-    setProgress(calculateProgress(startDate))
-
+    setProgress(calculateFocusSessionProgress(startDate))
     const interval = setInterval(() => {
-      setProgress(calculateProgress(startDate))
-    }, 6000)
+      setProgress(calculateFocusSessionProgress(startDate))
+    }, 1000)
 
     return () => clearInterval(interval)
   }, [startDate])
 
+  const starCount = getStarCountByFocusSessionProgress(progress)
+  const left = calculateStarLeftPosition(260, 13)
+
   return (
     <ProgressBarBackground>
       <ProgressBar style={{ width: `${progress}%` }}>
-        <Star style={{ left: '52px', top: '-6px', fill: progress > 1800 ? '#E8BB3F' : '#2d1b6c' }} />
-        <Star style={{ left: '150px', top: '-6px', fill: progress > 3600 ? '#E8BB3F' : '#2d1b6c' }} />
-        <Star style={{ left: '247px', top: '-6px', fill: progress > 7199 ? '#E8BB3F' : '#2d1b6c' }} />
+        <Star style={{ left: left[1], top: '-6px', fill: starCount > 0 ? '#E8BB3F' : '#2d1b6c' }} />
+        <Star style={{ left: left[2], top: '-6px', fill: starCount > 1 ? '#E8BB3F' : '#2d1b6c' }} />
+        <Star style={{ left: left[3], top: '-6px', fill: starCount > 2 ? '#E8BB3F' : '#2d1b6c' }} />
       </ProgressBar>
     </ProgressBarBackground>
   )

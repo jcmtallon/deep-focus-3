@@ -1,1 +1,9 @@
-export { countFocusSessionImpacts } from './focusSession'
+export {
+  calculateFocusSessionPoints,
+  calculateFocusSessionProgress,
+  calculateStarLeftPosition,
+  countFocusSessionImpacts,
+  getFocusSessionTime,
+  getStarCountByFocusSessionProgress,
+  getStarCountByFocusSessionTotalPoints,
+} from './focusSession'

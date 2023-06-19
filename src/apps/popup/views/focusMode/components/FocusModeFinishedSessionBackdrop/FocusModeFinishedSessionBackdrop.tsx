@@ -1,8 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import { FocusSession } from 'types'
 import styled from 'styled-components'
-import { countFocusSessionImpacts } from 'utils'
-import { DateTime } from 'luxon'
+import {
+  calculateFocusSessionPoints,
+  countFocusSessionImpacts,
+  getFocusSessionTime,
+  getStarCountByFocusSessionTotalPoints,
+} from 'utils'
 import { IconStar } from 'components'
 
 const Backdrop = styled.div`
@@ -118,24 +122,15 @@ function FocusModeFinishedSessionBackdrop(props: FocusModeFinishedSessionBackdro
 
   useEffect(() => {
     let timeoutId: NodeJS.Timeout
-    if (open) timeoutId = setTimeout(() => setOpen(false), 2000)
+    if (open) timeoutId = setTimeout(() => setOpen(false), 4000)
     return () => clearTimeout(timeoutId)
   }, [open, setOpen])
 
-  const getSessionTime = (focusSession: FocusSession) => {
-    const start = DateTime.fromMillis(focusSession.startDate)
-    const end = DateTime.fromMillis(focusSession.endDate!) // TODO: Dangerous
-    const diff = end.diff(start)
-    return diff
-  }
-
   if (!shouldRenderChild || !focusSession) return <></>
 
-  const sessionTime = getSessionTime(focusSession)
-  const timePoints = Math.floor(0.001 * sessionTime.toMillis())
-  const questPoints = focusSession.tasks.filter(t => t.status === 'COMPLETED').length * 100
-  const impactPoints = 150
-  const totalPoints = timePoints + questPoints - impactPoints
+  const sessionTime = getFocusSessionTime(focusSession)
+  const points = calculateFocusSessionPoints(focusSession)
+  const starCount = getStarCountByFocusSessionTotalPoints(points.totalPoints)
 
   return (
     <Backdrop style={open ? mountedStyle : unmountedStyle}>
@@ -143,21 +138,21 @@ function FocusModeFinishedSessionBackdrop(props: FocusModeFinishedSessionBackdro
         <Timer>{sessionTime.toFormat('hh:mm:ss')}</Timer>
         <TimePoints>
           <span>Time</span>
-          <span>{`${timePoints}pts`}</span>
+          <span>{`${points.pointsByTime}pts`}</span>
         </TimePoints>
         <Quests>
           <span>{`${focusSession.tasks.filter(t => t.status === 'COMPLETED').length ?? 0} quests`}</span>
-          <span>{`${questPoints}pts`}</span>
+          <span>{`${points.pointsByTasks}pts`}</span>
         </Quests>
         <Impacts>
           <span>{`${countFocusSessionImpacts(focusSession.impacts)} impacts`}</span>
-          <span>{`-${impactPoints}pts`}</span>
+          <span>{`-${points.pointsByImpacts}pts`}</span>
         </Impacts>
-        <TotalPoints>{`${totalPoints}pts`}</TotalPoints>
+        <TotalPoints>{`${points.totalPoints}pts`}</TotalPoints>
         <IconWrapper>
-          <Star style={{ top: '26px', left: '0px', fill: totalPoints > 25 ? '#E8BB3F' : '#2d1b6c' }} />
-          <Star style={{ top: '0px', left: '80px', fill: totalPoints > 75 ? '#E8BB3F' : '#2d1b6c' }} />
-          <Star style={{ top: '26px', right: '0px', fill: totalPoints > 99 ? '#E8BB3F' : '#2d1b6c' }} />
+          <Star style={{ top: '26px', left: '0px', fill: starCount > 0 ? '#E8BB3F' : '#2d1b6c' }} />
+          <Star style={{ top: '0px', left: '80px', fill: starCount > 1 ? '#E8BB3F' : '#2d1b6c' }} />
+          <Star style={{ top: '26px', right: '0px', fill: starCount > 2 ? '#E8BB3F' : '#2d1b6c' }} />
         </IconWrapper>
       </Container>
     </Backdrop>
