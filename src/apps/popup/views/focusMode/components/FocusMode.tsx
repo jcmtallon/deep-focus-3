@@ -4,6 +4,7 @@ import { sendMessage } from 'services/actions'
 import { FocusSession, Task } from 'types'
 import { getActiveFocusSession, getFocusSessionsByDay } from 'services/focusSessions'
 import { DateTime } from 'luxon'
+import { calculateFocusSessionPoints } from 'utils'
 import { FocusModeLayout } from './FocusModeLayout'
 import { FocusModesStats } from './FocusModeStats/FocusModeStats'
 import { FocusModeActions } from './FocusModeActions/FocusModeActions'
@@ -51,12 +52,18 @@ function FocusMode() {
 
   const handleFinishSession = async (session: FocusSession) => {
     const finishedSession = { ...session, endDate: new Date().getTime() }
-    await sendMessage('finishFocusSession', { session: finishedSession })
+    const points = calculateFocusSessionPoints(finishedSession)
+    await sendMessage('finishFocusSession', { session: { ...finishedSession, points: points.totalPoints } })
     const completedSessions = await getFocusSessionsByDay(DateTime.now())
-    setCompletedSessions(completedSessions)
-    setActiveFocusSession(null)
     setLastFocusSession(finishedSession)
     setOpenFocusSessionBackdrop(true)
+
+    // So we don't display the completed session info until the backdrop is
+    // completely covering the screen.
+    setTimeout(() => {
+      setCompletedSessions(completedSessions)
+      setActiveFocusSession(null)
+    }, 400)
   }
 
   const handleTaskStatusChange = async (tasks: Task[]) => {

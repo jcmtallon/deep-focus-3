@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import { IconStar } from 'components'
 
 const List = styled.ul`
   padding-top: 8px;
@@ -22,7 +23,7 @@ const Duration = styled.div`
 const Awards = styled.div`
   flex-grow: 1;
   text-align: right;
-  color: #e8bb3f;
+  column-gap: 2px;
 `
 const Quests = styled.div`
   flex-grow: 1;
@@ -40,4 +41,10 @@ const Counter = styled.div`
   color: #a78ce1;
 `
 
-export { List, ListItem, Duration, Awards, Quests, Impacts, Counter }
+const Star = styled(IconStar)`
+  fill: #2d1b6c;
+  width: 20px;
+  height: 20px;
+`
+
+export { List, ListItem, Duration, Awards, Quests, Impacts, Counter, Star }

@@ -6,6 +6,7 @@ interface FocusSession {
   endDate?: number
   tasks: Task[]
   impacts?: Record<string, number>
+  points?: number
 }
 
 export type { FocusSession }
