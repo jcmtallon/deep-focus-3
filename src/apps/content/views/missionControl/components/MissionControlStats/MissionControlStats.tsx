@@ -2,7 +2,7 @@ import React from 'react'
 import { FocusSession } from 'types'
 import { DateTime, Duration, DurationLike } from 'luxon'
 import { TimerDisplay } from 'components'
-import { countFocusSessionImpacts } from 'utils'
+import { calculateDayPointProgress, countFocusSessionImpacts } from 'utils'
 import * as S from './MissionControlStats.styles'
 
 interface MissionControlStatsProps {
@@ -28,6 +28,10 @@ function MissionControlStats(props: MissionControlStatsProps) {
     return diff.plus(acc)
   }, Duration.fromObject({ seconds: 0 }))
 
+  const totalPoints = focusSessions.reduce((acc: number, session: FocusSession) => {
+    return acc + (session?.points ?? 0)
+  }, 0)
+
   return (
     <S.Wrapper>
       <S.Date>{today.toLocaleString()}</S.Date>
@@ -38,6 +42,15 @@ function MissionControlStats(props: MissionControlStatsProps) {
         <S.Impacts>{`${impactCount} impacts`}</S.Impacts>
       </S.StatsWrapper>
       <S.BarWrapper>
+        <S.PointBar>
+          <S.PointBarFill style={{ width: `${calculateDayPointProgress(totalPoints)}%` }}>
+            <S.AwardLabel style={{ left: '50px', top: '13px' }}>Star</S.AwardLabel>
+            <S.AwardLabel style={{ left: '100px', top: '13px' }}>Red giant</S.AwardLabel>
+            <S.AwardLabel style={{ left: '180px', top: '13px' }}>Super nova</S.AwardLabel>
+            <S.AwardLabel style={{ left: '260px', top: '13px' }}>Neutron star</S.AwardLabel>
+            <S.AwardLabel style={{ left: '340px', top: '13px' }}>Black hole</S.AwardLabel>
+          </S.PointBarFill>
+        </S.PointBar>
         <S.BarContainer>
           <S.TimeBar style={{ width: `${Math.min(totalSessionTime.toMillis() / 200_000, 100)}%` }} />
         </S.BarContainer>

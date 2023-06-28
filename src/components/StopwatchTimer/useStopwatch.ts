@@ -21,7 +21,7 @@ const useStopwatch = (startTimestamp: number) => {
   useEffect(() => {
     const interval = setInterval(() => {
       setCountUp(getElapsedTime(startDateTime))
-    }, 1000)
+    }, 100)
 
     return () => clearInterval(interval)
   }, [startDateTime])

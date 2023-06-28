@@ -1,12 +1,10 @@
-import React from 'react'
+import React, { HTMLAttributes } from 'react'
 import styled from 'styled-components'
 
 const Timer = styled.div`
   font-size: 60px;
   font-weight: 700;
   line-height: 1;
-  border-top: 1px solid white;
-  border-bottom: 1px solid white;
   font-variant-numeric: tabular-nums;
 `
 
@@ -15,16 +13,16 @@ function padTime(time: number) {
 }
 
 // TODO: Support only one format
-interface TimerDisplayProps {
+interface TimerDisplayProps extends HTMLAttributes<HTMLDivElement> {
   time?: { days?: number; hours: number; minutes: number; seconds: number }
   formattedTime?: string
 }
 
 function TimerDisplay(props: TimerDisplayProps) {
-  const { formattedTime, time = { days: 0, hours: 0, minutes: 0, seconds: 0 } } = props
+  const { formattedTime, time = { days: 0, hours: 0, minutes: 0, seconds: 0 }, ...otherProps } = props
 
   return (
-    <Timer>
+    <Timer {...otherProps}>
       {formattedTime ?? `${padTime(time.hours)}:${padTime(time.minutes)}:${padTime(time.seconds)}`}
     </Timer>
   )

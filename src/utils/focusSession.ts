@@ -47,11 +47,11 @@ function getStarCountByFocusSessionProgress(progress: number): number {
 }
 
 // FIXME: Early abstraction. Maybe moving it to where it is used.
-function calculateStarLeftPosition(totalWidth: number, offset: number) {
+function calculateStarLeftPosition(totalWidth: number) {
   return {
-    '1': totalWidth * ONE_STAR_CRITERIA - offset,
-    '2': totalWidth * TWO_STAR_CRITERIA - offset,
-    '3': totalWidth * THREE_STAR_CRITERIA - offset,
+    '1': totalWidth * ONE_STAR_CRITERIA,
+    '2': totalWidth * TWO_STAR_CRITERIA,
+    '3': totalWidth * THREE_STAR_CRITERIA,
   }
 }
 

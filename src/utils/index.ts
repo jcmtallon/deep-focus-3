@@ -7,3 +7,5 @@ export {
   getStarCountByFocusSessionProgress,
   getStarCountByFocusSessionTotalPoints,
 } from './focusSession'
+
+export { calculateDayPointProgress } from './points'

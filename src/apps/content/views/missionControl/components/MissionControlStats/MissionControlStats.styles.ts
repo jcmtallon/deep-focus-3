@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 
 const Wrapper = styled.div`
-  width: 260px;
+  width: 100%;
   display: flex;
   flex-direction: column;
   row-gap: 4px;
@@ -73,7 +73,32 @@ const ImpactsBar = styled(Bar)`
   background-color: #e05022;
 `
 
+const PointBar = styled.div`
+  width: 100%;
+  height: 10px;
+  background-color: #180850;
+  border-radius: 8px;
+  margin-top: 10px;
+  margin-bottom: 30px;
+`
+
+const PointBarFill = styled.div`
+  height: 10px;
+  background-color: #fff9b0;
+  border-radius: 8px;
+  position: relative;
+`
+
+const AwardLabel = styled.div`
+  position: absolute;
+  font-size: 10px;
+  text-align: center;
+  color: white;
+  white-space: nowrap;
+`
+
 export {
+  AwardLabel,
   BarContainer,
   BarWrapper,
   Date,
@@ -86,4 +111,6 @@ export {
   TasksBar,
   TimeBar,
   Wrapper,
+  PointBar,
+  PointBarFill,
 }
