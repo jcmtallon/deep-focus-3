@@ -26,6 +26,8 @@ function MissionControlFocusMode(props: MissionControlFocusModeProps) {
       }
       addImpact()
       setOpenBackdrop(true)
+
+      // FIXME: Show correct impact count after displaying blocked site backdrop
     }
   }, [])
 

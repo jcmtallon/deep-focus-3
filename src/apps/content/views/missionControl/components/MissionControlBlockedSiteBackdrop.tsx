@@ -12,7 +12,7 @@ const Backdrop = styled.div`
   left: 0;
 
   z-index: 100; // TODO: Think a proper z-index scale
-  background-color: #15043B;
+  background-color: #E8BB3F;
 
   transform: translateY(500px)
   opacity: 0;
@@ -29,7 +29,7 @@ const Container = styled.div`
 const Title = styled.div`
   font-size: 4rem;
   font-weight: 700;
-  color: #e8bb3f;
+  color: #15043b;
 `
 
 const Count = styled.div`

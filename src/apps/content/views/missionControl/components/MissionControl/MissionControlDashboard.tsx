@@ -9,6 +9,7 @@ import { MissionControlTasks } from '../MissionControlTasks'
 import { MissionControlStats } from '../MissionControlStats'
 import { MissionControlHeader } from '../MissionControlHeader'
 import * as S from './MissionControlDashboard.styles'
+import { MissionControlDayProgress } from '../MissionControlDayProgress'
 
 interface MissionControlDashboardProps {}
 
@@ -44,6 +45,8 @@ function MissionControlDashboard(props: MissionControlDashboardProps) {
           selectedDate={selectedDate}
           setSelectedDate={newDate => setSelectedDate(newDate)}
         />
+        <MissionControlDayProgress focusSessions={focusSessions} />
+
         <S.Body>
           <S.Column>
             <S.Card title="Quote">Some quote here</S.Card>

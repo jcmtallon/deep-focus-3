@@ -4,7 +4,7 @@ import { Card as BaseCard } from 'apps/content/components'
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
-  row-gap: 32px;
+  row-gap: 0px;
   padding: 32px;
   width: 100%;
   height: 100%;
