@@ -3,7 +3,8 @@ export {
   calculateFocusSessionProgress,
   calculateStarLeftPosition,
   countFocusSessionImpacts,
-  getFocusSessionTime,
+  getFocusSessionsTotalTime,
+  getFocusSessionDuration,
   getStarCountByFocusSessionProgress,
   getStarCountByFocusSessionTotalPoints,
 } from './focusSession'

@@ -1,4 +1,4 @@
-import { DateTime, Duration } from 'luxon'
+import { DateTime, Duration, DurationLike } from 'luxon'
 import { FocusSession } from 'types'
 
 function countFocusSessionImpacts(impacts: FocusSession['impacts']): number {
@@ -9,11 +9,21 @@ function countFocusSessionImpacts(impacts: FocusSession['impacts']): number {
     .reduce((partialSum, a) => partialSum + a, 0)
 }
 
-function getFocusSessionTime(focusSession: FocusSession): Duration {
+function getFocusSessionDuration(focusSession: FocusSession): Duration {
   const start = DateTime.fromMillis(focusSession.startDate)
   const end = focusSession.endDate ? DateTime.fromMillis(focusSession.endDate) : DateTime.now()
   const diff = end.diff(start)
   return diff
+}
+
+function getFocusSessionsTotalTime(focusSessions: FocusSession[]): Duration {
+  return focusSessions.reduce((acc: DurationLike, session: FocusSession) => {
+    if (!session.endDate) return Duration.fromObject({ seconds: 0 })
+    const start = DateTime.fromMillis(session.startDate)
+    const end = DateTime.fromMillis(session.endDate)
+    const diff = end.diff(start)
+    return diff.plus(acc)
+  }, Duration.fromObject({ seconds: 0 }))
 }
 
 const FOCUS_SESSION_MAX_ACCOUNTED_TIME = 72000
@@ -59,8 +69,8 @@ const POINTS_BY_MILLISECOND = 0.001
 const POINTS_BY_TASK = 100
 
 function calculateFocusSessionPoints(focusSession: FocusSession) {
-  const sessionTime = getFocusSessionTime(focusSession)
-  const pointsByTime = Math.floor(POINTS_BY_MILLISECOND * sessionTime.toMillis())
+  const sessionDuration = getFocusSessionDuration(focusSession)
+  const pointsByTime = Math.floor(POINTS_BY_MILLISECOND * sessionDuration.toMillis())
 
   const impactCount = countFocusSessionImpacts(focusSession.impacts)
   const pointsByImpacts = -impactCount * 50 * impactCount
@@ -96,7 +106,8 @@ export {
   calculateFocusSessionProgress,
   calculateStarLeftPosition,
   countFocusSessionImpacts,
-  getFocusSessionTime,
+  getFocusSessionsTotalTime,
+  getFocusSessionDuration,
   getStarCountByFocusSessionProgress,
   getStarCountByFocusSessionTotalPoints,
 }

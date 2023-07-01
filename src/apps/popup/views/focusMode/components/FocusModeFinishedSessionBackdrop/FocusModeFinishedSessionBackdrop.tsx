@@ -4,7 +4,7 @@ import styled from 'styled-components'
 import {
   calculateFocusSessionPoints,
   countFocusSessionImpacts,
-  getFocusSessionTime,
+  getFocusSessionDuration,
   getStarCountByFocusSessionTotalPoints,
 } from 'utils'
 import { IconStar } from 'components'
@@ -128,14 +128,14 @@ function FocusModeFinishedSessionBackdrop(props: FocusModeFinishedSessionBackdro
 
   if (!shouldRenderChild || !focusSession) return <></>
 
-  const sessionTime = getFocusSessionTime(focusSession)
+  const sessionDuration = getFocusSessionDuration(focusSession)
   const points = calculateFocusSessionPoints(focusSession)
   const starCount = getStarCountByFocusSessionTotalPoints(points.totalPoints)
 
   return (
     <Backdrop style={open ? mountedStyle : unmountedStyle}>
       <Container>
-        <Timer>{sessionTime.toFormat('hh:mm:ss')}</Timer>
+        <Timer>{sessionDuration.toFormat('hh:mm:ss')}</Timer>
         <TimePoints>
           <span>Time</span>
           <span>{`${points.pointsByTime}pts`}</span>

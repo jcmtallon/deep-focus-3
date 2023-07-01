@@ -1,15 +1,13 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { PageLayout, SideNav } from 'apps/content/components'
-import { getFocusSessionsByDay, listBlockedSites } from 'services/store'
-import { BlockedSite, FocusSession } from 'types'
+import { getFocusSessionsByDay } from 'services/store'
+import { FocusSession } from 'types'
 import { DateTime } from 'luxon'
-import { MissionControlSessions } from '../MissionControlSessions'
-import { MissionControlBlockedSites } from '../MissionControlBlockedSites'
-import { MissionControlTasks } from '../MissionControlTasks'
-import { MissionControlStats } from '../MissionControlStats'
+import { getFocusSessionsTotalTime } from 'utils'
 import { MissionControlHeader } from '../MissionControlHeader'
 import * as S from './MissionControlDashboard.styles'
 import { MissionControlDayProgress } from '../MissionControlDayProgress'
+import { MissionControlSessions } from '../MissionControlSessions'
 
 interface MissionControlDashboardProps {}
 
@@ -18,25 +16,27 @@ function MissionControlDashboard(props: MissionControlDashboardProps) {
 
   const [focusSessions, setFocusSession] = useState<FocusSession[]>([])
   const [selectedDate, setSelectedDate] = useState<DateTime>(DateTime.now())
-  const [blockedSites, setBlockedSites] = useState<BlockedSite[]>([])
+  // const [blockedSites, setBlockedSites] = useState<BlockedSite[]>([])
 
   const getFocusSessions = useCallback(async () => {
     const focusSessions = await getFocusSessionsByDay(selectedDate)
     setFocusSession(focusSessions)
   }, [selectedDate])
 
-  const getBlockedSites = async () => {
-    const blockedSites = await listBlockedSites()
-    setBlockedSites(blockedSites)
-  }
+  // const getBlockedSites = async () => {
+  //   const blockedSites = await listBlockedSites()
+  //   setBlockedSites(blockedSites)
+  // }
 
   useEffect(() => {
     getFocusSessions()
   }, [getFocusSessions])
 
-  useEffect(() => {
-    getBlockedSites()
-  }, [])
+  // useEffect(() => {
+  //   getBlockedSites()
+  // }, [])
+
+  const totalTime = useMemo(() => getFocusSessionsTotalTime(focusSessions), [focusSessions])
 
   return (
     <PageLayout sideNav={<SideNav activeElement="missionControl" />}>
@@ -49,12 +49,20 @@ function MissionControlDashboard(props: MissionControlDashboardProps) {
 
         <S.Body>
           <S.Column>
+            <S.TimeDetailsContainer>
+              <S.Date>{selectedDate.toFormat('LLLL dd')}</S.Date>
+              <S.TimeDisplay formattedTime={totalTime.toFormat('hh:mm:ss')} />
+            </S.TimeDetailsContainer>
+            <MissionControlSessions focusSessions={focusSessions} />
+          </S.Column>
+          <S.Column>
+            <S.Quote>&ldquo;Focus on just one thing at a time&ldquo;</S.Quote>
+          </S.Column>
+          {/* <S.Column>
             <S.Card title="Quote">Some quote here</S.Card>
-
             <S.Card>
               <MissionControlStats focusSessions={focusSessions} />
             </S.Card>
-
             <S.Card title="Sessions">
               <MissionControlSessions focusSessions={focusSessions} />
             </S.Card>
@@ -69,7 +77,7 @@ function MissionControlDashboard(props: MissionControlDashboardProps) {
           </S.Column>
           <S.Column>
             <S.Card title="Trip Journal">Under construction</S.Card>
-          </S.Column>
+          </S.Column> */}
         </S.Body>
       </S.Wrapper>
     </PageLayout>

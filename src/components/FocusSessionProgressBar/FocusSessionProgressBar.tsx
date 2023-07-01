@@ -31,7 +31,7 @@ function FocusSessionProgressBar(props: FocusSessionProgressBarProps) {
   const starCount = getStarCountByFocusSessionProgress(progress)
   const left = calculateStarLeftPosition(width)
   const startOffset = height * 1.5
-  const impactArray = Array.from(Array(impactCount).keys()).filter(f => f !== 0)
+  const impactArray = Array.from(Array(impactCount).keys())
 
   return (
     <>

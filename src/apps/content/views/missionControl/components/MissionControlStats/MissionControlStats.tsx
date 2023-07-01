@@ -5,6 +5,8 @@ import { TimerDisplay } from 'components'
 import { calculateDayProgress, countFocusSessionImpacts } from 'utils'
 import * as S from './MissionControlStats.styles'
 
+// FIXME: Delete this file
+
 interface MissionControlStatsProps {
   focusSessions: FocusSession[]
 }

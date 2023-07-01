@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { Card as BaseCard } from 'apps/content/components'
+import { TimerDisplay } from 'components'
 
 const Wrapper = styled.div`
   display: flex;
@@ -24,10 +24,31 @@ const Column = styled.div`
   flex-direction: column;
   row-gap: 32px;
   flex-grow: 1;
+  align-items: center;
+  justify-content: center;
 `
 
-const Card = styled(BaseCard)`
-  width: 100%;
+const TimeDetailsContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: end;
+  padding-bottom: 40px;
 `
 
-export { Wrapper, Body, Column, Card }
+const Date = styled.div`
+  font-size: 20px;
+  font-weight: 700;
+  padding-bottom: 6px;
+`
+
+const TimeDisplay = styled(TimerDisplay)`
+  font-size: 100px;
+`
+
+const Quote = styled.div`
+  font-size: 38px;
+  font-style: italic;
+  color: #b8afcc;
+`
+
+export { Wrapper, Body, Column, Date, TimeDisplay, TimeDetailsContainer, Quote }
