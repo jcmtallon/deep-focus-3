@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react'
+import { useDelayUnmount } from 'hooks'
+import React, { useEffect } from 'react'
 import styled from 'styled-components'
 
 const Backdrop = styled.div`
@@ -38,23 +39,6 @@ const Count = styled.div`
   font-weight: 700;
   color: #e05022;
 `
-
-function useDelayUnmount(isMounted: boolean, delayTime: number) {
-  const [shouldRender, setShouldRender] = useState(false)
-
-  useEffect(() => {
-    let timeoutId: NodeJS.Timeout
-
-    if (isMounted && !shouldRender) {
-      setShouldRender(true)
-    } else if (!isMounted && shouldRender) {
-      timeoutId = setTimeout(() => setShouldRender(false), delayTime)
-    }
-    return () => clearTimeout(timeoutId)
-  }, [isMounted, delayTime, shouldRender])
-
-  return shouldRender
-}
 
 interface MissionControlBlockedSiteBackdropProps {
   open: boolean

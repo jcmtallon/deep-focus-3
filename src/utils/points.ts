@@ -1,3 +1,5 @@
+import { FocusSession, Astro } from 'types'
+
 const MAX_POINTS = 36000
 
 const WHITE_DWARF = 10800
@@ -30,4 +32,52 @@ function calculateAchievedAstro(points: number) {
   }
 }
 
-export { calculateDayProgress, calculateAchievedAstro, calculateAstroRightPosition }
+function getAstroByPoints(points: number): Astro | null {
+  if (points >= BLACK_HOLE) return 'BLACK_HOLE'
+  if (points >= NEUTRON_STAR) return 'NEUTRON_STAR'
+  if (points >= SUPER_NOVA) return 'SUPER_NOVA'
+  if (points >= RED_GIANT) return 'RED_GIANT'
+  if (points >= WHITE_DWARF) return 'WHITE_DWARF'
+  return null
+}
+
+function getAstroLabel(astro: Astro): string {
+  switch (astro) {
+    case 'WHITE_DWARF':
+      return 'White Dwarf'
+    case 'RED_GIANT':
+      return 'Red Giant'
+    case 'SUPER_NOVA':
+      return 'Super Nova'
+    case 'NEUTRON_STAR':
+      return 'Neutron Star'
+    case 'BLACK_HOLE':
+      return 'Black Hole'
+    default:
+      return ''
+  }
+}
+
+function checkNewlyAchievedAstro(points: number, newPoints: number): Astro | null {
+  const astro = getAstroByPoints(points)
+  const newAstro = getAstroByPoints(newPoints)
+
+  if (newAstro === null) return null
+  if (astro === null) return newAstro
+  return newAstro !== astro ? newAstro : null
+}
+
+function getFocusSessionsTotalPoints(focusSessions: FocusSession[]): number {
+  return focusSessions.reduce((acc, focusSession) => {
+    return acc + (focusSession?.points || 0)
+  }, 0)
+}
+
+export {
+  calculateAchievedAstro,
+  calculateAstroRightPosition,
+  calculateDayProgress,
+  checkNewlyAchievedAstro,
+  getAstroLabel,
+  getFocusSessionsTotalPoints,
+}

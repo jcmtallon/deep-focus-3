@@ -11,7 +11,6 @@ function MissionControlSessionsTimeline(props: MissionControlSessionsTimelinePro
   const { focusSessions } = props
 
   // FIXME: No sessions message
-  // FIXME: Gradient. Not showing bar.
 
   return (
     <S.Wrapper>

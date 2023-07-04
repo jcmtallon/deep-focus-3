@@ -1,15 +1,16 @@
 import { FooterNav, Header, PageLayout } from 'apps/popup/components'
 import React, { useEffect, useState } from 'react'
 import { sendMessage } from 'services/actions'
-import { FocusSession, Task } from 'types'
+import { Astro, FocusSession, Task } from 'types'
 import { getActiveFocusSession, getFocusSessionsByDay } from 'services/focusSessions'
 import { DateTime } from 'luxon'
-import { calculateFocusSessionPoints } from 'utils'
+import { calculateFocusSessionPoints, checkNewlyAchievedAstro, getFocusSessionsTotalPoints } from 'utils'
 import { FocusModeLayout } from './FocusModeLayout'
 import { FocusModesStats } from './FocusModeStats/FocusModeStats'
 import { FocusModeActions } from './FocusModeActions/FocusModeActions'
 import { FocusModeTasks } from './FocusModeTasks/FocusModeTasks'
 import { FocusModeFinishedSessionBackdrop } from './FocusModeFinishedSessionBackdrop'
+import { FocusModeAstroAchievedBackdrop } from './FocusModeAstroAchievedBackdrop'
 
 // TODO: Try to use FocusSession instead of Session or FocusMode
 
@@ -19,6 +20,7 @@ function FocusMode() {
 
   const [lastFocusSession, setLastFocusSession] = useState<FocusSession | null>(null)
   const [openFocusSessionBackdrop, setOpenFocusSessionBackdrop] = useState(false)
+  const [achievedAstro, setAchievedAstro] = useState<Astro | null>(null)
 
   const isFocusSessionOn = Boolean(activeFocusSession)
   const isFirstLoadCompleted = activeFocusSession !== undefined
@@ -72,6 +74,15 @@ function FocusMode() {
     setActiveFocusSession(prev => (prev ? { ...prev, tasks } : prev))
   }
 
+  const handleOnSessionFinishedBackdropClose = () => {
+    setOpenFocusSessionBackdrop(false)
+    // FIXME: Possibly checking this should be responsibility of the background ??
+    // So this same logic can be accessible by the Mission Control and other places.
+    const totalPoints = getFocusSessionsTotalPoints(completedSessions)
+    const newAstro = checkNewlyAchievedAstro(totalPoints - (lastFocusSession?.points || 0), totalPoints)
+    if (newAstro) setAchievedAstro(newAstro)
+  }
+
   return (
     <>
       <PageLayout
@@ -108,8 +119,9 @@ function FocusMode() {
       <FocusModeFinishedSessionBackdrop
         focusSession={lastFocusSession}
         open={openFocusSessionBackdrop}
-        setOpen={setOpenFocusSessionBackdrop}
+        onClose={handleOnSessionFinishedBackdropClose}
       />
+      <FocusModeAstroAchievedBackdrop astro={achievedAstro} onClose={() => setAchievedAstro(null)} />
     </>
   )
 }

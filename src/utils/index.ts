@@ -9,4 +9,11 @@ export {
   getStarCountByFocusSessionTotalPoints,
 } from './focusSession'
 
-export { calculateDayProgress, calculateAstroRightPosition, calculateAchievedAstro } from './points'
+export {
+  calculateAchievedAstro,
+  calculateAstroRightPosition,
+  calculateDayProgress,
+  checkNewlyAchievedAstro,
+  getAstroLabel,
+  getFocusSessionsTotalPoints,
+} from './points'

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { FocusSession } from 'types'
 import styled from 'styled-components'
 import {
@@ -8,6 +8,7 @@ import {
   getStarCountByFocusSessionTotalPoints,
 } from 'utils'
 import { IconStar } from 'components'
+import { useDelayUnmount } from 'hooks'
 
 const Backdrop = styled.div`
   position: fixed;
@@ -92,39 +93,20 @@ const TotalPoints = styled.div`
 interface FocusModeFinishedSessionBackdropProps {
   focusSession: FocusSession | null
   open: boolean
-  setOpen: (open: boolean) => void
-}
-
-// TODO: Same logic as in MissionControlBlockedSiteBackdrop.tsx
-// Consider abstracting a common hook.
-function useDelayUnmount(isMounted: boolean, delayTime: number) {
-  const [shouldRender, setShouldRender] = useState(false)
-
-  useEffect(() => {
-    let timeoutId: NodeJS.Timeout
-
-    if (isMounted && !shouldRender) {
-      setShouldRender(true)
-    } else if (!isMounted && shouldRender) {
-      timeoutId = setTimeout(() => setShouldRender(false), delayTime)
-    }
-    return () => clearTimeout(timeoutId)
-  }, [isMounted, delayTime, shouldRender])
-
-  return shouldRender
+  onClose: () => void
 }
 
 function FocusModeFinishedSessionBackdrop(props: FocusModeFinishedSessionBackdropProps) {
-  const { focusSession, open, setOpen } = props
+  const { focusSession, open, onClose } = props
   const shouldRenderChild = useDelayUnmount(open, 300)
   const mountedStyle = { animation: 'slideInAnimation 500ms cubic-bezier(0.33, 1, 0.68, 1)' }
   const unmountedStyle = { animation: 'slideOutAnimation 520ms cubic-bezier(0.32, 0, 0.67, 0)' }
 
   useEffect(() => {
     let timeoutId: NodeJS.Timeout
-    if (open) timeoutId = setTimeout(() => setOpen(false), 4000)
+    if (open) timeoutId = setTimeout(() => onClose(), 4000)
     return () => clearTimeout(timeoutId)
-  }, [open, setOpen])
+  }, [open, onClose])
 
   if (!shouldRenderChild || !focusSession) return <></>
 
