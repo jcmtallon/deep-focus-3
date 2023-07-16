@@ -89,7 +89,11 @@ function FocusModesStats(props: FocusModeStatsProps) {
         <Quests>{`${activeFocusSession?.tasks.filter(t => t.status === 'COMPLETED').length} quests`}</Quests>
         <Impacts>{`${impacts} impacts`}</Impacts>
       </StatsWrapper>
-      <FocusSessionProgressBar startDate={activeFocusSession.startDate} impactCount={impacts} />
+      <FocusSessionProgressBar
+        focusSession={activeFocusSession}
+        startDate={activeFocusSession.startDate}
+        impactCount={impacts}
+      />
     </Wrapper>
   )
 }

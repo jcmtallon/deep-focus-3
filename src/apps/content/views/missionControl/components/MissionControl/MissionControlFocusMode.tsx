@@ -41,6 +41,7 @@ function MissionControlFocusMode(props: MissionControlFocusModeProps) {
           <S.Quote>&ldquo;Focus on one thing at a time&ldquo;</S.Quote>
           <S.TimeDisplay startTimestamp={focusSession.startDate} />
           <S.ProgressBar
+            focusSession={focusSession}
             startDate={focusSession.startDate}
             width={540}
             height={14}

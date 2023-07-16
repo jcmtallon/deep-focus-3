@@ -1,6 +1,5 @@
 export {
   calculateFocusSessionPoints,
-  calculateFocusSessionProgress,
   calculateStarLeftPosition,
   countFocusSessionImpacts,
   getFocusSessionsTotalTime,
@@ -8,6 +7,8 @@ export {
   getStarCountByFocusSessionProgress,
   getStarCountByFocusSessionTotalPoints,
 } from './focusSession'
+
+export { calculateFocusSessionProgressBreakdown } from './focusSessionProgress'
 
 export {
   calculateAchievedAstro,

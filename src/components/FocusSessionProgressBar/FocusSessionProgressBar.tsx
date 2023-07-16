@@ -1,9 +1,11 @@
 import React, { useState, HTMLAttributes, useEffect } from 'react'
 import {
-  calculateFocusSessionProgress,
+  calculateFocusSessionPoints,
+  calculateFocusSessionProgressBreakdown,
   calculateStarLeftPosition,
-  getStarCountByFocusSessionProgress,
+  getStarCountByFocusSessionTotalPoints,
 } from 'utils'
+import { FocusSession } from 'types'
 import * as S from './FocusSessionProgressBar.styles'
 
 interface FocusSessionProgressBarProps extends HTMLAttributes<HTMLDivElement> {
@@ -11,24 +13,32 @@ interface FocusSessionProgressBarProps extends HTMLAttributes<HTMLDivElement> {
   width?: number
   height?: number
   impactCount?: number
+  focusSession: FocusSession
 }
 
 function FocusSessionProgressBar(props: FocusSessionProgressBarProps) {
-  const { startDate, width = 260, height = 10, impactCount, ...otherProps } = props
+  const { startDate, width = 260, height = 10, impactCount, focusSession, ...otherProps } = props
 
-  const [progress, setProgress] = useState(0)
+  const [barProgress, setBarProgress] = useState({ time: 0, impact: 0 })
+  const [totalPoints, setTotalPoints] = useState(0)
 
   useEffect(() => {
     // So the bar is painted right away when the component is mounted.
-    setProgress(calculateFocusSessionProgress(startDate))
+    const points = calculateFocusSessionPoints(focusSession)
+    const progress = calculateFocusSessionProgressBreakdown(points)
+    setBarProgress(progress)
+    setTotalPoints(points.totalPoints)
     const interval = setInterval(() => {
-      setProgress(calculateFocusSessionProgress(startDate))
+      const points = calculateFocusSessionPoints(focusSession)
+      const progress = calculateFocusSessionProgressBreakdown(points)
+      setBarProgress(progress)
+      setTotalPoints(points.totalPoints)
     }, 1000)
 
     return () => clearInterval(interval)
-  }, [startDate])
+  }, [startDate, focusSession])
 
-  const starCount = getStarCountByFocusSessionProgress(progress)
+  const starCount = getStarCountByFocusSessionTotalPoints(totalPoints)
   const left = calculateStarLeftPosition(width)
   const startOffset = height * 1.5
   const impactArray = Array.from(Array(impactCount).keys())
@@ -36,7 +46,12 @@ function FocusSessionProgressBar(props: FocusSessionProgressBarProps) {
   return (
     <>
       <S.ProgressBar {...otherProps}>
-        <S.ProgressBarFill style={{ width: `${progress}%`, height }}>
+        <S.ProgressBarFill
+          style={{
+            width: `${barProgress.time}%`,
+            height,
+            borderRadius: barProgress.impact > 0 ? '0px' : '0px 50px 50px 0px',
+          }}>
           <S.Star
             style={{
               left: left[1] - height * 2,
@@ -65,6 +80,7 @@ function FocusSessionProgressBar(props: FocusSessionProgressBarProps) {
             }}
           />
         </S.ProgressBarFill>
+        <S.ProgressBarFill style={{ backgroundColor: 'red', width: `${barProgress.impact}%`, height }} />
         <S.ImpactContainer
           style={{
             top: startOffset,

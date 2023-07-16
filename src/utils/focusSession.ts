@@ -1,5 +1,6 @@
 import { DateTime, Duration, DurationLike } from 'luxon'
 import { FocusSession } from 'types'
+import { FocusSessionPointBreakdown, IMPACT_POINTS, MAX_FOCUS_SESSION_POINTS } from './focusSession.types'
 
 function countFocusSessionImpacts(impacts: FocusSession['impacts']): number {
   if (!impacts) return 0
@@ -26,24 +27,11 @@ function getFocusSessionsTotalTime(focusSessions: FocusSession[]): Duration {
   }, Duration.fromObject({ seconds: 0 }))
 }
 
-const FOCUS_SESSION_MAX_ACCOUNTED_TIME = 72000
 const MAX_PROGRESS = 100
 
 const ONE_STAR_CRITERIA = 1 / 4
 const TWO_STAR_CRITERIA = 5 / 8
 const THREE_STAR_CRITERIA = 1 / 1
-
-/**
- * Progress displayed during a focus session is based uniquely in the elapsed time.
- * The final point result obtained after a focus session is finished also keeps in
- * account the number of impacts received and the number of tasks completed.
- */
-function calculateFocusSessionProgress(startDate: number): number {
-  const now = DateTime.now()
-  const start = DateTime.fromMillis(startDate)
-  const diff = now.diff(start).toMillis()
-  return Math.min(diff / FOCUS_SESSION_MAX_ACCOUNTED_TIME, 100)
-}
 
 /**
  * Number of award stars to receive for a given progress amount.
@@ -66,29 +54,21 @@ function calculateStarLeftPosition(totalWidth: number) {
 }
 
 const POINTS_BY_MILLISECOND = 0.001
-const POINTS_BY_TASK = 100
 
-function calculateFocusSessionPoints(focusSession: FocusSession) {
+function calculateFocusSessionPoints(focusSession: FocusSession): FocusSessionPointBreakdown {
   const sessionDuration = getFocusSessionDuration(focusSession)
   const pointsByTime = Math.floor(POINTS_BY_MILLISECOND * sessionDuration.toMillis())
 
   const impactCount = countFocusSessionImpacts(focusSession.impacts)
-  const pointsByImpacts = -impactCount * 50 * impactCount
-
-  const taskCount = focusSession.tasks.filter(t => t.status === 'COMPLETED').length
-  const pointsByTasks = taskCount * POINTS_BY_TASK
-
-  const totalPoints = pointsByTime + pointsByImpacts + pointsByTasks
+  const pointsByImpacts = -impactCount * IMPACT_POINTS * impactCount
+  const totalPoints = pointsByTime + pointsByImpacts
 
   return {
     pointsByTime,
     pointsByImpacts,
-    pointsByTasks,
     totalPoints,
   }
 }
-
-const MAX_FOCUS_SESSION_POINTS = FOCUS_SESSION_MAX_ACCOUNTED_TIME * 0.1
 
 const ONE_STAR_POINTS = MAX_FOCUS_SESSION_POINTS * ONE_STAR_CRITERIA
 const TWO_STAR_POINTS = MAX_FOCUS_SESSION_POINTS * TWO_STAR_CRITERIA
@@ -103,7 +83,6 @@ function getStarCountByFocusSessionTotalPoints(points: number): number {
 
 export {
   calculateFocusSessionPoints,
-  calculateFocusSessionProgress,
   calculateStarLeftPosition,
   countFocusSessionImpacts,
   getFocusSessionsTotalTime,

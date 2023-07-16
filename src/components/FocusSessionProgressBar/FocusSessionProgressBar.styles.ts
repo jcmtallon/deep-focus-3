@@ -7,6 +7,9 @@ const ProgressBar = styled.div`
   border-radius: 50px;
   margin-top: 10px;
   position: relative;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
 `
 
 const ProgressBarFill = styled.div`
