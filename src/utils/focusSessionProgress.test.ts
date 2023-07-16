@@ -1,110 +1,61 @@
-import { calculateFocusSessionProgressBreakdown } from './focusSessionProgress'
+import { getFocusSessionProgressWithPenalty, getFocusSessionProgress } from './focusSessionProgress'
 import { MAX_FOCUS_SESSION_POINTS, IMPACT_POINTS } from './focusSession.types'
 
-const mockPoints = {
-  pointsByImpacts: 0,
-  pointsByTime: 0,
-  totalPoints: 0, // Not used in this method
-}
-
-describe('calculateFocusSessionProgressBreakdown', () => {
-  test('all points, no impacts', () => {
-    const result = calculateFocusSessionProgressBreakdown({
-      ...mockPoints,
-      pointsByImpacts: 0,
-      pointsByTime: MAX_FOCUS_SESSION_POINTS,
-    })
-
-    expect(result).toStrictEqual({ impact: 0, time: 100 })
+describe('getFocusSessionProgressWithPenalty', () => {
+  test('0 progress when 0 points and no penalty', () => {
+    const result = getFocusSessionProgressWithPenalty(0, 0)
+    expect(result).toBe(0)
   })
 
-  test('half the points, no impacts', () => {
-    const result = calculateFocusSessionProgressBreakdown({
-      ...mockPoints,
-      pointsByImpacts: 0,
-      pointsByTime: MAX_FOCUS_SESSION_POINTS / 2,
-    })
-
-    expect(result).toStrictEqual({ impact: 0, time: 50 })
+  test('100 progress when all points and no penalty', () => {
+    const result = getFocusSessionProgressWithPenalty(MAX_FOCUS_SESSION_POINTS, 0)
+    expect(result).toBe(100)
   })
 
-  test('no points, no impacts', () => {
-    const result = calculateFocusSessionProgressBreakdown({
-      ...mockPoints,
-      pointsByImpacts: 0,
-      pointsByTime: 0,
-    })
-
-    expect(result).toStrictEqual({ impact: 0, time: 0 })
+  test('50 progress when half points and no penalty', () => {
+    const result = getFocusSessionProgressWithPenalty(MAX_FOCUS_SESSION_POINTS / 2, 0)
+    expect(result).toBe(50)
   })
 
-  test('no points, all impacts', () => {
-    const result = calculateFocusSessionProgressBreakdown({
-      ...mockPoints,
-      pointsByImpacts: -MAX_FOCUS_SESSION_POINTS,
-      pointsByTime: 0,
-    })
-
-    expect(result).toStrictEqual({ impact: 0, time: 0 })
+  test('0 progress when no points and some penalty', () => {
+    const result = getFocusSessionProgressWithPenalty(0, IMPACT_POINTS * 3)
+    expect(result).toBe(0)
   })
 
-  test('no points, half the impacts', () => {
-    const result = calculateFocusSessionProgressBreakdown({
-      ...mockPoints,
-      pointsByImpacts: -MAX_FOCUS_SESSION_POINTS / 2,
-      pointsByTime: 0,
-    })
-
-    expect(result).toStrictEqual({ impact: 0, time: 0 })
+  test('positive progress when less penalty points than points', () => {
+    const result = getFocusSessionProgressWithPenalty(IMPACT_POINTS * 3, IMPACT_POINTS * 2)
+    expect(result).toBe(1)
   })
 
-  test('impact points are deducted from time points', () => {
-    const result = calculateFocusSessionProgressBreakdown({
-      ...mockPoints,
-      pointsByImpacts: -IMPACT_POINTS,
-      pointsByTime: MAX_FOCUS_SESSION_POINTS / 4,
-    })
+  test('0 progress when less points than penalty points', () => {
+    const result = getFocusSessionProgressWithPenalty(IMPACT_POINTS * 1, IMPACT_POINTS * 2)
+    expect(result).toBe(0)
+  })
+})
 
-    expect(result).toStrictEqual({ impact: 1, time: 24 })
+describe('getFocusSessionProgress', () => {
+  test('0 progress when 0 points', () => {
+    const result = getFocusSessionProgress(0)
+    expect(result).toBe(0)
   })
 
-  test('impact progress cut to 0 to fit 100 total progress', () => {
-    const result = calculateFocusSessionProgressBreakdown({
-      ...mockPoints,
-      pointsByImpacts: -IMPACT_POINTS * 5 * 5,
-      pointsByTime: (MAX_FOCUS_SESSION_POINTS / 4) * 5,
-    })
-
-    expect(result).toStrictEqual({ impact: 0, time: 100 })
+  test('100 progress when all points', () => {
+    const result = getFocusSessionProgress(MAX_FOCUS_SESSION_POINTS)
+    expect(result).toBe(100)
   })
 
-  test('impact progress cut to fit 100 total progress', () => {
-    const result = calculateFocusSessionProgressBreakdown({
-      ...mockPoints,
-      pointsByImpacts: -IMPACT_POINTS * 6 * 6,
-      pointsByTime: (MAX_FOCUS_SESSION_POINTS / 4) * 5,
-    })
-
-    expect(result).toStrictEqual({ impact: 11, time: 89 })
+  test('500 progress when all points', () => {
+    const result = getFocusSessionProgress(MAX_FOCUS_SESSION_POINTS / 2)
+    expect(result).toBe(50)
   })
 
-  test('sum of impact progress and time progress cannot be higher than time progress without penalties', () => {
-    const result = calculateFocusSessionProgressBreakdown({
-      ...mockPoints,
-      pointsByImpacts: -IMPACT_POINTS * 6 * 6,
-      pointsByTime: MAX_FOCUS_SESSION_POINTS / 4,
-    })
-
-    expect(result).toStrictEqual({ impact: 25, time: 0 })
+  test('cannot exceed 100 progress', () => {
+    const result = getFocusSessionProgress(MAX_FOCUS_SESSION_POINTS * 2)
+    expect(result).toBe(100)
   })
 
-  test('progress by impacts can never be bigger than progress by time', () => {
-    const result = calculateFocusSessionProgressBreakdown({
-      ...mockPoints,
-      pointsByImpacts: -IMPACT_POINTS * 2 * 2,
-      pointsByTime: IMPACT_POINTS,
-    })
-
-    expect(result).toStrictEqual({ impact: 1, time: 0 })
+  test('cannot be less than 0 progress', () => {
+    const result = getFocusSessionProgress(-MAX_FOCUS_SESSION_POINTS)
+    expect(result).toBe(0)
   })
 })

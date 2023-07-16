@@ -16,12 +16,19 @@ const ProgressBarFill = styled.div`
   height: 100%;
   background-color: #fff9b0;
   border-radius: 50px;
-  position: relative;
+  position: absolute;
 `
 
 const Star = styled(IconStar)`
   fill: #2d1b6c;
   position: absolute;
+`
+
+const ThresholdBar = styled.div`
+  position: absolute;
+  width: 2px;
+  height: 8px;
+  background-color: #2d1b6c;
 `
 
 const ImpactContainer = styled.div`
@@ -35,4 +42,4 @@ const Impact = styled.div`
   border-radius: 50%;
 `
 
-export { ProgressBar, ProgressBarFill, Star, ImpactContainer, Impact }
+export { ProgressBar, ProgressBarFill, Star, ImpactContainer, Impact, ThresholdBar }

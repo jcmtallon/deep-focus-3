@@ -8,7 +8,7 @@ export {
   getStarCountByFocusSessionTotalPoints,
 } from './focusSession'
 
-export { calculateFocusSessionProgressBreakdown } from './focusSessionProgress'
+export { getFocusSessionProgressWithPenalty, getFocusSessionProgress } from './focusSessionProgress'
 
 export {
   calculateAchievedAstro,

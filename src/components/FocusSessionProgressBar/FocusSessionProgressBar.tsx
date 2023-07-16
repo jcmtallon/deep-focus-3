@@ -1,7 +1,8 @@
-import React, { useState, HTMLAttributes, useEffect } from 'react'
+import React, { useState, HTMLAttributes, useEffect, useCallback } from 'react'
 import {
   calculateFocusSessionPoints,
-  calculateFocusSessionProgressBreakdown,
+  getFocusSessionProgress,
+  getFocusSessionProgressWithPenalty,
   calculateStarLeftPosition,
   getStarCountByFocusSessionTotalPoints,
 } from 'utils'
@@ -19,21 +20,21 @@ interface FocusSessionProgressBarProps extends HTMLAttributes<HTMLDivElement> {
 function FocusSessionProgressBar(props: FocusSessionProgressBarProps) {
   const { startDate, width = 260, height = 10, impactCount, focusSession, ...otherProps } = props
 
-  const [barProgress, setBarProgress] = useState({ time: 0, impact: 0 })
+  const [barProgress, setBarProgress] = useState({ withPenalty: 0, withoutPenalty: 0 })
   const [totalPoints, setTotalPoints] = useState(0)
 
   useEffect(() => {
+    const updateBar = () => {
+      const { pointsByTime, pointsByImpacts } = calculateFocusSessionPoints(focusSession)
+      const progress = getFocusSessionProgress(pointsByTime)
+      const progressWithPenalty = getFocusSessionProgressWithPenalty(pointsByTime, -pointsByImpacts)
+      setBarProgress({ withPenalty: progressWithPenalty, withoutPenalty: progress })
+      setTotalPoints(pointsByTime + pointsByImpacts)
+    }
+
     // So the bar is painted right away when the component is mounted.
-    const points = calculateFocusSessionPoints(focusSession)
-    const progress = calculateFocusSessionProgressBreakdown(points)
-    setBarProgress(progress)
-    setTotalPoints(points.totalPoints)
-    const interval = setInterval(() => {
-      const points = calculateFocusSessionPoints(focusSession)
-      const progress = calculateFocusSessionProgressBreakdown(points)
-      setBarProgress(progress)
-      setTotalPoints(points.totalPoints)
-    }, 1000)
+    updateBar()
+    const interval = setInterval(() => updateBar(), 1000)
 
     return () => clearInterval(interval)
   }, [startDate, focusSession])
@@ -45,42 +46,11 @@ function FocusSessionProgressBar(props: FocusSessionProgressBarProps) {
 
   return (
     <>
-      <S.ProgressBar {...otherProps}>
+      <S.ProgressBar style={{ height }} {...otherProps}>
         <S.ProgressBarFill
-          style={{
-            width: `${barProgress.time}%`,
-            height,
-            borderRadius: barProgress.impact > 0 ? '0px' : '0px 50px 50px 0px',
-          }}>
-          <S.Star
-            style={{
-              left: left[1] - height * 2,
-              top: startOffset,
-              width: height * 2,
-              height: height * 2,
-              fill: starCount > 0 ? '#E8BB3F' : '#2d1b6c',
-            }}
-          />
-          <S.Star
-            style={{
-              left: left[2] - height * 2.5,
-              top: startOffset,
-              width: height * 2.5,
-              height: height * 2.5,
-              fill: starCount > 1 ? '#E8BB3F' : '#2d1b6c',
-            }}
-          />
-          <S.Star
-            style={{
-              left: left[3] - height * 3,
-              top: startOffset,
-              width: height * 3,
-              height: height * 3,
-              fill: starCount > 2 ? '#E8BB3F' : '#2d1b6c',
-            }}
-          />
-        </S.ProgressBarFill>
-        <S.ProgressBarFill style={{ backgroundColor: 'red', width: `${barProgress.impact}%`, height }} />
+          style={{ backgroundColor: 'red', width: `${barProgress.withoutPenalty}%`, height }}
+        />
+        <S.ProgressBarFill style={{ width: `${barProgress.withPenalty}%`, height }} />
         <S.ImpactContainer
           style={{
             top: startOffset,
@@ -92,6 +62,36 @@ function FocusSessionProgressBar(props: FocusSessionProgressBarProps) {
             <S.Impact style={{ width: height * 0.5, height: height * 0.5 }} />
           ))}
         </S.ImpactContainer>
+        <S.Star
+          style={{
+            left: left[1] - height * 2,
+            top: startOffset,
+            width: height * 2,
+            height: height * 2,
+            fill: starCount > 0 ? '#E8BB3F' : '#2d1b6c',
+          }}
+        />
+        <S.ThresholdBar style={{ left: left[1], top: startOffset }} />
+        <S.Star
+          style={{
+            left: left[2] - height * 2.5,
+            top: startOffset,
+            width: height * 2.5,
+            height: height * 2.5,
+            fill: starCount > 1 ? '#E8BB3F' : '#2d1b6c',
+          }}
+        />
+        <S.ThresholdBar style={{ left: left[2], top: startOffset }} />
+        <S.Star
+          style={{
+            left: left[3] - height * 3,
+            top: startOffset,
+            width: height * 3,
+            height: height * 3,
+            fill: starCount > 2 ? '#E8BB3F' : '#2d1b6c',
+          }}
+        />
+        <S.ThresholdBar style={{ left: left[3], top: startOffset }} />
       </S.ProgressBar>
     </>
   )
