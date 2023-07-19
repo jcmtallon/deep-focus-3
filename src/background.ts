@@ -8,10 +8,13 @@ import {
   addImpactToActiveFocusSessions,
   addTaskToActiveFocusSessions,
   finishActiveFocusSession,
+  getFocusSessionsByDay,
   updateActiveFocusSessionTasks,
 } from 'services/focusSessions'
 import { indexedDb } from 'services/indexedDb'
+import { DateTime } from 'luxon'
 import { FocusSession, Task } from 'types'
+import { checkNewlyAchievedAstro, getFocusSessionsTotalPoints } from 'utils'
 
 // TODO: Setup Store better? Make agnostic
 
@@ -101,6 +104,12 @@ async function finishFocusSession(props: {
   await finishActiveFocusSession()
   showIdleModeBadge()
 
+  const completedSessions = await getFocusSessionsByDay(DateTime.now())
+  const totalPoints = getFocusSessionsTotalPoints(completedSessions)
+  const pointsPriorCurrentSession = totalPoints - (props.payload.session.points || 0)
+  const astro = checkNewlyAchievedAstro(pointsPriorCurrentSession, totalPoints)
+  // if (astro)
+
   const tabId = await getActiveTabId()
 
   if (tabId) {
@@ -110,7 +119,7 @@ async function finishFocusSession(props: {
       .catch(() => {})
   }
 
-  props.sendResponse(true)
+  props.sendResponse({ astro })
 }
 
 async function debug() {

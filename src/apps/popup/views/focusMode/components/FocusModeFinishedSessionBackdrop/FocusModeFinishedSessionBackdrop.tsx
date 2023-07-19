@@ -1,9 +1,10 @@
 import React, { useEffect } from 'react'
-import { FocusSession } from 'types'
+import { Astro, FocusSession } from 'types'
 import styled from 'styled-components'
 import {
   calculateFocusSessionPoints,
   countFocusSessionImpacts,
+  getAstroLabel,
   getFocusSessionDuration,
   getStarCountByFocusSessionTotalPoints,
 } from 'utils'
@@ -83,6 +84,14 @@ const IconWrapper = styled.div`
   height: 40px;
 `
 
+const AstroLabel = styled.div`
+  color: white;
+  white-space: nowrap;
+  font-size: 20px;
+  font-weight: 700;
+  padding-bottom: 10px;
+`
+
 const TotalPoints = styled.div`
   color: white;
   font-size: 40px;
@@ -92,12 +101,13 @@ const TotalPoints = styled.div`
 
 interface FocusModeFinishedSessionBackdropProps {
   focusSession: FocusSession | null
+  astro: Astro | null
   open: boolean
   onClose: () => void
 }
 
 function FocusModeFinishedSessionBackdrop(props: FocusModeFinishedSessionBackdropProps) {
-  const { focusSession, open, onClose } = props
+  const { focusSession, open, astro, onClose } = props
   const shouldRenderChild = useDelayUnmount(open, 300)
   const mountedStyle = { animation: 'slideInAnimation 500ms cubic-bezier(0.33, 1, 0.68, 1)' }
   const unmountedStyle = { animation: 'slideOutAnimation 520ms cubic-bezier(0.32, 0, 0.67, 0)' }
@@ -132,6 +142,7 @@ function FocusModeFinishedSessionBackdrop(props: FocusModeFinishedSessionBackdro
           <span>{`-${points.pointsByImpacts}pts`}</span>
         </Impacts>
         <TotalPoints>{`${points.totalPoints}pts`}</TotalPoints>
+        {astro && <AstroLabel>{`You achieved a ${getAstroLabel(astro).toUpperCase()}!`}</AstroLabel>}
         <IconWrapper>
           <Star style={{ top: '26px', left: '0px', fill: starCount > 0 ? '#E8BB3F' : '#2d1b6c' }} />
           <Star style={{ top: '0px', left: '80px', fill: starCount > 1 ? '#E8BB3F' : '#2d1b6c' }} />

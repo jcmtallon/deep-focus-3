@@ -1,12 +1,5 @@
 import { FocusSession, Astro } from 'types'
-
-const MAX_POINTS = 36000
-
-const WHITE_DWARF = 10800
-const RED_GIANT = 18000
-const SUPER_NOVA = 24000
-const NEUTRON_STAR = 30000
-const BLACK_HOLE = MAX_POINTS
+import { BLACK_HOLE, MAX_POINTS, NEUTRON_STAR, RED_GIANT, SUPER_NOVA, WHITE_DWARF } from './points.types'
 
 function calculateDayProgress(points: number): number {
   return Math.min((points / MAX_POINTS) * 100, 100)

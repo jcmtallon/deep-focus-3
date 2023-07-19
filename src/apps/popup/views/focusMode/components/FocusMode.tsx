@@ -2,15 +2,15 @@ import { FooterNav, Header, PageLayout } from 'apps/popup/components'
 import React, { useEffect, useState } from 'react'
 import { sendMessage } from 'services/actions'
 import { Astro, FocusSession, Task } from 'types'
+// Get focus session from store instead
 import { getActiveFocusSession, getFocusSessionsByDay } from 'services/focusSessions'
 import { DateTime } from 'luxon'
-import { calculateFocusSessionPoints, checkNewlyAchievedAstro, getFocusSessionsTotalPoints } from 'utils'
+import { calculateFocusSessionPoints } from 'utils'
 import { FocusModeLayout } from './FocusModeLayout'
 import { FocusModesStats } from './FocusModeStats/FocusModeStats'
 import { FocusModeActions } from './FocusModeActions/FocusModeActions'
 import { FocusModeTasks } from './FocusModeTasks/FocusModeTasks'
 import { FocusModeFinishedSessionBackdrop } from './FocusModeFinishedSessionBackdrop'
-import { FocusModeAstroAchievedBackdrop } from './FocusModeAstroAchievedBackdrop'
 
 // TODO: Try to use FocusSession instead of Session or FocusMode
 
@@ -55,8 +55,12 @@ function FocusMode() {
   const handleFinishSession = async (session: FocusSession) => {
     const finishedSession = { ...session, endDate: new Date().getTime() }
     const points = calculateFocusSessionPoints(finishedSession)
-    await sendMessage('finishFocusSession', { session: { ...finishedSession, points: points.totalPoints } })
+    const results = (await sendMessage('finishFocusSession', {
+      session: { ...finishedSession, points: points.totalPoints },
+    })) as { astro: Astro | null } // TODO: type sendMessage instead of casting.
+
     const completedSessions = await getFocusSessionsByDay(DateTime.now())
+    if (results.astro) setAchievedAstro(results.astro)
     setLastFocusSession(finishedSession)
     setOpenFocusSessionBackdrop(true)
 
@@ -76,11 +80,6 @@ function FocusMode() {
 
   const handleOnSessionFinishedBackdropClose = () => {
     setOpenFocusSessionBackdrop(false)
-    // FIXME: Possibly checking this should be responsibility of the background ??
-    // So this same logic can be accessible by the Mission Control and other places.
-    const totalPoints = getFocusSessionsTotalPoints(completedSessions)
-    const newAstro = checkNewlyAchievedAstro(totalPoints - (lastFocusSession?.points || 0), totalPoints)
-    if (newAstro) setAchievedAstro(newAstro)
   }
 
   return (
@@ -119,9 +118,9 @@ function FocusMode() {
       <FocusModeFinishedSessionBackdrop
         focusSession={lastFocusSession}
         open={openFocusSessionBackdrop}
+        astro={achievedAstro}
         onClose={handleOnSessionFinishedBackdropClose}
       />
-      <FocusModeAstroAchievedBackdrop astro={achievedAstro} onClose={() => setAchievedAstro(null)} />
     </>
   )
 }
