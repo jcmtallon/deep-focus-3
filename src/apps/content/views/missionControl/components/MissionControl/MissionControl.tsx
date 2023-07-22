@@ -32,7 +32,7 @@ function MissionControl() {
   // FIXME: Add loading state display
 
   if (isFocusSessionOn && activeFocusSession) {
-    return <MissionControlFocusMode focusSession={activeFocusSession} />
+    return <MissionControlFocusMode activeFocusSession={activeFocusSession} />
   }
 
   return <MissionControlDashboard />

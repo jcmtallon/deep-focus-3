@@ -2,7 +2,7 @@ import React from 'react'
 import { FocusSession } from 'types'
 import { DateTime, Duration, DurationLike } from 'luxon'
 import { TimerDisplay } from 'components'
-import { calculateDayProgress, countFocusSessionImpacts } from 'utils'
+import { getDayProgress, countFocusSessionImpacts } from 'utils'
 import * as S from './MissionControlStats.styles'
 
 // FIXME: Delete this file
@@ -45,7 +45,7 @@ function MissionControlStats(props: MissionControlStatsProps) {
       </S.StatsWrapper>
       <S.BarWrapper>
         <S.PointBar>
-          <S.PointBarFill style={{ width: `${calculateDayProgress(totalPoints)}%` }}>
+          <S.PointBarFill style={{ width: `${getDayProgress(totalPoints)}%` }}>
             <S.AwardLabel style={{ left: '50px', top: '13px' }}>Star</S.AwardLabel>
             <S.AwardLabel style={{ left: '100px', top: '13px' }}>Red giant</S.AwardLabel>
             <S.AwardLabel style={{ left: '180px', top: '13px' }}>Super nova</S.AwardLabel>

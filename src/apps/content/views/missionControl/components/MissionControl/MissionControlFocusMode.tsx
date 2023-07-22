@@ -3,19 +3,27 @@ import { PageLayout } from 'apps/content/components'
 import { FocusSession } from 'types'
 import { sendMessage } from 'services/actions'
 import { countFocusSessionImpacts } from 'utils'
+import { getActiveFocusSession as storeGetActiveFocusSession } from 'services/store'
 import { MissionControlBlockedSiteBackdrop } from '../MissionControlBlockedSiteBackdrop'
 import * as S from './MissionControlFocusMode.styles'
 
 interface MissionControlFocusModeProps {
-  focusSession: FocusSession
+  activeFocusSession: FocusSession
 }
 
 function MissionControlFocusMode(props: MissionControlFocusModeProps) {
-  const { focusSession } = props
+  const { activeFocusSession } = props
+
+  const [focusSession, setFocusSession] = useState<FocusSession>(activeFocusSession)
 
   const [openBackdrop, setOpenBackdrop] = useState<boolean>(false)
 
   useEffect(() => {
+    const getActiveFocusSession = async () => {
+      const session = await storeGetActiveFocusSession()
+      if (session) setFocusSession(session)
+    }
+
     const queryParams = new URLSearchParams(window.location.search)
     const blockType = queryParams.get('blockType')
     const siteId = queryParams.get('site')?.toString()
@@ -27,7 +35,10 @@ function MissionControlFocusMode(props: MissionControlFocusModeProps) {
       addImpact()
       setOpenBackdrop(true)
 
-      // FIXME: Show correct impact count after displaying blocked site backdrop
+      setTimeout(() => {
+        // FIXME: Instead of using a timeout, we should bring the latest focusSession value from a callback.
+        getActiveFocusSession()
+      }, 200)
     }
   }, [])
 

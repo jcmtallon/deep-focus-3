@@ -199,7 +199,7 @@ function Stats() {
           </Card>
           <Card title="Astros">
             {obtainedAstros.map(astro => (
-              <div key={astro.id}>{astro.id}</div>
+              <div key={astro.astroId}>{astro.name}</div>
             ))}
           </Card>
         </Column>

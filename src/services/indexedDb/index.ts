@@ -34,7 +34,7 @@ const indexedDb = (function (): IndexedDb {
     let db: IDBDatabase | null = null
 
     return new Promise((resolve, reject) => {
-      const request = indexedDB.open(DATABASE_NAME, 2)
+      const request = indexedDB.open(DATABASE_NAME, 3)
 
       request.onerror = event => {
         reject(event)
