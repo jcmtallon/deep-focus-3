@@ -1,5 +1,35 @@
 import { FocusSession, AstroName } from 'types'
 import { BLACK_HOLE, MAX_POINTS, NEUTRON_STAR, RED_GIANT, SUPER_NOVA, WHITE_DWARF } from './points.types'
+import { FocusSessionPointBreakdown, IMPACT_POINTS, POINTS_BY_MILLISECOND } from './focusSession.types'
+import { countFocusSessionImpacts, getFocusSessionDuration } from './focusSession'
+
+function calculateFocusSessionPoints(focusSession: FocusSession): FocusSessionPointBreakdown {
+  const sessionDuration = getFocusSessionDuration(focusSession)
+  const pointsByTime = Math.floor(POINTS_BY_MILLISECOND * sessionDuration.toMillis())
+
+  const impactCount = countFocusSessionImpacts(focusSession.impacts)
+  const pointsByImpacts = -impactCount * IMPACT_POINTS * impactCount
+  const totalPoints = pointsByTime + pointsByImpacts
+
+  return {
+    pointsByTime,
+    pointsByImpacts,
+    totalPoints,
+  }
+}
+
+function calculateFocusSessionsPoints(focusSessions: FocusSession[]): { points: number; penalty: number } {
+  return focusSessions.reduce(
+    (acc, focusSession) => {
+      const sessionPoints = calculateFocusSessionPoints(focusSession)
+      return {
+        points: acc.points + sessionPoints.pointsByTime,
+        penalty: acc.penalty - sessionPoints.pointsByImpacts, // TODO: Avoid negative points
+      }
+    },
+    { points: 0, penalty: 0 },
+  )
+}
 
 function calculateDayProgress(points: number): number {
   return Math.min((points / MAX_POINTS) * 100, 100)
@@ -67,6 +97,8 @@ function getFocusSessionsTotalPoints(focusSessions: FocusSession[]): number {
 }
 
 export {
+  calculateFocusSessionPoints,
+  calculateFocusSessionsPoints,
   calculateAchievedAstro,
   calculateAstroRightPosition,
   calculateDayProgress,

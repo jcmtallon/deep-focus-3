@@ -1,4 +1,4 @@
-import React, { useState, HTMLAttributes, useEffect, useCallback } from 'react'
+import React, { useState, HTMLAttributes, useEffect } from 'react'
 import {
   calculateFocusSessionPoints,
   getFocusSessionProgress,

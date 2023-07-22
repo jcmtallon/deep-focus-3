@@ -1,6 +1,6 @@
 import { DateTime, Duration, DurationLike } from 'luxon'
 import { FocusSession } from 'types'
-import { FocusSessionPointBreakdown, IMPACT_POINTS, MAX_FOCUS_SESSION_POINTS } from './focusSession.types'
+import { MAX_FOCUS_SESSION_POINTS } from './focusSession.types'
 
 function countFocusSessionImpacts(impacts: FocusSession['impacts']): number {
   if (!impacts) return 0
@@ -53,23 +53,6 @@ function calculateStarLeftPosition(totalWidth: number) {
   }
 }
 
-const POINTS_BY_MILLISECOND = 0.001
-
-function calculateFocusSessionPoints(focusSession: FocusSession): FocusSessionPointBreakdown {
-  const sessionDuration = getFocusSessionDuration(focusSession)
-  const pointsByTime = Math.floor(POINTS_BY_MILLISECOND * sessionDuration.toMillis())
-
-  const impactCount = countFocusSessionImpacts(focusSession.impacts)
-  const pointsByImpacts = -impactCount * IMPACT_POINTS * impactCount
-  const totalPoints = pointsByTime + pointsByImpacts
-
-  return {
-    pointsByTime,
-    pointsByImpacts,
-    totalPoints,
-  }
-}
-
 const ONE_STAR_POINTS = MAX_FOCUS_SESSION_POINTS * ONE_STAR_CRITERIA
 const TWO_STAR_POINTS = MAX_FOCUS_SESSION_POINTS * TWO_STAR_CRITERIA
 const THREE_STAR_POINTS = MAX_FOCUS_SESSION_POINTS * THREE_STAR_CRITERIA
@@ -82,7 +65,6 @@ function getStarCountByFocusSessionTotalPoints(points: number): number {
 }
 
 export {
-  calculateFocusSessionPoints,
   calculateStarLeftPosition,
   countFocusSessionImpacts,
   getFocusSessionsTotalTime,

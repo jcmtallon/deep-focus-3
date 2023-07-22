@@ -1,24 +1,32 @@
 import React, { HTMLAttributes, useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 import { FocusSession } from 'types'
-import { calculateDayProgress, calculateAstroRightPosition, calculateAchievedAstro } from 'utils'
+import {
+  calculateDayProgress,
+  calculateAstroRightPosition,
+  calculateAchievedAstro,
+  calculateFocusSessionsPoints,
+} from 'utils'
 import { IconStar } from 'components'
 
 const ProgressBar = styled.div`
   width: 100%;
-  height: 10px;
+  min-height: 10px;
   background-color: #180850;
   border-radius: 50px;
   margin-top: 10px;
-  position: relative;
   margin-bottom: 50px;
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
 `
 
 const ProgressBarFill = styled.div`
   height: 100%;
   background-color: #fff9b0;
   border-radius: 50px;
-  position: relative;
+  position: absolute;
 `
 
 const Points = styled.div`
@@ -70,17 +78,19 @@ function MissionControlDayProgress(props: MissionControlDayProgressProps) {
   const neutronStarSize = whiteDwarfSize * 1.45
   const blackHoleSize = whiteDwarfSize * 1.6
 
-  const totalPoints = focusSessions.reduce((acc: number, session: FocusSession) => {
-    return acc + (session?.points ?? 0)
-  }, 0)
+  const pointsInfo = calculateFocusSessionsPoints(focusSessions)
+  const totalPoints = pointsInfo.points - pointsInfo.penalty
 
   const progress = calculateDayProgress(totalPoints)
+  const progressWithoutPenalty = calculateDayProgress(pointsInfo.points)
+
   const astroPosition = calculateAstroRightPosition(progressBarWidth)
   const achievedAstro = calculateAchievedAstro(totalPoints)
   const topOffset = progressBarHeight * 1.75
 
   return (
     <ProgressBar ref={ref} {...otherProps}>
+      <ProgressBarFill style={{ width: `${progressWithoutPenalty}%`, backgroundColor: 'red' }} />
       <ProgressBarFill style={{ width: `${progress}%` }} />
       <Astro
         style={{
