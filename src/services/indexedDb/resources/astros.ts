@@ -1,5 +1,5 @@
 import { DateTime } from 'luxon'
-import { Astro } from 'types'
+import { Astro, ObtainedAstro } from 'types'
 import { COLLECTION_NAME } from '../constants'
 
 const { ASTROS } = COLLECTION_NAME
@@ -36,7 +36,7 @@ const addAstro =
     })
   }
 
-const listAstros = (db: IDBDatabase) => (): Promise<{ astro: Astro; astroId: number }> => {
+const listAstros = (db: IDBDatabase) => (): Promise<ObtainedAstro[]> => {
   const transaction = db.transaction(ASTROS, 'readonly')
   const objectStore = transaction.objectStore(ASTROS)
 
@@ -57,7 +57,7 @@ const listAstros = (db: IDBDatabase) => (): Promise<{ astro: Astro; astroId: num
 // TODO: Reuse types
 interface AstrosEndpoints {
   add: (astro: Astro) => Promise<void>
-  list: () => Promise<{ astro: Astro; astroId: number }>
+  list: () => Promise<ObtainedAstro[]>
 }
 
 export type { AstrosEndpoints }
