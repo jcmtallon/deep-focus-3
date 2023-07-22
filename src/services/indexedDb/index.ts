@@ -13,12 +13,14 @@ import {
   SessionEndpoints,
 } from './resources/focusSessions'
 import { COLLECTION_NAME, DATABASE_NAME } from './constants'
+import { AstrosEndpoints, addAstro, listAstros } from './resources/astros'
 
-const { BLOCKED_SITES, FOCUS_SESSIONS } = COLLECTION_NAME
+const { BLOCKED_SITES, FOCUS_SESSIONS, ASTROS } = COLLECTION_NAME
 
 interface IndexedDbInstance {
   blockedSites: BlockedSiteEndpoints
   focusSessions: SessionEndpoints
+  astros: AstrosEndpoints
 }
 
 interface IndexedDb {
@@ -32,7 +34,7 @@ const indexedDb = (function (): IndexedDb {
     let db: IDBDatabase | null = null
 
     return new Promise((resolve, reject) => {
-      const request = indexedDB.open(DATABASE_NAME, 1)
+      const request = indexedDB.open(DATABASE_NAME, 2)
 
       request.onerror = event => {
         reject(event)
@@ -56,6 +58,13 @@ const indexedDb = (function (): IndexedDb {
           })
           sessionStore.createIndex('startDate', 'startDate', { unique: false })
         }
+
+        if (!db.objectStoreNames.contains(ASTROS)) {
+          db.createObjectStore(ASTROS, {
+            keyPath: 'astroId',
+            autoIncrement: false,
+          })
+        }
       }
 
       request.onsuccess = event => {
@@ -74,6 +83,10 @@ const indexedDb = (function (): IndexedDb {
             add: addFocusSession(db),
             list: listFocusSessions(db),
             query: queryFocusSessions(db),
+          },
+          astros: {
+            add: addAstro(db),
+            list: listAstros(db),
           },
         })
       }
