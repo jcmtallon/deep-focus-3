@@ -10,12 +10,12 @@ export {
 export { getFocusSessionProgressWithPenalty, getFocusSessionProgress } from './focusSessionProgress'
 
 export {
-  calculateFocusSessionPoints,
-  calculateFocusSessionsPoints,
   calculateAchievedAstro,
   calculateAstroRightPosition,
   calculateDayProgress,
+  getFocusSessionsPointsBreakdown,
   checkNewlyAchievedAstro,
   getAstroLabel,
+  getFocusSessionPointsBreakdown,
   getFocusSessionsTotalPoints,
 } from './points'

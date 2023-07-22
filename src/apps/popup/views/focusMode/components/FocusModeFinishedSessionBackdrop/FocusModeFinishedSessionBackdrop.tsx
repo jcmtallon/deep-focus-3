@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import { AstroName, FocusSession } from 'types'
 import styled from 'styled-components'
 import {
-  calculateFocusSessionPoints,
+  getFocusSessionPointsBreakdown,
   countFocusSessionImpacts,
   getAstroLabel,
   getFocusSessionDuration,
@@ -121,8 +121,8 @@ function FocusModeFinishedSessionBackdrop(props: FocusModeFinishedSessionBackdro
   if (!shouldRenderChild || !focusSession) return <></>
 
   const sessionDuration = getFocusSessionDuration(focusSession)
-  const points = calculateFocusSessionPoints(focusSession)
-  const starCount = getStarCountByFocusSessionTotalPoints(points.totalPoints)
+  const pointsBreakdown = getFocusSessionPointsBreakdown(focusSession)
+  const starCount = getStarCountByFocusSessionTotalPoints(pointsBreakdown.total)
 
   return (
     <Backdrop style={open ? mountedStyle : unmountedStyle}>
@@ -130,7 +130,7 @@ function FocusModeFinishedSessionBackdrop(props: FocusModeFinishedSessionBackdro
         <Timer>{sessionDuration.toFormat('hh:mm:ss')}</Timer>
         <TimePoints>
           <span>Time</span>
-          <span>{`${points.pointsByTime}pts`}</span>
+          <span>{`${pointsBreakdown.gained}pts`}</span>
         </TimePoints>
         <Quests>
           <span>{`${focusSession.tasks.filter(t => t.status === 'COMPLETED').length ?? 0} quests`}</span>
@@ -139,9 +139,9 @@ function FocusModeFinishedSessionBackdrop(props: FocusModeFinishedSessionBackdro
         </Quests>
         <Impacts>
           <span>{`${countFocusSessionImpacts(focusSession.impacts)} impacts`}</span>
-          <span>{`-${points.pointsByImpacts}pts`}</span>
+          <span>{`-${pointsBreakdown.penalty}pts`}</span>
         </Impacts>
-        <TotalPoints>{`${points.totalPoints}pts`}</TotalPoints>
+        <TotalPoints>{`${pointsBreakdown.total}pts`}</TotalPoints>
         {astro && <AstroLabel>{`You achieved a ${getAstroLabel(astro).toUpperCase()}!`}</AstroLabel>}
         <IconWrapper>
           <Star style={{ top: '26px', left: '0px', fill: starCount > 0 ? '#E8BB3F' : '#2d1b6c' }} />

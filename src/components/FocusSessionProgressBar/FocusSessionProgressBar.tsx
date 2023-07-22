@@ -1,6 +1,6 @@
 import React, { useState, HTMLAttributes, useEffect } from 'react'
 import {
-  calculateFocusSessionPoints,
+  getFocusSessionPointsBreakdown,
   getFocusSessionProgress,
   getFocusSessionProgressWithPenalty,
   calculateStarLeftPosition,
@@ -25,11 +25,11 @@ function FocusSessionProgressBar(props: FocusSessionProgressBarProps) {
 
   useEffect(() => {
     const updateBar = () => {
-      const { pointsByTime, pointsByImpacts } = calculateFocusSessionPoints(focusSession)
-      const progress = getFocusSessionProgress(pointsByTime)
-      const progressWithPenalty = getFocusSessionProgressWithPenalty(pointsByTime, -pointsByImpacts)
+      const { gained, penalty, total } = getFocusSessionPointsBreakdown(focusSession)
+      const progress = getFocusSessionProgress(gained)
+      const progressWithPenalty = getFocusSessionProgressWithPenalty(gained, penalty)
       setBarProgress({ withPenalty: progressWithPenalty, withoutPenalty: progress })
-      setTotalPoints(pointsByTime + pointsByImpacts)
+      setTotalPoints(total)
     }
 
     // So the bar is painted right away when the component is mounted.

@@ -5,7 +5,7 @@ import {
   calculateDayProgress,
   calculateAstroRightPosition,
   calculateAchievedAstro,
-  calculateFocusSessionsPoints,
+  getFocusSessionsPointsBreakdown,
 } from 'utils'
 import { IconStar } from 'components'
 
@@ -78,14 +78,13 @@ function MissionControlDayProgress(props: MissionControlDayProgressProps) {
   const neutronStarSize = whiteDwarfSize * 1.45
   const blackHoleSize = whiteDwarfSize * 1.6
 
-  const pointsInfo = calculateFocusSessionsPoints(focusSessions)
-  const totalPoints = pointsInfo.points - pointsInfo.penalty
+  const pointsInfo = getFocusSessionsPointsBreakdown(focusSessions)
 
-  const progress = calculateDayProgress(totalPoints)
-  const progressWithoutPenalty = calculateDayProgress(pointsInfo.points)
+  const progress = calculateDayProgress(pointsInfo.total)
+  const progressWithoutPenalty = calculateDayProgress(pointsInfo.gained)
 
   const astroPosition = calculateAstroRightPosition(progressBarWidth)
-  const achievedAstro = calculateAchievedAstro(totalPoints)
+  const achievedAstro = calculateAchievedAstro(pointsInfo.total)
   const topOffset = progressBarHeight * 1.75
 
   return (
@@ -146,7 +145,7 @@ function MissionControlDayProgress(props: MissionControlDayProgressProps) {
           }}
         />
       </Astro>
-      <Points style={{ top: topOffset }}>{totalPoints} pts</Points>
+      <Points style={{ top: topOffset }}>{pointsInfo.total} pts</Points>
     </ProgressBar>
   )
 }

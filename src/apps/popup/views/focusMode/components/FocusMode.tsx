@@ -5,7 +5,7 @@ import { AstroName, FocusSession, Task } from 'types'
 // Get focus session from store instead
 import { getActiveFocusSession, getFocusSessionsByDay } from 'services/focusSessions'
 import { DateTime } from 'luxon'
-import { calculateFocusSessionPoints } from 'utils'
+import { getFocusSessionPointsBreakdown } from 'utils'
 import { FocusModeLayout } from './FocusModeLayout'
 import { FocusModesStats } from './FocusModeStats/FocusModeStats'
 import { FocusModeActions } from './FocusModeActions/FocusModeActions'
@@ -54,9 +54,9 @@ function FocusMode() {
 
   const handleFinishSession = async (session: FocusSession) => {
     const finishedSession = { ...session, endDate: new Date().getTime() }
-    const points = calculateFocusSessionPoints(finishedSession)
+    const pointsBreakdown = getFocusSessionPointsBreakdown(finishedSession)
     const results = (await sendMessage('finishFocusSession', {
-      session: { ...finishedSession, points: points.totalPoints },
+      session: { ...finishedSession, points: pointsBreakdown.total },
     })) as { astro: AstroName | null } // TODO: type sendMessage instead of casting.
 
     const completedSessions = await getFocusSessionsByDay(DateTime.now())
