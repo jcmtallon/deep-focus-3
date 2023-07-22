@@ -1,12 +1,12 @@
 import { indexedDb } from 'services/indexedDb'
-import { Astro, ObtainedAstro } from 'types'
+import { AstroName, Astro } from 'types'
 
-async function addAstro(astro: Astro): Promise<void> {
+async function addAstro(astro: AstroName): Promise<void> {
   const database = await indexedDb.getInstance()
   await database.astros.add(astro)
 }
 
-async function listObtainedAstros(): Promise<ObtainedAstro[]> {
+async function listObtainedAstros(): Promise<Astro[]> {
   const database = await indexedDb.getInstance()
   const obtainedAstros = await database.astros.list()
   return obtainedAstros

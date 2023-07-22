@@ -1,4 +1,4 @@
-import { FocusSession, Astro } from 'types'
+import { FocusSession, AstroName } from 'types'
 import { BLACK_HOLE, MAX_POINTS, NEUTRON_STAR, RED_GIANT, SUPER_NOVA, WHITE_DWARF } from './points.types'
 
 function calculateDayProgress(points: number): number {
@@ -25,7 +25,7 @@ function calculateAchievedAstro(points: number) {
   }
 }
 
-function getAstroByPoints(points: number): Astro | null {
+function getAstroByPoints(points: number): AstroName | null {
   if (points >= BLACK_HOLE) return 'BLACK_HOLE'
   if (points >= NEUTRON_STAR) return 'NEUTRON_STAR'
   if (points >= SUPER_NOVA) return 'SUPER_NOVA'
@@ -34,7 +34,7 @@ function getAstroByPoints(points: number): Astro | null {
   return null
 }
 
-function getAstroLabel(astro: Astro): string {
+function getAstroLabel(astro: AstroName): string {
   switch (astro) {
     case 'WHITE_DWARF':
       return 'White Dwarf'
@@ -51,7 +51,7 @@ function getAstroLabel(astro: Astro): string {
   }
 }
 
-function checkNewlyAchievedAstro(points: number, newPoints: number): Astro | null {
+function checkNewlyAchievedAstro(points: number, newPoints: number): AstroName | null {
   const astro = getAstroByPoints(points)
   const newAstro = getAstroByPoints(newPoints)
 

@@ -1,5 +1,5 @@
-type Astro = 'WHITE_DWARF' | 'RED_GIANT' | 'SUPER_NOVA' | 'NEUTRON_STAR' | 'BLACK_HOLE'
+type AstroName = 'WHITE_DWARF' | 'RED_GIANT' | 'SUPER_NOVA' | 'NEUTRON_STAR' | 'BLACK_HOLE'
 
-type ObtainedAstro = { astro: Astro; astroId: number }
+type Astro = { name: AstroName; id: number; date: number }
 
-export type { Astro, ObtainedAstro }
+export type { AstroName, Astro }

@@ -1,13 +1,14 @@
 import { DateTime } from 'luxon'
-import { Astro, ObtainedAstro } from 'types'
+import { AstroName, Astro } from 'types'
 import { COLLECTION_NAME } from '../constants'
 
 const { ASTROS } = COLLECTION_NAME
 
 const addAstro =
   (db: IDBDatabase) =>
-  (astro: Astro): Promise<void> => {
-    const astroId = parseInt(DateTime.now().toFormat('yyyyLLdd'), 10)
+  (astroName: AstroName): Promise<void> => {
+    const today = DateTime.now()
+    const astroId = parseInt(today.toFormat('yyyyLLdd'), 10)
 
     const objectStore = db.transaction(ASTROS, 'readwrite').objectStore(ASTROS)
 
@@ -21,12 +22,12 @@ const addAstro =
         const storedObject = addRequest.result
 
         if (!storedObject) {
-          const addRequest = objectStore.add({ astro, astroId })
+          const addRequest = objectStore.add({ name: astroName, astroId, date: today.toMillis() })
           addRequest.onsuccess = () => {
             resolve()
           }
         } else {
-          storedObject.astro = astro
+          storedObject.name = astroName
           const updateRequest = objectStore.put(storedObject)
           updateRequest.onsuccess = () => {
             resolve()
@@ -36,7 +37,7 @@ const addAstro =
     })
   }
 
-const listAstros = (db: IDBDatabase) => (): Promise<ObtainedAstro[]> => {
+const listAstros = (db: IDBDatabase) => (): Promise<Astro[]> => {
   const transaction = db.transaction(ASTROS, 'readonly')
   const objectStore = transaction.objectStore(ASTROS)
 
@@ -56,8 +57,8 @@ const listAstros = (db: IDBDatabase) => (): Promise<ObtainedAstro[]> => {
 
 // TODO: Reuse types
 interface AstrosEndpoints {
-  add: (astro: Astro) => Promise<void>
-  list: () => Promise<ObtainedAstro[]>
+  add: (astro: AstroName) => Promise<void>
+  list: () => Promise<Astro[]>
 }
 
 export type { AstrosEndpoints }

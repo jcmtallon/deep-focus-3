@@ -1,7 +1,7 @@
 import { PageLayout, SideNav, Card as BaseCard } from 'apps/content/components'
 import { listBlockedSites, getFocusSessionsByDateRange, listObtainedAstros } from 'services/store'
 import React, { useEffect, useMemo, useState } from 'react'
-import { BlockedSite, FocusSession, ObtainedAstro } from 'types'
+import { BlockedSite, FocusSession, Astro } from 'types'
 import styled from 'styled-components'
 import { Line } from 'react-chartjs-2'
 import {
@@ -44,7 +44,7 @@ const Column = styled.div`
 
 function Stats() {
   const [blockedSites, setBlockedSites] = useState<BlockedSite[]>([])
-  const [obtainedAstros, setObtainedAstros] = useState<ObtainedAstro[]>([])
+  const [obtainedAstros, setObtainedAstros] = useState<Astro[]>([])
   const [focusSessions, setFocusSessions] = useState<FocusSession[]>([])
   const [criteria, setCriteria] = useState<'time' | 'sessions' | 'tasks' | 'impacts'>('time')
 
@@ -199,7 +199,7 @@ function Stats() {
           </Card>
           <Card title="Astros">
             {obtainedAstros.map(astro => (
-              <div key={astro.astroId}>{astro.astro}</div>
+              <div key={astro.id}>{astro.id}</div>
             ))}
           </Card>
         </Column>

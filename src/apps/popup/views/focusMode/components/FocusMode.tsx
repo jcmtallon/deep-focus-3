@@ -1,7 +1,7 @@
 import { FooterNav, Header, PageLayout } from 'apps/popup/components'
 import React, { useEffect, useState } from 'react'
 import { sendMessage } from 'services/actions'
-import { Astro, FocusSession, Task } from 'types'
+import { AstroName, FocusSession, Task } from 'types'
 // Get focus session from store instead
 import { getActiveFocusSession, getFocusSessionsByDay } from 'services/focusSessions'
 import { DateTime } from 'luxon'
@@ -20,7 +20,7 @@ function FocusMode() {
 
   const [lastFocusSession, setLastFocusSession] = useState<FocusSession | null>(null)
   const [openFocusSessionBackdrop, setOpenFocusSessionBackdrop] = useState(false)
-  const [achievedAstro, setAchievedAstro] = useState<Astro | null>(null)
+  const [obtainedAstroName, setObtainedAstro] = useState<AstroName | null>(null)
 
   const isFocusSessionOn = Boolean(activeFocusSession)
   const isFirstLoadCompleted = activeFocusSession !== undefined
@@ -57,10 +57,10 @@ function FocusMode() {
     const points = calculateFocusSessionPoints(finishedSession)
     const results = (await sendMessage('finishFocusSession', {
       session: { ...finishedSession, points: points.totalPoints },
-    })) as { astro: Astro | null } // TODO: type sendMessage instead of casting.
+    })) as { astro: AstroName | null } // TODO: type sendMessage instead of casting.
 
     const completedSessions = await getFocusSessionsByDay(DateTime.now())
-    if (results.astro) setAchievedAstro(results.astro)
+    if (results.astro) setObtainedAstro(results.astro)
     setLastFocusSession(finishedSession)
     setOpenFocusSessionBackdrop(true)
 
@@ -118,7 +118,7 @@ function FocusMode() {
       <FocusModeFinishedSessionBackdrop
         focusSession={lastFocusSession}
         open={openFocusSessionBackdrop}
-        astro={achievedAstro}
+        astro={obtainedAstroName}
         onClose={handleOnSessionFinishedBackdropClose}
       />
     </>

@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { Astro, FocusSession } from 'types'
+import { AstroName, FocusSession } from 'types'
 import styled from 'styled-components'
 import {
   calculateFocusSessionPoints,
@@ -101,7 +101,7 @@ const TotalPoints = styled.div`
 
 interface FocusModeFinishedSessionBackdropProps {
   focusSession: FocusSession | null
-  astro: Astro | null
+  astro: AstroName | null
   open: boolean
   onClose: () => void
 }
