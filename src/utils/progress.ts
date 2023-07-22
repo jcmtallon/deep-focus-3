@@ -1,4 +1,4 @@
-import { MAX_FOCUS_SESSION_POINTS } from './focusSession.types'
+import { MAX_FOCUS_SESSION_POINTS, MAX_DAY_POINTS } from './constants'
 
 /**
  * @returns Number from 0 to 100 representing the progress of the focus session after
@@ -20,4 +20,13 @@ function getFocusSessionProgress(points: number): number {
   return clampedProgress
 }
 
-export { getFocusSessionProgressWithPenalty, getFocusSessionProgress }
+/**
+ * @returns Number from 0 to 100
+ */
+function getDayProgress(points: number): number {
+  const progress = (Math.max(points, 0) / MAX_DAY_POINTS) * 100
+  const clampedProgress = Math.min(Math.max(progress, 0), 100)
+  return clampedProgress
+}
+
+export { getFocusSessionProgressWithPenalty, getFocusSessionProgress, getDayProgress }

@@ -1,5 +1,5 @@
-import { getFocusSessionProgressWithPenalty, getFocusSessionProgress } from './focusSessionProgress'
-import { MAX_FOCUS_SESSION_POINTS, IMPACT_POINTS } from './focusSession.types'
+import { getFocusSessionProgressWithPenalty, getFocusSessionProgress } from './progress'
+import { MAX_FOCUS_SESSION_POINTS, IMPACT_POINTS } from './constants'
 
 describe('getFocusSessionProgressWithPenalty', () => {
   test('0 progress when 0 points and no penalty', () => {

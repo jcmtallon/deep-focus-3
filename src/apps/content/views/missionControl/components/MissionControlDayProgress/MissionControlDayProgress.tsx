@@ -2,7 +2,7 @@ import React, { HTMLAttributes, useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 import { FocusSession } from 'types'
 import {
-  calculateDayProgress,
+  getDayProgress,
   calculateAstroRightPosition,
   calculateAchievedAstro,
   getFocusSessionsPointsBreakdown,
@@ -80,8 +80,8 @@ function MissionControlDayProgress(props: MissionControlDayProgressProps) {
 
   const pointsInfo = getFocusSessionsPointsBreakdown(focusSessions)
 
-  const progress = calculateDayProgress(pointsInfo.total)
-  const progressWithoutPenalty = calculateDayProgress(pointsInfo.gained)
+  const progress = getDayProgress(pointsInfo.total)
+  const progressWithoutPenalty = getDayProgress(pointsInfo.gained)
 
   const astroPosition = calculateAstroRightPosition(progressBarWidth)
   const achievedAstro = calculateAchievedAstro(pointsInfo.total)

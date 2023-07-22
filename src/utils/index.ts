@@ -1,21 +1,18 @@
+export { countFocusSessionImpacts, getFocusSessionsTotalTime, getFocusSessionDuration } from './focusSession'
+
 export {
   calculateStarLeftPosition,
-  countFocusSessionImpacts,
-  getFocusSessionsTotalTime,
-  getFocusSessionDuration,
   getStarCountByFocusSessionProgress,
   getStarCountByFocusSessionTotalPoints,
-} from './focusSession'
+} from './stars'
 
-export { getFocusSessionProgressWithPenalty, getFocusSessionProgress } from './focusSessionProgress'
+export { getFocusSessionProgressWithPenalty, getFocusSessionProgress, getDayProgress } from './progress'
+
+export { getFocusSessionsPointsBreakdown, getFocusSessionPointsBreakdown } from './points'
 
 export {
   calculateAchievedAstro,
   calculateAstroRightPosition,
-  calculateDayProgress,
-  getFocusSessionsPointsBreakdown,
   checkNewlyAchievedAstro,
   getAstroLabel,
-  getFocusSessionPointsBreakdown,
-  getFocusSessionsTotalPoints,
-} from './points'
+} from './astros'

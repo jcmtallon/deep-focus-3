@@ -1,5 +1,5 @@
-import { checkNewlyAchievedAstro } from './points'
-import { BLACK_HOLE, NEUTRON_STAR, RED_GIANT, SUPER_NOVA, WHITE_DWARF } from './points.types'
+import { checkNewlyAchievedAstro } from './astros'
+import { BLACK_HOLE, NEUTRON_STAR, RED_GIANT, SUPER_NOVA, WHITE_DWARF } from './constants'
 
 describe('checkNewlyAchievedAstro', () => {
   test('should return null if both values are 0', () => {

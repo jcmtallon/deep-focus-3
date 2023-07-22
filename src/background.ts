@@ -14,7 +14,7 @@ import {
 import { indexedDb } from 'services/indexedDb'
 import { DateTime } from 'luxon'
 import { FocusSession, Task } from 'types'
-import { checkNewlyAchievedAstro, getFocusSessionsTotalPoints } from 'utils'
+import { checkNewlyAchievedAstro, getFocusSessionsPointsBreakdown } from 'utils'
 import { addAstro } from 'services/astros'
 
 // TODO: Setup Store better? Make agnostic
@@ -106,7 +106,7 @@ async function finishFocusSession(props: {
   showIdleModeBadge()
 
   const completedSessions = await getFocusSessionsByDay(DateTime.now())
-  const totalPoints = getFocusSessionsTotalPoints(completedSessions)
+  const { total: totalPoints } = getFocusSessionsPointsBreakdown(completedSessions)
   const pointsPriorCurrentSession = totalPoints - (props.payload.session.points || 0)
   const astro = checkNewlyAchievedAstro(pointsPriorCurrentSession, totalPoints)
   if (astro) addAstro(astro)
