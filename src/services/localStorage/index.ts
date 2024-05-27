@@ -3,6 +3,8 @@
 
 const LOCAL_STORAGE_KEY = {
   ACTIVE_FOCUS_SESSION: 'deepFocusChromeExtension_activeFocusSession',
+  BACKGROUND_AUDIO_PLAYING: 'deepFocusChromeExtension_backgroundAudioPlaying',
+  BACKGROUND_AUDIO_VOLUME: 'deepFocusChromeExtension_backgroundAudioVolume',
 } as const
 
 type LocalStorageKey = (typeof LOCAL_STORAGE_KEY)[keyof typeof LOCAL_STORAGE_KEY]
@@ -19,7 +21,7 @@ const readLocalStorage = async (key: LocalStorageKey) => {
   })
 }
 
-const setLocalStorage = async (payload: Record<LocalStorageKey, any>) => {
+const setLocalStorage = async (payload: Partial<Record<LocalStorageKey, any>>) => {
   return new Promise((resolve, reject) => {
     chrome.storage.local
       .set(payload)

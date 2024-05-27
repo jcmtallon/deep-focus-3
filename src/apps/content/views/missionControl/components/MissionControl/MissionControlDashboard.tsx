@@ -56,6 +56,9 @@ function MissionControlDashboard(props: MissionControlDashboardProps) {
             <MissionControlSessions focusSessions={focusSessions} />
           </S.Column>
           <S.Column>
+            {/* <button role="button" onClick={() => togglePictureInPicture()}>
+              Toggle button
+            </button> */}
             <S.Quote>&ldquo;Focus on just one thing at a time&ldquo;</S.Quote>
           </S.Column>
           {/* <S.Column>

@@ -25,7 +25,7 @@
     "@jcmtallon/eslint-config-glamping-react-ts": "^0.0.18",
     "@jcmtallon/prettier-config": "^0.0.1",
     "@types/chart.js": "^2.9.37",
-    "@types/chrome": "^0.0.197",
+    "@types/chrome": "^0.0.268",
     "@types/jest": "^29.5.3",
     "@types/lodash": "^4.14.194",
     "@types/luxon": "^3.3.0",

@@ -100,6 +100,7 @@ async function finishFocusSession(props: {
   sendResponse: (payload: any) => {}
 }) {
   disableRules()
+
   await addFocusSession(props.payload.session)
   await addImpactsToBlockedSites(props.payload.session.impacts)
   await finishActiveFocusSession()

@@ -43,7 +43,7 @@ async function enableRules() {
   const storedRules = await database.blockedSites.list()
   chrome.declarativeNetRequest.getDynamicRules(previousRules => {
     const previousRuleIds = previousRules.map(rule => rule.id)
-    const newRules: chrome.declarativeNetRequest.Rule[] = storedRules.map((rule, indx) => {
+    const newRules = storedRules.map((rule, indx) => {
       return {
         id: indx + 1,
         priority: 1,
@@ -56,7 +56,7 @@ async function enableRules() {
           resourceTypes: ['main_frame'],
         },
       }
-    })
+    }) as chrome.declarativeNetRequest.Rule[]
 
     chrome.declarativeNetRequest
       .updateDynamicRules({

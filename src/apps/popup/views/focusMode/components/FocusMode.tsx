@@ -6,6 +6,14 @@ import { AstroName, FocusSession, Task } from 'types'
 import { getActiveFocusSession, getFocusSessionsByDay } from 'services/focusSessions'
 import { DateTime } from 'luxon'
 import { getFocusSessionPointsBreakdown } from 'utils'
+import {
+  pauseBackgroundAudio,
+  playBackgroundAudio,
+  changeBackgroundAudioVolume,
+  getBackgroundAudioPlaying,
+  getBackgroundAudioVolume,
+  AudioTrack,
+} from 'services/audio'
 import { FocusModeLayout } from './FocusModeLayout'
 import { FocusModesStats } from './FocusModeStats/FocusModeStats'
 import { FocusModeActions } from './FocusModeActions/FocusModeActions'
@@ -22,6 +30,10 @@ function FocusMode() {
   const [openFocusSessionBackdrop, setOpenFocusSessionBackdrop] = useState(false)
   const [obtainedAstroName, setObtainedAstro] = useState<AstroName | null>(null)
 
+  const [playing, setPlaying] = useState<undefined | boolean>(undefined)
+  const [volume, setVolume] = useState<undefined | number>(undefined)
+  const [track, setTrack] = useState<keyof typeof AudioTrack>('BIRDS')
+
   const isFocusSessionOn = Boolean(activeFocusSession)
   const isFirstLoadCompleted = activeFocusSession !== undefined
 
@@ -35,14 +47,44 @@ function FocusMode() {
     getFocusModeStatus()
   }, [])
 
+  useEffect(() => {
+    const getBackgroundAudioSettings = async () => {
+      const playing = await getBackgroundAudioPlaying()
+      const volume = await getBackgroundAudioVolume()
+      setPlaying(playing)
+      setVolume(volume)
+    }
+    getBackgroundAudioSettings()
+  }, [])
+
+  const handlePauseBackgroundAudio = () => {
+    pauseBackgroundAudio({
+      responseCallback: () => {
+        setPlaying(false)
+      },
+    })
+  }
+
+  const handlePlayBackgroundAudio = () => {
+    playBackgroundAudio({
+      track,
+      volume,
+      responseCallback: () => {
+        setPlaying(true)
+      },
+    })
+  }
+
   const handleStartSession = async (taskTitle: string) => {
     const response = await sendMessage('startFocusMode', { taskTitle })
     if (!response) return // TODO: handle possible error
+    handlePlayBackgroundAudio()
     setActiveFocusSession(response as FocusSession)
   }
 
   const handleAbortSession = async () => {
     sendMessage('stopFocusMode')
+    handlePauseBackgroundAudio()
     setActiveFocusSession(null)
   }
 
@@ -59,6 +101,7 @@ function FocusMode() {
       session: { ...finishedSession, points: pointsBreakdown.total },
     })) as { astro: AstroName | null } // TODO: type sendMessage instead of casting.
 
+    handlePauseBackgroundAudio()
     const completedSessions = await getFocusSessionsByDay(DateTime.now())
     if (results.astro) setObtainedAstro(results.astro)
     setLastFocusSession(finishedSession)
@@ -82,6 +125,26 @@ function FocusMode() {
     setOpenFocusSessionBackdrop(false)
   }
 
+  const handleVolumeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const volume = Number(event.target.value) / 100
+    setVolume(volume)
+
+    changeBackgroundAudioVolume({
+      volume,
+      responseCallback: changed => {
+        if (changed) setVolume(volume)
+      },
+    })
+  }
+
+  const backgroundMusicButtonClick = () => {
+    if (playing) {
+      handlePauseBackgroundAudio()
+    } else {
+      handlePlayBackgroundAudio()
+    }
+  }
+
   return (
     <>
       <PageLayout
@@ -101,7 +164,30 @@ function FocusMode() {
               />
             }
             centerSlot={
-              <FocusModeTasks tasks={activeFocusSession?.tasks} onChange={handleTaskStatusChange} />
+              <>
+                <div style={{ display: 'flex' }}>
+                  <button onClick={backgroundMusicButtonClick} type="button">
+                    {playing ? 'Stop audio' : 'Play audio'}
+                  </button>
+                  <select
+                    value={track}
+                    onChange={event => setTrack(event.target.value as keyof typeof AudioTrack)}>
+                    {Object.keys(AudioTrack).map(key => (
+                      <option key={key} value={key}>
+                        {key}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <input
+                  type="range"
+                  min={1}
+                  max={100}
+                  value={(volume || 1) * 100}
+                  onChange={handleVolumeChange}
+                />
+                <FocusModeTasks tasks={activeFocusSession?.tasks} onChange={handleTaskStatusChange} />
+              </>
             }
             bottomSlot={
               <FocusModeActions

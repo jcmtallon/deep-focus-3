@@ -16,6 +16,9 @@
 - [x] Add command for opening Action Popup
 
 
+### Debugging offsite pages
+chrome://inspect/#other
+
 ## Inspiration
 https://chrome.google.com/webstore/detail/otto-%E2%80%93-pomodoro-timer-and/jbojhemhnilgooplglkfoheddemkodld
 https://chrome.google.com/webstore/detail/coffeelings/hcbddpppkcnfjifbcfnhmelpemdoepkk
