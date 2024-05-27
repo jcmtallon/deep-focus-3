@@ -12,6 +12,7 @@ import {
   changeBackgroundAudioVolume,
   getBackgroundAudioPlaying,
   getBackgroundAudioVolume,
+  getBackgroundAudioTrack,
   AudioTrack,
 } from 'services/audio'
 import { FocusModeLayout } from './FocusModeLayout'
@@ -32,7 +33,7 @@ function FocusMode() {
 
   const [playing, setPlaying] = useState<undefined | boolean>(undefined)
   const [volume, setVolume] = useState<undefined | number>(undefined)
-  const [track, setTrack] = useState<keyof typeof AudioTrack>('BIRDS')
+  const [track, setTrack] = useState<undefined | keyof typeof AudioTrack>(undefined)
 
   const isFocusSessionOn = Boolean(activeFocusSession)
   const isFirstLoadCompleted = activeFocusSession !== undefined
@@ -51,8 +52,10 @@ function FocusMode() {
     const getBackgroundAudioSettings = async () => {
       const playing = await getBackgroundAudioPlaying()
       const volume = await getBackgroundAudioVolume()
+      const track = await getBackgroundAudioTrack()
       setPlaying(playing)
       setVolume(volume)
+      setTrack(track)
     }
     getBackgroundAudioSettings()
   }, [])

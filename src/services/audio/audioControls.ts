@@ -42,22 +42,34 @@ async function getBackgroundAudioVolume(): Promise<number> {
  *
  *
  */
+async function getBackgroundAudioTrack(): Promise<keyof typeof AudioTrack> {
+  const unknownValue = await readLocalStorage(LOCAL_STORAGE_KEY.BACKGROUND_AUDIO_TRACK)
+  const stringValue = typeof unknownValue === 'string' ? unknownValue.replace(/"/g, '') : 'BIRDS'
+  const track = stringValue in AudioTrack ? (stringValue as keyof typeof AudioTrack) : 'BIRDS'
+  return track
+}
+
+/**
+ *
+ *
+ */
 async function playBackgroundAudio(args: {
   track?: keyof typeof AudioTrack
   volume?: number
   responseCallback?: (playing: boolean) => void
 }): Promise<void> {
-  const { track, volume: propsVolume, responseCallback } = args
+  const { track = 'BIRDS', volume: propsVolume, responseCallback } = args
 
   await initAudioOffscreen()
 
   // TODO: If no track, select random track randomly.
-  const url = track ? AudioTrack[track] : AudioTrack.BIRDS
+  const url = AudioTrack[track]
   const volume = propsVolume ?? 1
 
   await chrome.runtime.sendMessage({ message: Message.PLAY_MUSIC, url, volume }, async response => {
     if (response.message === 'Playing audio element') {
       await setLocalStorage({ [LOCAL_STORAGE_KEY.BACKGROUND_AUDIO_PLAYING]: JSON.stringify(true) })
+      await setLocalStorage({ [LOCAL_STORAGE_KEY.BACKGROUND_AUDIO_TRACK]: track })
       responseCallback?.(true)
     }
   })
@@ -105,6 +117,7 @@ export { AudioTrack }
 export {
   changeBackgroundAudioVolume,
   getBackgroundAudioPlaying,
+  getBackgroundAudioTrack,
   getBackgroundAudioVolume,
   pauseBackgroundAudio,
   playBackgroundAudio,

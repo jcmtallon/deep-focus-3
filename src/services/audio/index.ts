@@ -2,6 +2,7 @@ export {
   AudioTrack,
   changeBackgroundAudioVolume,
   getBackgroundAudioPlaying,
+  getBackgroundAudioTrack,
   getBackgroundAudioVolume,
   pauseBackgroundAudio,
   playBackgroundAudio,
