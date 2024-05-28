@@ -8,6 +8,7 @@ import { MissionControlHeader } from '../MissionControlHeader'
 import * as S from './MissionControlDashboard.styles'
 import { MissionControlDayProgress } from '../MissionControlDayProgress'
 import { MissionControlSessions } from '../MissionControlSessions'
+import { MissionControlDayTimeline } from './MissionControlDayTimeline'
 
 interface MissionControlDashboardProps {}
 
@@ -60,6 +61,7 @@ function MissionControlDashboard(props: MissionControlDashboardProps) {
               Toggle button
             </button> */}
             <S.Quote>&ldquo;Focus on just one thing at a time&ldquo;</S.Quote>
+            <MissionControlDayTimeline focusSessions={focusSessions} />
           </S.Column>
           {/* <S.Column>
             <S.Card title="Quote">Some quote here</S.Card>
