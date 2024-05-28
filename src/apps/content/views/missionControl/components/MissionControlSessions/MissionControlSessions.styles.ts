@@ -7,6 +7,7 @@ const List = styled.ul`
   flex-direction: column;
   row-gap: 4px;
   font-weight: 700;
+  width: 100%;
 `
 
 const ListItem = styled.li`
@@ -17,10 +18,13 @@ const ListItem = styled.li`
 `
 
 const Duration = styled.div`
+  width: 33%;
+  text-align: right;
   flex-grow: 1;
   font-variant-numeric: tabular-nums;
 `
 const Awards = styled.div`
+  width: 33%;
   flex-grow: 1;
   text-align: right;
   column-gap: 2px;
@@ -31,9 +35,19 @@ const Quests = styled.div`
   color: #2dbe90;
 `
 const Impacts = styled.div`
-  flex-grow: 1;
-  text-align: right;
-  color: #e05022;
+  width: 33%;
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 3px;
+  row-gap: 3px;
+  justify-content: flex-end;
+`
+
+const Impact = styled.div`
+  background: #c92626;
+  border-radius: 50%;
+  width: 8px;
+  height: 8px;
 `
 
 const Counter = styled.div`
@@ -47,4 +61,4 @@ const Star = styled(IconStar)`
   height: 20px;
 `
 
-export { List, ListItem, Duration, Awards, Quests, Impacts, Counter, Star }
+export { List, Impact, ListItem, Duration, Awards, Quests, Impacts, Counter, Star }
