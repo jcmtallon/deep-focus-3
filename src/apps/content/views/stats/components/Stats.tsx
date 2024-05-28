@@ -19,6 +19,7 @@ import { DateTime, Duration } from 'luxon'
 import { forEach } from 'lodash'
 import { countFocusSessionImpacts } from 'utils'
 import { MissionControlBlockedSites } from './MissionControlBlockedSites/MissionControlBlockedSites'
+import { StatsAstros } from './StatsAstros'
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Filler, Legend)
 
@@ -198,9 +199,7 @@ function Stats() {
             <MissionControlBlockedSites blockedSites={blockedSites} />
           </Card>
           <Card title="Astros">
-            {obtainedAstros.map(astro => (
-              <div key={astro.astroId}>{astro.name}</div>
-            ))}
+            <StatsAstros astros={obtainedAstros} />
           </Card>
         </Column>
       </Body>
