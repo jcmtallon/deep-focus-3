@@ -15,6 +15,7 @@ import {
 import styled from 'styled-components'
 import { forEach } from 'lodash'
 import { DateTime } from 'luxon'
+import { countFocusSessionImpacts } from 'utils'
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Filler, Legend)
 
@@ -61,9 +62,9 @@ interface MissionControlDayTimelineProps {
 function MissionControlDayTimeline(props: MissionControlDayTimelineProps) {
   const { focusSessions = [] } = props
 
-  const dataSet = useMemo(() => {
-    const timeSlotRecord: Record<number, { minutes: number }> = Object.fromEntries(
-      hours.map(hour => [hour, { minutes: 0 }]),
+  const timeDataSet = useMemo(() => {
+    const timeSlotRecord: Record<number, { minutes: number; impacts: number }> = Object.fromEntries(
+      hours.map(hour => [hour, { minutes: 0, impacts: 0 }]),
     )
 
     forEach(focusSessions, focusSession => {
@@ -91,13 +92,25 @@ function MissionControlDayTimeline(props: MissionControlDayTimelineProps) {
           remainingMinutes = 0
         }
       }
+
+      const impactCount = countFocusSessionImpacts(focusSession.impacts)
+      const impactCountPerSegment = Math.ceil(impactCount / segments) * 5 // 5 is to make them more noticeable
+
+      while (segments > 1) {
+        timeSlotRecord[startTimeSlot + segments].impacts += impactCountPerSegment
+        segments--
+      }
     })
     return timeSlotRecord
   }, [focusSessions])
 
-  const data = useMemo(() => {
-    return Object.keys(dataSet).map(key => dataSet[parseInt(key, 10)].minutes)
-  }, [dataSet])
+  const timeData = useMemo(() => {
+    return Object.keys(timeDataSet).map(key => timeDataSet[parseInt(key, 10)].minutes)
+  }, [timeDataSet])
+
+  const impactData = useMemo(() => {
+    return Object.keys(timeDataSet).map(key => timeDataSet[parseInt(key, 10)].impacts)
+  }, [timeDataSet])
 
   return (
     <Wrapper>
@@ -105,8 +118,8 @@ function MissionControlDayTimeline(props: MissionControlDayTimelineProps) {
         options={{
           responsive: true,
           plugins: {
-            legend: { position: 'top' as const },
-            title: { display: true, text: 'Your day' },
+            legend: { position: 'chartArea' as const },
+            title: { display: false },
           },
           scales: { y: { min: 0, max: 60 } },
         }}
@@ -116,9 +129,16 @@ function MissionControlDayTimeline(props: MissionControlDayTimelineProps) {
             {
               fill: true,
               label: 'Time',
-              data,
+              data: timeData,
               borderColor: 'rgb(53, 162, 235)',
               backgroundColor: 'rgba(53, 162, 235, 0.5)',
+            },
+            {
+              fill: true,
+              label: 'Impacts',
+              data: impactData,
+              borderColor: 'rgb(255, 99, 132)',
+              backgroundColor: 'rgba(255, 99, 132, 0.5)',
             },
           ],
         }}
