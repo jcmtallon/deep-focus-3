@@ -64,7 +64,8 @@ function FocusModeActions(props: FocusModeActionsProps) {
   const allSessionTasksCompleted = session?.tasks.every(t => t.status === 'COMPLETED')
 
   const handleFocusModeStart = () => {
-    onStartSession?.(input.trim())
+    const text = input !== '' ? input : 'Focus session'
+    onStartSession?.(text.trim())
     setInput('')
   }
 
@@ -105,9 +106,7 @@ function FocusModeActions(props: FocusModeActionsProps) {
           onKeyDown={handleSessionStartInputKeyDown}
           onChange={e => setInput(e.target.value)}
         />
-        <Button disabled={input.length === 0} onClick={handleFocusModeStart}>
-          Start Focus Session
-        </Button>
+        <Button onClick={handleFocusModeStart}>Start Focus Session</Button>
       </Wrapper>
     )
   }
