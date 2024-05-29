@@ -94,9 +94,9 @@ function MissionControlDayTimeline(props: MissionControlDayTimelineProps) {
       }
 
       const impactCount = countFocusSessionImpacts(focusSession.impacts)
-      const impactCountPerSegment = Math.ceil(impactCount / segments) * 5 // 5 is to make them more noticeable
+      const impactCountPerSegment = Math.ceil(impactCount / segments)
 
-      while (segments > 1) {
+      while (segments >= 1) {
         timeSlotRecord[startTimeSlot + segments].impacts += impactCountPerSegment
         segments--
       }
@@ -121,24 +121,26 @@ function MissionControlDayTimeline(props: MissionControlDayTimelineProps) {
             legend: { position: 'chartArea' as const },
             title: { display: false },
           },
-          scales: { y: { min: 0, max: 60 } },
+          scales: { y: { min: 0, max: 60 }, y1: { min: 0, max: 10, display: false } },
         }}
         data={{
           labels,
           datasets: [
             {
               fill: true,
-              label: 'Time',
-              data: timeData,
-              borderColor: 'rgb(53, 162, 235)',
-              backgroundColor: 'rgba(53, 162, 235, 0.5)',
-            },
-            {
-              fill: true,
               label: 'Impacts',
               data: impactData,
               borderColor: 'rgb(255, 99, 132)',
               backgroundColor: 'rgba(255, 99, 132, 0.5)',
+              yAxisID: 'y1',
+            },
+            {
+              fill: true,
+              label: 'Time',
+              data: timeData,
+              borderColor: 'rgb(53, 162, 235)',
+              backgroundColor: 'rgba(53, 162, 235, 0.5)',
+              yAxisID: 'y',
             },
           ],
         }}
