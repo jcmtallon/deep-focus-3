@@ -2,7 +2,7 @@ import React from 'react'
 import { MemoryRouter, Routes as ReactRouterRoutes, Route } from 'react-router-dom'
 import { MissionControl } from './views/missionControl'
 import { Stats } from './views/stats'
-import { Quotes } from './views/quotes'
+import { Astros } from './views/astros'
 
 function Routes() {
   return (
@@ -10,7 +10,7 @@ function Routes() {
       <ReactRouterRoutes>
         <Route path="/" element={<MissionControl />} />
         <Route path="/stats" element={<Stats />} />
-        <Route path="/quotes" element={<Quotes />} />
+        <Route path="/astros" element={<Astros />} />
       </ReactRouterRoutes>
     </MemoryRouter>
   )

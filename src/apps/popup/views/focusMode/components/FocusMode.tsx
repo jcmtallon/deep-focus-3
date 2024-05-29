@@ -182,6 +182,7 @@ function FocusMode() {
                     ))}
                   </select>
                 </div>
+                <br />
                 <input
                   type="range"
                   min={1}
@@ -189,6 +190,8 @@ function FocusMode() {
                   value={(volume || 1) * 100}
                   onChange={handleVolumeChange}
                 />
+                <br />
+                <br />
                 <FocusModeTasks tasks={activeFocusSession?.tasks} onChange={handleTaskStatusChange} />
               </>
             }

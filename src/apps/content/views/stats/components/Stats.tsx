@@ -1,7 +1,7 @@
 import { PageLayout, SideNav, Card as BaseCard } from 'apps/content/components'
-import { listBlockedSites, getFocusSessionsByDateRange, listObtainedAstros } from 'services/store'
+import { listBlockedSites, getFocusSessionsByDateRange } from 'services/store'
 import React, { useEffect, useMemo, useState } from 'react'
-import { BlockedSite, FocusSession, Astro } from 'types'
+import { BlockedSite, FocusSession } from 'types'
 import styled from 'styled-components'
 import { Line } from 'react-chartjs-2'
 import {
@@ -19,7 +19,6 @@ import { DateTime, Duration } from 'luxon'
 import { forEach } from 'lodash'
 import { countFocusSessionImpacts } from 'utils'
 import { MissionControlBlockedSites } from './MissionControlBlockedSites/MissionControlBlockedSites'
-import { StatsAstros } from './StatsAstros'
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Filler, Legend)
 
@@ -45,7 +44,6 @@ const Column = styled.div`
 
 function Stats() {
   const [blockedSites, setBlockedSites] = useState<BlockedSite[]>([])
-  const [obtainedAstros, setObtainedAstros] = useState<Astro[]>([])
   const [focusSessions, setFocusSessions] = useState<FocusSession[]>([])
   const [criteria, setCriteria] = useState<'time' | 'sessions' | 'tasks' | 'impacts'>('time')
 
@@ -59,14 +57,8 @@ function Stats() {
     setFocusSessions(focusSessions)
   }
 
-  const getObtainedAstros = async () => {
-    const obtainedAstros = await listObtainedAstros()
-    setObtainedAstros(obtainedAstros)
-  }
-
   useEffect(() => {
     getBlockedSites()
-    getObtainedAstros()
   }, [])
 
   useEffect(() => {
@@ -197,9 +189,6 @@ function Stats() {
         <Column>
           <Card title="Blocked Sites">
             <MissionControlBlockedSites blockedSites={blockedSites} />
-          </Card>
-          <Card title="Astros">
-            <StatsAstros astros={obtainedAstros} />
           </Card>
         </Column>
       </Body>

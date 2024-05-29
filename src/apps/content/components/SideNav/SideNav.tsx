@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import * as S from './SideNav.styles'
 
 interface SideNavProps {
-  activeElement?: 'missionControl' | 'stats' | 'quotes'
+  activeElement?: 'missionControl' | 'stats' | 'astros'
 }
 
 function SideNav(props: SideNavProps) {
@@ -18,8 +18,8 @@ function SideNav(props: SideNavProps) {
       <S.Button active={activeElement === 'stats'} onClick={() => navigate('/stats')} type="button">
         Stats
       </S.Button>
-      <S.Button active={activeElement === 'quotes'} onClick={() => navigate('/quotes')} type="button">
-        Quotes
+      <S.Button active={activeElement === 'astros'} onClick={() => navigate('/astros')} type="button">
+        Astros
       </S.Button>
     </S.Nav>
   )
