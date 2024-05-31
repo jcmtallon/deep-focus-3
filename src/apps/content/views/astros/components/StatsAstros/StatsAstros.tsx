@@ -13,6 +13,7 @@ import {
   Legend,
 } from 'chart.js'
 import { getAstroLabel } from 'utils'
+import { DateTime } from 'luxon'
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Filler, Legend)
 
@@ -45,11 +46,11 @@ function StatsAstros(props: StatsAstrosProps) {
 
   const astroDataSets = useMemo(() => {
     const sizes: Record<AstroName, number> = {
-      WHITE_DWARF: 1,
+      WHITE_DWARF: 1.5,
       RED_GIANT: 3,
       SUPER_NOVA: 4,
       NEUTRON_STAR: 10,
-      BLACK_HOLE: 15,
+      BLACK_HOLE: 16,
     }
 
     const colors: Record<AstroName, string> = {
@@ -69,6 +70,7 @@ function StatsAstros(props: StatsAstrosProps) {
           r: sizes[astro.name],
           x: getDeterminantNumber(astro.astroId),
           y: getDeterminantNumber(astro.date),
+          d: astro.date,
         })),
     }))
   }, [astros])
@@ -80,6 +82,15 @@ function StatsAstros(props: StatsAstrosProps) {
         plugins: {
           legend: { display: false, position: 'right' },
           title: { display: true, text: 'Focus universe' },
+          tooltip: {
+            callbacks: {
+              label: tooltipItem => {
+                const dataSet = astroDataSets[tooltipItem.datasetIndex]
+                const data = dataSet.data[tooltipItem.dataIndex]
+                return `${dataSet.label}: ${DateTime.fromMillis(data.d).toFormat('LLL dd yyyy')}`
+              },
+            },
+          },
         },
       }}
       data={{
