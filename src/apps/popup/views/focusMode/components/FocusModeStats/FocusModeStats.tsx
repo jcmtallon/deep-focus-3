@@ -90,6 +90,7 @@ function FocusModesStats(props: FocusModeStatsProps) {
         <Impacts>{`${impacts} impacts`}</Impacts>
       </StatsWrapper>
       <FocusSessionProgressBar
+        completedSessions={completedSessions}
         focusSession={activeFocusSession}
         startDate={activeFocusSession.startDate}
         impactCount={impacts}

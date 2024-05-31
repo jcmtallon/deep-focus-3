@@ -1,9 +1,15 @@
-export { countFocusSessionImpacts, getFocusSessionsTotalTime, getFocusSessionDuration } from './focusSession'
+export {
+  countFocusSessionImpacts,
+  getFocusSessionDuration,
+  getFocusSessionsPenaltyTime,
+  getFocusSessionsTotalTime,
+} from './focusSession'
 
 export {
   calculateStarLeftPosition,
   getStarCountByFocusSessionProgress,
   getStarCountByFocusSessionTotalPoints,
+  durationToStar,
 } from './stars'
 
 export { getFocusSessionProgressWithPenalty, getFocusSessionProgress, getDayProgress } from './progress'

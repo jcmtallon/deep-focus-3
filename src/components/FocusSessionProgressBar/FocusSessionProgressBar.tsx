@@ -5,8 +5,12 @@ import {
   getFocusSessionProgressWithPenalty,
   calculateStarLeftPosition,
   getStarCountByFocusSessionTotalPoints,
+  durationToStar,
+  countFocusSessionImpacts,
+  getFocusSessionsPenaltyTime,
 } from 'utils'
 import { FocusSession } from 'types'
+import { Duration } from 'luxon'
 import * as S from './FocusSessionProgressBar.styles'
 
 interface FocusSessionProgressBarProps extends HTMLAttributes<HTMLDivElement> {
@@ -15,13 +19,22 @@ interface FocusSessionProgressBarProps extends HTMLAttributes<HTMLDivElement> {
   height?: number
   impactCount?: number
   focusSession: FocusSession
+  completedSessions?: FocusSession[]
 }
 
 function FocusSessionProgressBar(props: FocusSessionProgressBarProps) {
-  const { startDate, width = 260, height = 10, impactCount, focusSession, ...otherProps } = props
+  const {
+    width = 260,
+    height = 10,
+    impactCount,
+    focusSession, // FIXME: focusSession and startDate overlap. Remove one
+    completedSessions = [],
+    ...otherProps
+  } = props
 
   const [barProgress, setBarProgress] = useState({ withPenalty: 0, withoutPenalty: 0 })
   const [totalPoints, setTotalPoints] = useState(0)
+  const [timeToS, setTimeToS] = useState<string>('')
 
   useEffect(() => {
     const updateBar = () => {
@@ -30,6 +43,26 @@ function FocusSessionProgressBar(props: FocusSessionProgressBarProps) {
       const progressWithPenalty = getFocusSessionProgressWithPenalty(gained, penalty)
       setBarProgress({ withPenalty: progressWithPenalty, withoutPenalty: progress })
       setTotalPoints(total)
+
+      const elapsedDuration = Duration.fromMillis(
+        new Date().getTime() - new Date(focusSession.startDate).getTime(),
+      )
+
+      const penaltyDuration = Duration.fromObject({
+        seconds: getFocusSessionsPenaltyTime(countFocusSessionImpacts(focusSession.impacts)),
+      })
+
+      const countedDuration = elapsedDuration.minus(penaltyDuration)
+
+      // Remaining minutes to achieve next star
+      const durationToStarOne = durationToStar(countedDuration, '1')
+      const durationToStarTwo = durationToStar(countedDuration, '2')
+      const durationToStarThree = durationToStar(countedDuration, '3')
+      setTimeToS(
+        `${durationToStarOne.toFormat('m')} min, ${durationToStarTwo.toFormat(
+          'm',
+        )} min,  ${durationToStarThree.toFormat('m')} min`,
+      )
     }
 
     // So the bar is painted right away when the component is mounted.
@@ -37,7 +70,7 @@ function FocusSessionProgressBar(props: FocusSessionProgressBarProps) {
     const interval = setInterval(() => updateBar(), 1000)
 
     return () => clearInterval(interval)
-  }, [startDate, focusSession])
+  }, [focusSession, completedSessions])
 
   const starCount = getStarCountByFocusSessionTotalPoints(totalPoints)
   const left = calculateStarLeftPosition(width)
@@ -46,6 +79,7 @@ function FocusSessionProgressBar(props: FocusSessionProgressBarProps) {
 
   return (
     <>
+      <span>{timeToS}</span>
       <S.ProgressBar style={{ height }} {...otherProps}>
         <S.ProgressBarFill
           style={{ backgroundColor: 'red', width: `${barProgress.withoutPenalty}%`, height }}

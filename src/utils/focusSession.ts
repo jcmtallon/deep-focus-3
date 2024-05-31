@@ -1,5 +1,6 @@
 import { DateTime, Duration, DurationLike } from 'luxon'
 import { FocusSession } from 'types'
+import { TIME_PENALTY } from './constants'
 
 function countFocusSessionImpacts(impacts: FocusSession['impacts']): number {
   if (!impacts) return 0
@@ -26,4 +27,17 @@ function getFocusSessionsTotalTime(focusSessions: FocusSession[]): Duration {
   }, Duration.fromObject({ seconds: 0 }))
 }
 
-export { countFocusSessionImpacts, getFocusSessionsTotalTime, getFocusSessionDuration }
+/**
+ *
+ * In seconds
+ */
+function getFocusSessionsPenaltyTime(impactCount: number = 0): number {
+  return impactCount * TIME_PENALTY * impactCount
+}
+
+export {
+  countFocusSessionImpacts,
+  getFocusSessionsTotalTime,
+  getFocusSessionDuration,
+  getFocusSessionsPenaltyTime,
+}
