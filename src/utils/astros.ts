@@ -1,4 +1,5 @@
 import { AstroName } from 'types'
+import { Duration } from 'luxon'
 import { BLACK_HOLE, MAX_DAY_POINTS, NEUTRON_STAR, RED_GIANT, SUPER_NOVA, WHITE_DWARF } from './constants'
 
 function calculateAstroRightPosition(width: number) {
@@ -56,4 +57,27 @@ function checkNewlyAchievedAstro(points: number, newPoints: number): AstroName |
   return newAstro !== astro ? newAstro : null
 }
 
-export { calculateAchievedAstro, calculateAstroRightPosition, checkNewlyAchievedAstro, getAstroLabel }
+const astroDurationCriteria: Record<AstroName, number> = {
+  WHITE_DWARF,
+  RED_GIANT,
+  SUPER_NOVA,
+  NEUTRON_STAR,
+  BLACK_HOLE,
+}
+
+/**
+ *
+ */
+function durationToAstro(currentDuration: Duration, targetAstro: AstroName): Duration {
+  const targetDuration = Duration.fromObject({ seconds: astroDurationCriteria[targetAstro] })
+  const diff = targetDuration.minus(currentDuration)
+  return diff.as('milliseconds') < 0 ? Duration.fromMillis(0) : diff
+}
+
+export {
+  calculateAchievedAstro,
+  calculateAstroRightPosition,
+  checkNewlyAchievedAstro,
+  durationToAstro,
+  getAstroLabel,
+}

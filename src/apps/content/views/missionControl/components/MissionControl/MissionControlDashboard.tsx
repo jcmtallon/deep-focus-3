@@ -17,25 +17,15 @@ function MissionControlDashboard(props: MissionControlDashboardProps) {
 
   const [focusSessions, setFocusSession] = useState<FocusSession[]>([])
   const [selectedDate, setSelectedDate] = useState<DateTime>(DateTime.now())
-  // const [blockedSites, setBlockedSites] = useState<BlockedSite[]>([])
 
   const getFocusSessions = useCallback(async () => {
     const focusSessions = await getFocusSessionsByDay(selectedDate)
     setFocusSession(focusSessions)
   }, [selectedDate])
 
-  // const getBlockedSites = async () => {
-  //   const blockedSites = await listBlockedSites()
-  //   setBlockedSites(blockedSites)
-  // }
-
   useEffect(() => {
     getFocusSessions()
   }, [getFocusSessions])
-
-  // useEffect(() => {
-  //   getBlockedSites()
-  // }, [])
 
   const totalTime = useMemo(() => getFocusSessionsTotalTime(focusSessions), [focusSessions])
 

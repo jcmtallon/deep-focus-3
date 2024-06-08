@@ -47,13 +47,15 @@ const TWO_STAR_TIME_CRITERIA = FOCUS_SESSION_MAX_ACCOUNTED_TIME * TWO_STAR_CRITE
 /** Amount of time required to obtain the third star of a focus session */
 const THREE_STAR_TIME_CRITERIA = FOCUS_SESSION_MAX_ACCOUNTED_TIME * THREE_STAR_CRITERIA
 
+const criteria = { '1': ONE_STAR_TIME_CRITERIA, '2': TWO_STAR_TIME_CRITERIA, '3': THREE_STAR_TIME_CRITERIA }
+
 /**
  *
  */
-function durationToStar(progressedDuration: Duration, starNumber: '1' | '2' | '3'): Duration {
-  const criteria = { '1': ONE_STAR_TIME_CRITERIA, '2': TWO_STAR_TIME_CRITERIA, '3': THREE_STAR_TIME_CRITERIA }
-  const duration = Duration.fromObject({ seconds: criteria[starNumber] }).minus(progressedDuration)
-  return duration.as('milliseconds') < 0 ? Duration.fromMillis(0) : duration
+function durationToStar(currentDuration: Duration, targetStar: '1' | '2' | '3'): Duration {
+  const targetDuration = Duration.fromObject({ seconds: criteria[targetStar] })
+  const diff = targetDuration.minus(currentDuration)
+  return diff.as('milliseconds') < 0 ? Duration.fromMillis(0) : diff
 }
 
 export {

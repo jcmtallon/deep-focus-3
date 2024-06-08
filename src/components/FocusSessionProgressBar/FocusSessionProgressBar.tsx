@@ -1,4 +1,4 @@
-import React, { useState, HTMLAttributes, useEffect } from 'react'
+import React, { useState, HTMLAttributes, useEffect, useMemo } from 'react'
 import {
   getFocusSessionPointsBreakdown,
   getFocusSessionProgress,
@@ -8,6 +8,8 @@ import {
   durationToStar,
   countFocusSessionImpacts,
   getFocusSessionsPenaltyTime,
+  getFocusSessionsTotalTime,
+  durationToAstro,
 } from 'utils'
 import { FocusSession } from 'types'
 import { Duration } from 'luxon'
@@ -34,7 +36,13 @@ function FocusSessionProgressBar(props: FocusSessionProgressBarProps) {
 
   const [barProgress, setBarProgress] = useState({ withPenalty: 0, withoutPenalty: 0 })
   const [totalPoints, setTotalPoints] = useState(0)
-  const [timeToS, setTimeToS] = useState<string>('')
+  const [timeToStar, setTimeToStar] = useState<string>('')
+  const [timeToAstro, setTimeToAstro] = useState<string>('')
+
+  const completedSessionsTotalDuration = useMemo(
+    () => getFocusSessionsTotalTime(completedSessions),
+    [completedSessions],
+  )
 
   useEffect(() => {
     const updateBar = () => {
@@ -52,16 +60,32 @@ function FocusSessionProgressBar(props: FocusSessionProgressBarProps) {
         seconds: getFocusSessionsPenaltyTime(countFocusSessionImpacts(focusSession.impacts)),
       })
 
-      const countedDuration = elapsedDuration.minus(penaltyDuration)
+      const currentSessionDuration = elapsedDuration.minus(penaltyDuration)
+      const dayTotalProgressDuration = currentSessionDuration.plus(completedSessionsTotalDuration)
 
       // Remaining minutes to achieve next star
-      const durationToStarOne = durationToStar(countedDuration, '1')
-      const durationToStarTwo = durationToStar(countedDuration, '2')
-      const durationToStarThree = durationToStar(countedDuration, '3')
-      setTimeToS(
+      const durationToStarOne = durationToStar(currentSessionDuration, '1')
+      const durationToStarTwo = durationToStar(currentSessionDuration, '2')
+      const durationToStarThree = durationToStar(currentSessionDuration, '3')
+
+      const durationToWhiteDwarf = durationToAstro(dayTotalProgressDuration, 'WHITE_DWARF')
+      const durationToRedGiant = durationToAstro(dayTotalProgressDuration, 'RED_GIANT')
+      const durationToSuperNova = durationToAstro(dayTotalProgressDuration, 'SUPER_NOVA')
+      const durationToNeutronStar = durationToAstro(dayTotalProgressDuration, 'NEUTRON_STAR')
+      const durationToBlackHole = durationToAstro(dayTotalProgressDuration, 'BLACK_HOLE')
+
+      setTimeToStar(
         `${durationToStarOne.toFormat('m')} min, ${durationToStarTwo.toFormat(
           'm',
         )} min,  ${durationToStarThree.toFormat('m')} min`,
+      )
+
+      setTimeToAstro(
+        `${durationToWhiteDwarf.toFormat('h:m')}m, ${durationToRedGiant.toFormat(
+          'h:m',
+        )}m, ${durationToSuperNova.toFormat('h:m')}m, ${durationToNeutronStar.toFormat(
+          'h:m',
+        )}m, ${durationToBlackHole.toFormat('h:m')}m`,
       )
     }
 
@@ -70,7 +94,7 @@ function FocusSessionProgressBar(props: FocusSessionProgressBarProps) {
     const interval = setInterval(() => updateBar(), 1000)
 
     return () => clearInterval(interval)
-  }, [focusSession, completedSessions])
+  }, [focusSession, completedSessionsTotalDuration])
 
   const starCount = getStarCountByFocusSessionTotalPoints(totalPoints)
   const left = calculateStarLeftPosition(width)
@@ -79,7 +103,8 @@ function FocusSessionProgressBar(props: FocusSessionProgressBarProps) {
 
   return (
     <>
-      <span>{timeToS}</span>
+      <span>{timeToStar}</span>
+      <span>{timeToAstro}</span>
       <S.ProgressBar style={{ height }} {...otherProps}>
         <S.ProgressBarFill
           style={{ backgroundColor: 'red', width: `${barProgress.withoutPenalty}%`, height }}

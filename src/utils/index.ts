@@ -21,4 +21,5 @@ export {
   calculateAstroRightPosition,
   checkNewlyAchievedAstro,
   getAstroLabel,
+  durationToAstro,
 } from './astros'
