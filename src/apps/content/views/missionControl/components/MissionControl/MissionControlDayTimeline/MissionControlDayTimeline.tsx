@@ -84,11 +84,19 @@ function MissionControlDayTimeline(props: MissionControlDayTimelineProps) {
       while (remainingMinutes > 0) {
         const minutesInSlot = segments === 1 ? 60 - startMinute : 60
         if (minutesInSlot <= remainingMinutes) {
-          timeSlotRecord[startTimeSlot + segments].minutes += minutesInSlot
+          const index = startTimeSlot + segments
+          // If segment belongs to a time slot in the next day, we skip it.
+          if (index in timeSlotRecord) {
+            timeSlotRecord[startTimeSlot + segments].minutes += minutesInSlot
+          }
           remainingMinutes -= minutesInSlot
           segments++
         } else {
-          timeSlotRecord[startTimeSlot + segments].minutes += remainingMinutes
+          const index = startTimeSlot + segments
+          // If segment belongs to a time slot in the next day, we skip it.
+          if (index in timeSlotRecord) {
+            timeSlotRecord[startTimeSlot + segments].minutes += remainingMinutes
+          }
           remainingMinutes = 0
         }
       }
@@ -97,7 +105,11 @@ function MissionControlDayTimeline(props: MissionControlDayTimelineProps) {
       const impactCountPerSegment = Math.ceil(impactCount / segments)
 
       while (segments >= 1) {
-        timeSlotRecord[startTimeSlot + segments].impacts += impactCountPerSegment
+        const index = startTimeSlot + segments
+        // If segment belongs to a time slot in the next day, we skip it.
+        if (index in timeSlotRecord) {
+          timeSlotRecord[startTimeSlot + segments].impacts += impactCountPerSegment
+        }
         segments--
       }
     })
