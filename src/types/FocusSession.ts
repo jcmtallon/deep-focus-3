@@ -4,6 +4,9 @@ interface FocusSession {
   sessionId?: string
   startDate: number
   endDate?: number
+  /**
+   * A Record of siteIds and number of impacts received on each site.
+   */
   impacts?: Record<string, number>
 
   /**
@@ -13,12 +16,12 @@ interface FocusSession {
   categoryId?: number
 
   /**
-   * @deprecated TODO: Remove this property
+   * @deprecated TODO: Remove this property.
    */
   points?: number
 
   /**
-   * @deprecated TODO: Remove this property
+   * @deprecated TODO: Remove this property.
    */
   tasks: Task[]
 }

@@ -10,6 +10,7 @@ import { MissionControlDayProgress } from '../MissionControlDayProgress'
 import { MissionControlSessions } from '../MissionControlSessions'
 import { MissionControlDayTimeline } from './MissionControlDayTimeline'
 import { MissionControlCategoryDetails } from './MissionControlCategoryDetails'
+import { MissionControlProductivityAnalysis } from './MissionControlProductivityAnalysis'
 
 interface MissionControlDashboardProps {
   categories: Category[]
@@ -46,6 +47,7 @@ function MissionControlDashboard(props: MissionControlDashboardProps) {
             <S.TimeDetailsContainer>
               <S.Date>{selectedDate.toFormat('LLLL dd')}</S.Date>
               <S.TimeDisplay formattedTime={totalTime.toFormat('hh:mm:ss')} />
+              <MissionControlProductivityAnalysis totalTime={totalTime} focusSessions={focusSessions} />
             </S.TimeDetailsContainer>
             <MissionControlCategoryDetails categories={categories} focusSessions={focusSessions} />
             <MissionControlSessions categories={categories} focusSessions={focusSessions} />
