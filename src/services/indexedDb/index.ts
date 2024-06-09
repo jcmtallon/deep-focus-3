@@ -14,13 +14,15 @@ import {
 } from './resources/focusSessions'
 import { COLLECTION_NAME, DATABASE_NAME } from './constants'
 import { AstrosEndpoints, addAstro, listAstros } from './resources/astros'
+import { addCategory, listCategories, deleteCategory, CategoryEndpoints } from './resources/categories'
 
-const { BLOCKED_SITES, FOCUS_SESSIONS, ASTROS } = COLLECTION_NAME
+const { BLOCKED_SITES, FOCUS_SESSIONS, ASTROS, CATEGORIES } = COLLECTION_NAME
 
 interface IndexedDbInstance {
   blockedSites: BlockedSiteEndpoints
   focusSessions: SessionEndpoints
   astros: AstrosEndpoints
+  categories: CategoryEndpoints
 }
 
 interface IndexedDb {
@@ -46,6 +48,13 @@ const indexedDb = (function (): IndexedDb {
 
         if (!db.objectStoreNames.contains(BLOCKED_SITES)) {
           db.createObjectStore(BLOCKED_SITES, {
+            keyPath: 'id',
+            autoIncrement: true,
+          })
+        }
+
+        if (!db.objectStoreNames.contains(CATEGORIES)) {
+          db.createObjectStore(CATEGORIES, {
             keyPath: 'id',
             autoIncrement: true,
           })
@@ -87,6 +96,11 @@ const indexedDb = (function (): IndexedDb {
           astros: {
             add: addAstro(db),
             list: listAstros(db),
+          },
+          categories: {
+            add: addCategory(db),
+            list: listCategories(db),
+            delete: deleteCategory(db),
           },
         })
       }

@@ -13,7 +13,7 @@ import {
 } from 'services/focusSessions'
 import { indexedDb } from 'services/indexedDb'
 import { DateTime } from 'luxon'
-import { FocusSession, Task } from 'types'
+import { Category, FocusSession, Task } from 'types'
 import { checkNewlyAchievedAstro, getFocusSessionsPointsBreakdown } from 'utils'
 import { addAstro } from 'services/astros'
 
@@ -50,8 +50,11 @@ async function addImpact(props: { payload: { siteId: string }; sendResponse: (pa
   props.sendResponse(true)
 }
 
-async function startFocusMode(props: { payload: { taskTitle: string }; sendResponse: (payload: any) => {} }) {
-  const focusSession = await startActiveFocusSessions({ taskTitle: props.payload.taskTitle })
+async function startFocusMode(props: {
+  payload: { category: Category | undefined }
+  sendResponse: (payload: any) => {}
+}) {
+  const focusSession = await startActiveFocusSessions({ category: props.payload.category })
   enableRules()
   showFocusModeBadge()
 

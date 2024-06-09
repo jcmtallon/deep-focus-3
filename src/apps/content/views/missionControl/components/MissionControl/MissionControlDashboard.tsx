@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { PageLayout, SideNav } from 'apps/content/components'
 import { getFocusSessionsByDay } from 'services/store'
-import { FocusSession } from 'types'
+import { Category, FocusSession } from 'types'
 import { DateTime } from 'luxon'
 import { getFocusSessionsTotalTime } from 'utils'
 import { MissionControlHeader } from '../MissionControlHeader'
@@ -9,11 +9,14 @@ import * as S from './MissionControlDashboard.styles'
 import { MissionControlDayProgress } from '../MissionControlDayProgress'
 import { MissionControlSessions } from '../MissionControlSessions'
 import { MissionControlDayTimeline } from './MissionControlDayTimeline'
+import { MissionControlCategoryDetails } from './MissionControlCategoryDetails'
 
-interface MissionControlDashboardProps {}
+interface MissionControlDashboardProps {
+  categories: Category[]
+}
 
 function MissionControlDashboard(props: MissionControlDashboardProps) {
-  const { ...otherProps } = props
+  const { categories } = props
 
   const [focusSessions, setFocusSession] = useState<FocusSession[]>([])
   const [selectedDate, setSelectedDate] = useState<DateTime>(DateTime.now())
@@ -44,10 +47,10 @@ function MissionControlDashboard(props: MissionControlDashboardProps) {
               <S.Date>{selectedDate.toFormat('LLLL dd')}</S.Date>
               <S.TimeDisplay formattedTime={totalTime.toFormat('hh:mm:ss')} />
             </S.TimeDetailsContainer>
-            <MissionControlSessions focusSessions={focusSessions} />
+            <MissionControlCategoryDetails categories={categories} focusSessions={focusSessions} />
+            <MissionControlSessions categories={categories} focusSessions={focusSessions} />
           </S.Column>
           <S.Column>
-            <S.Quote>&ldquo;Focus on just one thing at a time&ldquo;</S.Quote>
             <MissionControlDayTimeline focusSessions={focusSessions} />
           </S.Column>
           {/* <S.Column>

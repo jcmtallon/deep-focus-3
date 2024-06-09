@@ -1,12 +1,22 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { getActiveFocusSession as storeGetActiveFocusSession } from 'services/store'
-import { FocusSession } from 'types'
+import { Category, FocusSession } from 'types'
+import { listCategories } from 'services/categories'
 import { MissionControlFocusMode } from './MissionControlFocusMode'
 import { MissionControlDashboard } from './MissionControlDashboard'
 
 function MissionControl() {
   const [activeFocusSession, setActiveFocusSession] = useState<FocusSession | null>(null)
+  const [categories, setCategories] = useState<Category[]>([])
   const isFocusSessionOn = Boolean(activeFocusSession)
+
+  useEffect(() => {
+    const fetchCategoryData = async () => {
+      const categories = await listCategories()
+      setCategories(categories)
+    }
+    fetchCategoryData()
+  }, [])
 
   const getActiveFocusSession = useCallback(async () => {
     const session = await storeGetActiveFocusSession()
@@ -35,7 +45,7 @@ function MissionControl() {
     return <MissionControlFocusMode activeFocusSession={activeFocusSession} />
   }
 
-  return <MissionControlDashboard />
+  return <MissionControlDashboard categories={categories} />
 }
 
 export { MissionControl }

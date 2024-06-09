@@ -1,14 +1,16 @@
 import { indexedDb } from 'services/indexedDb'
 import { LOCAL_STORAGE_KEY, readLocalStorage, removeStorage, setLocalStorage } from 'services/localStorage'
-import { FocusSession, Task } from 'types'
+import { Category, FocusSession, Task } from 'types'
 import { DateTime } from 'luxon'
 
 const { ACTIVE_FOCUS_SESSION } = LOCAL_STORAGE_KEY
 
-async function startActiveFocusSessions(props: { taskTitle: string }): Promise<FocusSession> {
+async function startActiveFocusSessions(props: { category: Category | undefined }): Promise<FocusSession> {
   const payload: FocusSession = {
     startDate: new Date().getTime(),
-    tasks: [{ id: crypto.randomUUID(), title: props.taskTitle, status: 'PENDING' }],
+    categoryId: props.category?.id,
+    // FIXME: deprecate tasks
+    tasks: [],
   }
 
   await setLocalStorage({ [ACTIVE_FOCUS_SESSION]: JSON.stringify(payload) })

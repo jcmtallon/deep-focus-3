@@ -1,7 +1,7 @@
 import { FooterNav, Header, PageLayout } from 'apps/popup/components'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { sendMessage } from 'services/actions'
-import { AstroName, FocusSession, Task } from 'types'
+import { AstroName, Category, FocusSession, Task } from 'types'
 // Get focus session from store instead
 import { getActiveFocusSession, getFocusSessionsByDay } from 'services/focusSessions'
 import { DateTime } from 'luxon'
@@ -15,6 +15,7 @@ import {
   getBackgroundAudioTrack,
   AudioTrack,
 } from 'services/audio'
+import { listCategories } from 'services/categories'
 import { FocusModeLayout } from './FocusModeLayout'
 import { FocusModesStats } from './FocusModeStats/FocusModeStats'
 import { FocusModeActions } from './FocusModeActions/FocusModeActions'
@@ -26,6 +27,7 @@ import { FocusModeFinishedSessionBackdrop } from './FocusModeFinishedSessionBack
 function FocusMode() {
   const [activeFocusSession, setActiveFocusSession] = useState<FocusSession | null | undefined>(undefined)
   const [completedSessions, setCompletedSessions] = useState<FocusSession[]>([])
+  const [categories, setCategories] = useState<Category[]>([])
 
   const [lastFocusSession, setLastFocusSession] = useState<FocusSession | null>(null)
   const [openFocusSessionBackdrop, setOpenFocusSessionBackdrop] = useState(false)
@@ -60,6 +62,14 @@ function FocusMode() {
     getBackgroundAudioSettings()
   }, [])
 
+  useEffect(() => {
+    const fetchCategoryData = async () => {
+      const categories = await listCategories()
+      setCategories(categories)
+    }
+    fetchCategoryData()
+  }, [])
+
   const handlePauseBackgroundAudio = () => {
     pauseBackgroundAudio({
       responseCallback: () => {
@@ -78,8 +88,12 @@ function FocusMode() {
     })
   }
 
-  const handleStartSession = async (taskTitle: string) => {
-    const response = await sendMessage('startFocusMode', { taskTitle })
+  const activeSessionCategory = useMemo(() => {
+    return categories.find(c => c.id === activeFocusSession?.categoryId)
+  }, [categories, activeFocusSession])
+
+  const handleStartSession = async (category: Category | undefined) => {
+    const response = await sendMessage('startFocusMode', { category })
     if (!response) return // TODO: handle possible error
     handlePlayBackgroundAudio()
     setActiveFocusSession(response as FocusSession)
@@ -192,6 +206,11 @@ function FocusMode() {
                 />
                 <br />
                 <br />
+                {activeSessionCategory && (
+                  <div style={{ backgroundColor: activeSessionCategory.color }}>
+                    {activeSessionCategory.name}
+                  </div>
+                )}
                 <FocusModeTasks tasks={activeFocusSession?.tasks} onChange={handleTaskStatusChange} />
               </>
             }

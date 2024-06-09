@@ -42,14 +42,13 @@ function MissionControlFocusMode(props: MissionControlFocusModeProps) {
     }
   }, [])
 
-  const currentTaskTitle = focusSession.tasks[focusSession.tasks.length - 1].title
+  // const currentTaskTitle = focusSession.tasks[focusSession.tasks.length - 1].title
   const impactCount = countFocusSessionImpacts(focusSession.impacts)
 
   return (
     <PageLayout sideNav={<></>}>
       <S.Wrapper>
         <S.TopContainer>
-          <S.Quote>&ldquo;Focus on one thing at a time&ldquo;</S.Quote>
           <S.TimeDisplay startTimestamp={focusSession.startDate} />
           <S.ProgressBar
             focusSession={focusSession}
@@ -61,7 +60,7 @@ function MissionControlFocusMode(props: MissionControlFocusModeProps) {
         </S.TopContainer>
         <S.BottomContainer>
           <S.FocusTaskSubtitle>your current task</S.FocusTaskSubtitle>
-          <S.Task>{currentTaskTitle}</S.Task>
+          <S.Task>Show category here</S.Task>
         </S.BottomContainer>
         <></>
       </S.Wrapper>

@@ -22,7 +22,7 @@ const Body = styled.div`
 const Column = styled.div`
   display: flex;
   flex-direction: column;
-  row-gap: 32px;
+  row-gap: 0px;
   flex-grow: 1;
   align-items: center;
   justify-content: center;
