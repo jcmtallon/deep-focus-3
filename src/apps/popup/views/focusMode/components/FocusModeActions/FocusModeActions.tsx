@@ -72,12 +72,8 @@ function FocusModeActions(props: FocusModeActionsProps) {
       const categories = await listCategories()
       const selectedCategoryId = await getStoredSelectedCategoryId()
       setCategories(categories)
-
-      console.log(selectedCategoryId)
-
       if (selectedCategoryId) {
         const selectedCategory = categories.find(c => c.id === Number(selectedCategoryId))
-        console.log(selectedCategory)
         setSelectedCategory(selectedCategory)
       }
     }
