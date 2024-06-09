@@ -1,6 +1,7 @@
 // Reference: https://developer.chrome.com/docs/extensions/reference/declarativeNetRequest/#method-setExtensionActionOptions
 
 import { indexedDb } from 'services/indexedDb'
+import { LOCAL_STORAGE_KEY, readLocalStorage, setLocalStorage } from 'services/localStorage'
 import { Category } from 'types'
 
 async function listCategories(): Promise<Category[]> {
@@ -19,4 +20,13 @@ async function addCategory(args: { name: string; color: string }) {
   await database.categories.add(args)
 }
 
-export { listCategories, deleteCategory, addCategory }
+async function getStoredSelectedCategoryId(): Promise<number | undefined> {
+  const stringValue = await readLocalStorage(LOCAL_STORAGE_KEY.SELECTED_CATEGORY_ID)
+  return typeof stringValue === 'number' ? stringValue : undefined
+}
+
+async function storeSelectedCategoryId(categoryId: number | undefined): Promise<void> {
+  await setLocalStorage({ [LOCAL_STORAGE_KEY.SELECTED_CATEGORY_ID]: categoryId })
+}
+
+export { listCategories, deleteCategory, addCategory, getStoredSelectedCategoryId, storeSelectedCategoryId }

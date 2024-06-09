@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { listCategories } from 'services/categories'
+import { getStoredSelectedCategoryId, listCategories, storeSelectedCategoryId } from 'services/categories'
 import styled from 'styled-components'
 import { Category, FocusSession } from 'types'
 
@@ -70,7 +70,16 @@ function FocusModeActions(props: FocusModeActionsProps) {
   useEffect(() => {
     const fetchCategoryData = async () => {
       const categories = await listCategories()
+      const selectedCategoryId = await getStoredSelectedCategoryId()
       setCategories(categories)
+
+      console.log(selectedCategoryId)
+
+      if (selectedCategoryId) {
+        const selectedCategory = categories.find(c => c.id === Number(selectedCategoryId))
+        console.log(selectedCategory)
+        setSelectedCategory(selectedCategory)
+      }
     }
     fetchCategoryData()
   }, [])
@@ -122,6 +131,7 @@ function FocusModeActions(props: FocusModeActionsProps) {
           onChange={e => {
             const category = categories.find(c => c.id === Number(e.target.value))
             setSelectedCategory(category ?? undefined)
+            storeSelectedCategoryId(category?.id)
           }}>
           <option value="default" disabled>
             Select a category
