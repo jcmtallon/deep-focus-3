@@ -47,7 +47,11 @@ function MissionControlDashboard(props: MissionControlDashboardProps) {
             <S.TimeDetailsContainer>
               <S.Date>{selectedDate.toFormat('LLLL dd')}</S.Date>
               <S.TimeDisplay formattedTime={totalTime.toFormat('hh:mm:ss')} />
-              <MissionControlProductivityAnalysis totalTime={totalTime} focusSessions={focusSessions} />
+              <MissionControlProductivityAnalysis
+                selectedDate={selectedDate}
+                totalTime={totalTime}
+                focusSessions={focusSessions}
+              />
             </S.TimeDetailsContainer>
             <MissionControlCategoryDetails categories={categories} focusSessions={focusSessions} />
             <MissionControlSessions categories={categories} focusSessions={focusSessions} />

@@ -7,6 +7,7 @@ const LOCAL_STORAGE_KEY = {
   BACKGROUND_AUDIO_VOLUME: 'deepFocusChromeExtension_backgroundAudioVolume',
   BACKGROUND_AUDIO_TRACK: 'deepFocusChromeExtension_backgroundAudioTrack',
   SELECTED_CATEGORY_ID: 'deepFocusChromeExtension_selectedCategoryId',
+  SETTINGS: 'deepFocusChromeExtension_settings',
 } as const
 
 type LocalStorageKey = (typeof LOCAL_STORAGE_KEY)[keyof typeof LOCAL_STORAGE_KEY]

@@ -1,15 +1,28 @@
 import { DateTime, Duration } from 'luxon'
-import React, { useMemo } from 'react'
-import { FocusSession } from 'types'
+import React, { useEffect, useMemo, useState } from 'react'
+import { DEFAULT_SETTINGS, getSettings } from 'services/settings'
+import { FocusSession, Settings } from 'types'
 import { countFocusSessionImpacts, getFocusSessionsPenaltyTime } from 'utils'
 
 interface MissionControlProductivityAnalysisProps {
+  selectedDate: DateTime
   focusSessions: FocusSession[]
   totalTime: Duration
 }
 
 function MissionControlProductivityAnalysis(props: MissionControlProductivityAnalysisProps) {
-  const { focusSessions, totalTime } = props
+  const { focusSessions, totalTime, selectedDate } = props
+
+  const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS)
+
+  useEffect(() => {
+    const fetchSettings = async () => {
+      const set = await getSettings()
+      setSettings(set)
+    }
+
+    fetchSettings()
+  }, [])
 
   const efficiency = useMemo(() => {
     if (focusSessions.length < 1) return ''
@@ -39,8 +52,19 @@ function MissionControlProductivityAnalysis(props: MissionControlProductivityAna
 
     const efficiency = Math.floor((sanitizedProductiveTime * 100) / durationBetweenFirstAndLastSession)
 
-    return `Penalty: ${totalPenaltyDuration.toFormat('m')} mins __  Effectivity: ${efficiency}%`
-  }, [focusSessions, totalTime])
+    const { weekday } = selectedDate
+    const targetFocus =
+      weekday - 1 in settings.targetFocusDurationPerDay
+        ? settings.targetFocusDurationPerDay[weekday - 1]
+        : 300
+
+    const targetFocusInMillis = targetFocus * 60 * 1000
+    const progress = Math.floor((sanitizedProductiveTime * 100) / targetFocusInMillis)
+
+    return `Progress: ${progress}% Penalty: ${totalPenaltyDuration.toFormat(
+      'm',
+    )} mins __  Effectivity: ${efficiency}%`
+  }, [focusSessions, totalTime, selectedDate, settings.targetFocusDurationPerDay])
 
   return <>{efficiency}</>
 }
