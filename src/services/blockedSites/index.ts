@@ -3,6 +3,11 @@
 import { indexedDb } from 'services/indexedDb'
 import { BlockedSite } from 'types'
 
+async function addBlockedSite(urlFilter: string): Promise<void> {
+  const database = await indexedDb.getInstance()
+  database.blockedSites.add(urlFilter)
+}
+
 async function listBlockedSites(): Promise<BlockedSite[]> {
   const database = await indexedDb.getInstance()
   const blockedSites = await database.blockedSites.list()
@@ -81,6 +86,7 @@ async function debugRules() {
 }
 
 export {
+  addBlockedSite,
   addImpactsToBlockedSites,
   addImpactToBlockedSite,
   debugRules,

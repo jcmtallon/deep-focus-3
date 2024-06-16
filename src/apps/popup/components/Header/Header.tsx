@@ -2,6 +2,10 @@ import React from 'react'
 import { sendMessage } from 'services/actions'
 import * as S from './Header.styles'
 
+/**
+ * TODO: Remove this component
+ * @deprecated
+ */
 function Header() {
   const handleDebugClick = () => {
     sendMessage('debug')

@@ -11,7 +11,6 @@ import {
   getFocusSessionsByDay,
   updateActiveFocusSessionTasks,
 } from 'services/focusSessions'
-import { indexedDb } from 'services/indexedDb'
 import { DateTime } from 'luxon'
 import { Category, FocusSession, Task } from 'types'
 import { checkNewlyAchievedAstro, getFocusSessionsPointsBreakdown } from 'utils'
@@ -25,11 +24,6 @@ chrome.runtime.onInstalled.addListener(() => {
 
 // TODO: Execute when uninstalled:
 // https://stackoverflow.com/a/72958868
-
-async function addBlockedSite(props: { payload: any }) {
-  const database = await indexedDb.getInstance()
-  database.blockedSites.add(props.payload.urlFilter ?? 'bbc') // TODO: Temp implementation
-}
 
 // Gets active tab id
 function getActiveTabId(): Promise<number | undefined> {
@@ -134,7 +128,6 @@ async function debug() {
 }
 
 listenToMessages({
-  addBlockedSite: payload => addBlockedSite(payload),
   addImpact: payload => addImpact(payload),
   debug: () => debug(),
   extendFocusSession: payload => extendFocusSession(payload),

@@ -4,6 +4,10 @@ interface IconGearProps extends React.SVGProps<SVGSVGElement> {
   title?: string
 }
 
+/**
+ * TODO: Remove if not used
+ * @deprecated
+ */
 function IconGear(props: IconGearProps) {
   return (
     <svg

@@ -31,23 +31,6 @@ const SuccessButton = styled(Button)`
   color: white;
 `
 
-// const Input = styled.input`
-//   width: 100%;
-//   background-color: transparent;
-//   border: 2px solid #9497d3;
-//   color: #9497d3;
-//   text-align: center;
-//   font-size: 16px;
-//   font-weight: 700;
-//   padding: 8px;
-
-//   :focus {
-//     outline: none;
-//     color: white;
-//     border: 2px solid white;
-//   }
-// `
-
 interface FocusModeActionsProps {
   session?: FocusSession
 
@@ -91,12 +74,6 @@ function FocusModeActions(props: FocusModeActionsProps) {
   const handleExtendSession = () => {
     onExtendSession?.(input.trim()) // TODO: Deprecate extending session with a task.
   }
-
-  // const handleSessionStartInputKeyDown: KeyboardEventHandler<HTMLInputElement> = event => {
-  //   if (event.key === 'Enter') {
-  //     handleFocusModeStart()
-  //   }
-  // }
 
   // const handleInSessionInputKeyDown: KeyboardEventHandler<HTMLInputElement> = event => {
   //   if (event.key === 'Enter') {

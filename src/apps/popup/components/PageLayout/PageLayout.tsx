@@ -8,6 +8,10 @@ interface PageLayoutProps {
   footer?: ReactNode
 }
 
+/**
+ * TODO: Remove this component
+ * @deprecated
+ */
 function PageLayout(props: PageLayoutProps) {
   const { children, footer, header } = props
 

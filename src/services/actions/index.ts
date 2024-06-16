@@ -37,7 +37,6 @@ async function sendMessagePromise(action: Action, payload?: unknown) {
 }
 
 type Action =
-  | 'addBlockedSite'
   | 'debug'
   | 'extendFocusSession'
   | 'finishFocusSession'
@@ -57,10 +56,6 @@ type MessageCallbacks = Record<Partial<Action>, (payload?: any) => void>
 function listenToMessages(callbacks: MessageCallbacks) {
   chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     switch (request.action) {
-      case 'addBlockedSite':
-        callbacks.addBlockedSite({ payload: request.payload, sender, sendResponse })
-        break
-
       case 'debug':
         callbacks.debug()
         break

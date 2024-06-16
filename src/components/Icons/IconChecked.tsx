@@ -4,6 +4,11 @@ interface IconCheckedProps extends React.SVGProps<SVGSVGElement> {
   title?: string
 }
 
+/**
+ *
+ * TODO: Remove if not used
+ * @deprecated
+ */
 function IconChecked(props: IconCheckedProps) {
   return (
     <svg

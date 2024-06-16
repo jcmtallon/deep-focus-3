@@ -1,161 +1,83 @@
-import { FooterNav, PageLayout } from 'apps/popup/components'
-import React, { useCallback, useEffect, useState } from 'react'
-import { sendMessage } from 'services/actions'
-import { listBlockedSites, deleteBlockedSite } from 'services/blockedSites'
-import { listCategories, deleteCategory, addCategory } from 'services/categories'
-import { Category, Settings } from 'types'
-import { DEFAULT_SETTINGS, editSettings, getSettings } from 'services/settings'
-import * as S from './BlockedSites.styles'
+import { PopupPageLayout, PopupPageBodyLayout } from 'apps/popup/components'
+import { listBlockedSites, deleteBlockedSite, addBlockedSite } from 'services/blockedSites'
+import { Button, Chip, IconImpact, Input } from 'components'
+import React, { KeyboardEventHandler, useCallback, useEffect, useState } from 'react'
+import styled from 'styled-components'
+import { BlockedSite } from 'types'
+
+const ImpactNameInput: typeof Input = styled(Input)`
+  width: 180px;
+`
+
+const ChipsWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 6px;
+`
 
 function BlockedSites() {
-  const [inputBlockedSiteValue, setBlockedSiteInputValue] = useState('')
-  const [categoryInputValue, setCategoryInputValue] = useState('')
-  const [blockedSites, setBlockedSites] = useState<{ url: string; id: number }[]>([])
-  const [categories, setCategories] = useState<Category[]>([])
-  const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS)
-
-  const [categoryColor, setCategoryColor] = useState('#000000')
+  const [blockedSiteName, setBlockedSiteName] = useState<string>('')
+  const [blockedSites, setBlockedSites] = useState<BlockedSite[]>([])
 
   const fetchBlockedSiteData = useCallback(async () => {
-    // TODO: Leave this to the BE?
     const blockedSites = await listBlockedSites()
     setBlockedSites(blockedSites)
-  }, [setBlockedSites])
-
-  const fetchCategoryData = useCallback(async () => {
-    const categories = await listCategories()
-    setCategories(categories)
-  }, [setCategories])
-
-  const fetchSettings = useCallback(async () => {
-    try {
-      const settings = await getSettings()
-      if (settings) setSettings(settings)
-    } catch (error) {
-      // TODO: Handle error
-    }
-  }, [setSettings])
-
-  const handleAddClick = () => {
-    // TODO: Make send message return a promise
-    sendMessage('addBlockedSite', { urlFilter: inputBlockedSiteValue })
-    setBlockedSiteInputValue('')
-    setTimeout(() => {
-      fetchBlockedSiteData()
-    }, 100)
-  }
-
-  const handleAddCategoryClick = async () => {
-    await addCategory({ name: categoryInputValue, color: categoryColor })
-    setCategoryInputValue('')
-    setTimeout(() => {
-      fetchCategoryData()
-    }, 100)
-  }
+  }, [])
 
   const handleDeleteBlockedSiteClick = async (id: number) => {
     await deleteBlockedSite(id)
     fetchBlockedSiteData()
   }
 
-  const handleDeleteCategoryClick = async (id: number) => {
-    await deleteCategory(id)
-    fetchCategoryData()
+  const handleAddBlockedSiteClick = async () => {
+    const urlFilter = blockedSiteName.trim()
+    if (!urlFilter) {
+      // eslint-disable-next-line no-alert -- TODO: Replace with toast or dialog.
+      alert('Asteroid name missing')
+      return
+    }
+    await addBlockedSite(blockedSiteName)
+    setBlockedSiteName('')
+    fetchBlockedSiteData()
   }
 
+  const handleNameInputKeyDown: KeyboardEventHandler<HTMLInputElement> = event => {
+    if (event.key === 'Enter') handleAddBlockedSiteClick()
+  }
+
+  // Initial data fetch on load.
   useEffect(() => {
     fetchBlockedSiteData()
-    fetchCategoryData()
-    fetchSettings()
-  }, [fetchBlockedSiteData, fetchCategoryData, fetchSettings])
-
-  const handleEditTargetDuration = (index: number, value: string) => {
-    const minutes = value !== '' ? parseInt(value, 10) : 0
-    const newTargetFocusDurationPerDay = { ...settings.targetFocusDurationPerDay, [index]: minutes }
-    const newSettings = { ...settings, targetFocusDurationPerDay: newTargetFocusDurationPerDay }
-    editSettings(newSettings)
-    setSettings(newSettings)
-  }
+  }, [fetchBlockedSiteData])
 
   return (
-    <PageLayout footer={<FooterNav activeElement="asteroids" />} header={<></>}>
-      <S.Wrapper>
-        <span>Settings</span>
-        <div style={{ display: 'flex', columnGap: '5px' }}>
-          <input
-            type="number"
-            style={{ width: '40px' }}
-            value={settings.targetFocusDurationPerDay[0]}
-            onChange={e => handleEditTargetDuration(0, e.target.value)}
+    <PopupPageLayout hideHeader>
+      <PopupPageBodyLayout
+        title="Asteroids"
+        subtitle="Those sites that could impact your focus"
+        secondaryAction={
+          <ImpactNameInput
+            value={blockedSiteName}
+            onKeyDown={handleNameInputKeyDown}
+            onChange={e => setBlockedSiteName(e.target.value)}
+            placeholder="Write a site name"
           />
-          <input
-            type="number"
-            style={{ width: '40px' }}
-            value={settings.targetFocusDurationPerDay[1]}
-            onChange={e => handleEditTargetDuration(1, e.target.value)}
-          />
-          <input
-            type="number"
-            style={{ width: '40px' }}
-            value={settings.targetFocusDurationPerDay[2]}
-            onChange={e => handleEditTargetDuration(2, e.target.value)}
-          />
-          <input
-            type="number"
-            style={{ width: '40px' }}
-            value={settings.targetFocusDurationPerDay[3]}
-            onChange={e => handleEditTargetDuration(3, e.target.value)}
-          />
-          <input
-            type="number"
-            style={{ width: '40px' }}
-            value={settings.targetFocusDurationPerDay[4]}
-            onChange={e => handleEditTargetDuration(4, e.target.value)}
-          />
-          <input
-            type="number"
-            style={{ width: '40px' }}
-            value={settings.targetFocusDurationPerDay[5]}
-            onChange={e => handleEditTargetDuration(5, e.target.value)}
-          />
-          <input
-            type="number"
-            style={{ width: '40px' }}
-            value={settings.targetFocusDurationPerDay[6]}
-            onChange={e => handleEditTargetDuration(6, e.target.value)}
-          />
-        </div>
-        <span>Asteroids!</span>
-        <S.Input value={inputBlockedSiteValue} onChange={e => setBlockedSiteInputValue(e.target.value)} />
-        <S.Button type="button" onClick={handleAddClick}>
-          Add asteroid
-        </S.Button>
-        <S.EntryList>
+        }
+        primaryAction={
+          <Button onClick={handleAddBlockedSiteClick} startIcon={<IconImpact />}>
+            Add asteroid
+          </Button>
+        }>
+        <ChipsWrapper>
           {blockedSites.map(({ url, id }) => (
-            <S.Entry type="button" onClick={() => handleDeleteBlockedSiteClick(id)} key={id}>
+            <Chip key={id} onDelete={() => handleDeleteBlockedSiteClick(id)}>
               {url}
-            </S.Entry>
+            </Chip>
           ))}
-        </S.EntryList>
-        <span>Categories!</span>
-        <input type="color" value={categoryColor} onChange={e => setCategoryColor(e.target.value)} />
-        <S.Input value={categoryInputValue} onChange={e => setCategoryInputValue(e.target.value)} />
-        <S.Button type="button" onClick={handleAddCategoryClick}>
-          Add category
-        </S.Button>
-        <S.EntryList>
-          {categories.map(({ name, id, color }) => (
-            <S.Entry
-              style={{ backgroundColor: color }}
-              type="button"
-              onClick={() => handleDeleteCategoryClick(id)}
-              key={id}>
-              {name}
-            </S.Entry>
-          ))}
-        </S.EntryList>
-      </S.Wrapper>
-    </PageLayout>
+        </ChipsWrapper>
+      </PopupPageBodyLayout>
+    </PopupPageLayout>
   )
 }
 
