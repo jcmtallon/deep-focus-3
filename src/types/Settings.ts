@@ -16,7 +16,7 @@ interface Settings {
    * - 5: Saturday
    * - 6: Sunday
    */
-  targetFocusDurationPerDay: Record<number, number>
+  targetFocusDurationPerDay: Record<number, number | null>
 }
 
 export type { Settings }

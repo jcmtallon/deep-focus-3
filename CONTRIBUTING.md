@@ -2,6 +2,7 @@
 |Tech|UI|
 |--|--|
 |blockedSite|Asteroid|
+|control deck|settings|
 |cluster|category|
 
 # Working with Chrome Extensions
