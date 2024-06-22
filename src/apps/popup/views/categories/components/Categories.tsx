@@ -1,11 +1,12 @@
 import { PopupPageLayout, PopupPageBodyLayout } from 'apps/popup/components'
-import { Button, IconGroup, IconX } from 'components'
+import { Button, IconGroup } from 'components'
 import React, { KeyboardEventHandler, useCallback, useEffect, useState } from 'react'
-import { addCategory, deleteCategory, listCategories, updateCategory } from 'services/categories'
+import { addCategory, listCategories } from 'services/categories'
 import { Category } from 'types'
 import { getDefaultCategoryColor } from 'utils'
 import { CategoryColorSelectPanel } from './CategoryColorSelectPanel'
 import * as S from './Categories.styles'
+import { CategoryEntry } from './CategoryEntry'
 
 function Categories() {
   // New category input state
@@ -14,10 +15,6 @@ function Categories() {
 
   // Existing categories data
   const [categories, setCategories] = useState<Category[]>([])
-
-  // Edited category input state
-  const [editedCategory, setEditedCategory] = useState<Category | null>(null)
-  const [previousCategoryName, setPreviousCategoryName] = useState<string | null>(null)
 
   // Category select panel state
   const [openCategorySelect, toggleCategorySelect] = useState<boolean>(false)
@@ -33,29 +30,15 @@ function Categories() {
     fetchCategoryData()
   }
 
-  const handleDeleteCategoryClick = async (id: number) => {
-    await deleteCategory(id)
-    fetchCategoryData()
-  }
-
   const handleNameInputKeyDown: KeyboardEventHandler<HTMLInputElement> = event => {
     if (event.key === 'Enter') handleAddCategoryClick()
   }
 
   // Applies the color to the edited category if it exists, otherwise to the new category input.
   const handleColorChange = async (color: string) => {
-    if (editedCategory) {
-      await updateCategory({ ...editedCategory, color })
-      setEditedCategory(null)
-      fetchCategoryData()
-    } else {
-      setCategoryColor(color)
-    }
-    toggleCategorySelect(false)
-  }
+    setCategoryColor(color)
 
-  const handleCategoryNameChange = async (name: string) => {
-    if (editedCategory) updateCategory({ ...editedCategory, name })
+    toggleCategorySelect(false)
   }
 
   // Fetch initial category data
@@ -95,47 +78,17 @@ function Categories() {
           }>
           <S.CategoriesWrapper>
             {categories.map(category => (
-              <S.CategoryRow key={category.id}>
-                <S.CategoryLabelWrapper>
-                  <S.CategoryLabel
-                    contentEditable="true"
-                    onFocus={e => {
-                      setEditedCategory(category)
-                      setPreviousCategoryName(e.currentTarget.textContent)
-                    }}
-                    onInput={e => handleCategoryNameChange(e.currentTarget.textContent || '')}
-                    onBlur={e => {
-                      if (!e.currentTarget.textContent && previousCategoryName) {
-                        handleCategoryNameChange(previousCategoryName)
-                        fetchCategoryData()
-                      }
-                      setPreviousCategoryName(null)
-                      setEditedCategory(null)
-                    }}>
-                    {category.name}
-                  </S.CategoryLabel>
-                  <S.CategoryColorSample
-                    tabIndex={0}
-                    role="button"
-                    onClick={() => {
-                      setEditedCategory(category)
-                      toggleCategorySelect(true)
-                    }}
-                    style={{ backgroundColor: category.color }}
-                  />
-                </S.CategoryLabelWrapper>
-                <S.IconXWrapper role="button" onClick={() => handleDeleteCategoryClick(category.id)}>
-                  <IconX />
-                </S.IconXWrapper>
-              </S.CategoryRow>
+              <CategoryEntry
+                key={category.id}
+                category={category}
+                onCategoryChanged={() => fetchCategoryData()}
+              />
             ))}
           </S.CategoriesWrapper>
         </PopupPageBodyLayout>
       </PopupPageLayout>
-      {/* Select panel used for selecting colors for new categories entries,
-      and also to edit the color of existing categories. */}
       <CategoryColorSelectPanel
-        selectedValue={editedCategory?.color || categoryColor}
+        selectedValue={categoryColor}
         open={openCategorySelect}
         onColorSelect={handleColorChange}
         onClose={() => toggleCategorySelect(false)}
