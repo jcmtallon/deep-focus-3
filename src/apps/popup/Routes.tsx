@@ -3,6 +3,7 @@ import { MemoryRouter, Routes as ReactRouterRoutes, Route } from 'react-router-d
 import { FocusMode } from './views/focusMode'
 import { BlockedSitesV0, BlockedSites } from './views/blockedSites'
 import { Categories } from './views/categories'
+import { Settings } from './views/settings'
 
 function Routes() {
   // TODO: Fetch necessary resources here.
@@ -16,6 +17,7 @@ function Routes() {
         {/* <Route path="asteroids" element={<BlockedSitesV0 />} /> */}
         <Route path="asteroids" element={<BlockedSites />} />
         <Route path="clusters" element={<Categories />} />
+        <Route path="controlDeck" element={<Settings />} />
       </ReactRouterRoutes>
     </MemoryRouter>
   )
