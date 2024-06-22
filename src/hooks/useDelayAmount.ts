@@ -1,6 +1,10 @@
 import { useEffect, useState } from 'react'
 
-function useDelayUnmount(isMounted: boolean, delayTime: number) {
+/**
+ * Useful for delaying the unmount of a component until a certain time has passed,
+ * for example, to allow an animation to play out before the component is removed from the DOM.
+ */
+function useDelayUnmount(isMounted: boolean, delayTime: number): boolean {
   const [shouldRender, setShouldRender] = useState(false)
 
   useEffect(() => {

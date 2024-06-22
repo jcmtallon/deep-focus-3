@@ -50,12 +50,27 @@ const deleteCategory = (db: IDBDatabase) => (id: number) => {
   })
 }
 
+const putCategory =
+  (db: IDBDatabase) =>
+  (category: Category): Promise<Category> => {
+    const request = db.transaction(CATEGORIES, 'readwrite').objectStore(CATEGORIES).put(category)
+    return new Promise((resolve, reject) => {
+      request.onsuccess = () => {
+        resolve(category)
+      }
+      request.onerror = e => {
+        reject(e)
+      }
+    })
+  }
+
 // TODO: Reuse types
 interface CategoryEndpoints {
   add: (args: { name: string; color: string }) => Promise<unknown>
   list: () => Promise<Category[]>
+  put: (category: Category) => Promise<Category>
   delete: (id: number) => Promise<unknown>
 }
 
 export type { CategoryEndpoints }
-export { addCategory, listCategories, deleteCategory }
+export { addCategory, listCategories, deleteCategory, putCategory }

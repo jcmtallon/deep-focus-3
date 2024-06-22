@@ -235,6 +235,27 @@ const GlobalStyles = createGlobalStyle`
     outline: none;
   }
 
+  /* width */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #152766;
+  border-radius: 6px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #152766;
+}
+
   // Standardizing focus outline styles -------------
 `
 

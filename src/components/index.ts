@@ -17,6 +17,9 @@ export type { InputProps } from './Input'
 export { NavButton } from './NavButton'
 export type { NavButtonProps } from './NavButton'
 
+export { SlidePanel } from './SlidePanel'
+export type { SlidePanelProps } from './SlidePanel'
+
 export { StopwatchTimer } from './StopwatchTimer/StopwatchTimer'
 export type { StopwatchTimerProps } from './StopwatchTimer/StopwatchTimer'
 

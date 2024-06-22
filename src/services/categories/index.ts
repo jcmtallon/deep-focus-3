@@ -20,6 +20,11 @@ async function addCategory(args: { name: string; color: string }) {
   await database.categories.add(args)
 }
 
+async function updateCategory(category: Category) {
+  const database = await indexedDb.getInstance()
+  await database.categories.put(category)
+}
+
 async function getStoredSelectedCategoryId(): Promise<number | undefined> {
   const stringValue = await readLocalStorage(LOCAL_STORAGE_KEY.SELECTED_CATEGORY_ID)
   return typeof stringValue === 'number' ? stringValue : undefined
@@ -29,4 +34,11 @@ async function storeSelectedCategoryId(categoryId: number | undefined): Promise<
   await setLocalStorage({ [LOCAL_STORAGE_KEY.SELECTED_CATEGORY_ID]: categoryId })
 }
 
-export { listCategories, deleteCategory, addCategory, getStoredSelectedCategoryId, storeSelectedCategoryId }
+export {
+  addCategory,
+  deleteCategory,
+  getStoredSelectedCategoryId,
+  listCategories,
+  storeSelectedCategoryId,
+  updateCategory,
+}

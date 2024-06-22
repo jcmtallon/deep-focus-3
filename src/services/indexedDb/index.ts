@@ -14,7 +14,13 @@ import {
 } from './resources/focusSessions'
 import { COLLECTION_NAME, DATABASE_NAME } from './constants'
 import { AstrosEndpoints, addAstro, listAstros } from './resources/astros'
-import { addCategory, listCategories, deleteCategory, CategoryEndpoints } from './resources/categories'
+import {
+  addCategory,
+  listCategories,
+  deleteCategory,
+  CategoryEndpoints,
+  putCategory,
+} from './resources/categories'
 
 const { BLOCKED_SITES, FOCUS_SESSIONS, ASTROS, CATEGORIES } = COLLECTION_NAME
 
@@ -99,6 +105,7 @@ const indexedDb = (function (): IndexedDb {
           },
           categories: {
             add: addCategory(db),
+            put: putCategory(db),
             list: listCategories(db),
             delete: deleteCategory(db),
           },

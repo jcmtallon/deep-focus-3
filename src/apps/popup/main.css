@@ -4,6 +4,30 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+@keyframes slideLeftAnimation {
+  0% {
+    transform: translateX(300px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0px);
+    opacity: 1;
+  }
+}
+
+@keyframes slideRightAnimation {
+  0% {
+    transform: translateX(0px);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(300px);
+    opacity: 0;
+  }
+}
+
+/* TODO: Remove if not used */
+
 @keyframes slideInAnimation {
   0% {
     transform: translateY(600px);

@@ -32,7 +32,6 @@ const Body = styled.div`
   justify-content: stretch;
   overflow-y: auto;
   padding: 20px 0px 0px;
-  scrollbar-width: thin;
 `
 
 const Footer = styled.div`
