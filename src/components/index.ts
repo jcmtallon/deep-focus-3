@@ -12,6 +12,9 @@ export type { CircularProgressProps } from './CircularProgress'
 export { Chip } from './Chip'
 export type { ChipProps } from './Chip'
 
+export { DurationToAstroLabel } from './DurationToAstroLabel'
+export type { DurationToAstroLabelProps } from './DurationToAstroLabel'
+
 export { ErrorBoundary } from './ErrorBoundary/ErrorBoundary'
 
 export { FocusSessionProgressBar } from './FocusSessionProgressBar/FocusSessionProgressBar'

@@ -1,6 +1,6 @@
 import { PopupPageLayout } from 'apps/popup/components'
 import React, { useMemo } from 'react'
-import { Button, CircularProgress, IconPlay, TimerDisplay } from 'components'
+import { Button, CircularProgress, DurationToAstroLabel, IconPlay, TimerDisplay } from 'components'
 import { FocusSession } from 'types'
 import styled from 'styled-components'
 import { getFocusSessionsTotalTime } from 'utils'
@@ -42,7 +42,7 @@ function FocusControlsIdle(props: FocusControlsIdleProps) {
             <TimerContainer>
               {/* TODO: This formatting is not the one we need */}
               <TimerDisplay formattedTime={totalDuration.toFormat('h:mm:ss')} />
-              <>5h 3m to White Dwarf</>
+              <DurationToAstroLabel totalSeconds={totalDuration.shiftTo('seconds').seconds} />
             </TimerContainer>
           </CircularProgress>
         }
