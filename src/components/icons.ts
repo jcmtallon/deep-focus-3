@@ -4,6 +4,8 @@ export { IconQuestion } from './Icons/IconQuestion'
 export { IconStar } from './Icons/IconStar'
 export { IconChecked } from './Icons/IconChecked'
 
+export { IconCheckCircle } from './Icons/IconCheckCircle'
+export { IconChevronDown } from './Icons/IconChevronDown'
 export { IconDashboard } from './Icons/IconDashboard'
 export { IconGroup } from './Icons/IconGroup'
 export { IconImpact } from './Icons/IconImpact'

@@ -58,7 +58,8 @@ function MissionControlProductivityAnalysis(props: MissionControlProductivityAna
         ? settings.targetFocusDurationPerDay[weekday - 1]
         : 300
 
-    const targetFocusInMillis = targetFocus * 60 * 1000
+    // TODO: This 0 was a dirty fix to shut up Typescript. Revisit what's the expected fallback when null.
+    const targetFocusInMillis = targetFocus ?? 0 * 60 * 1000
     const progress = Math.floor((sanitizedProductiveTime * 100) / targetFocusInMillis)
 
     return `Progress: ${progress}% Penalty: ${totalPenaltyDuration.toFormat(

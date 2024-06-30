@@ -9,7 +9,7 @@ import {
   countFocusSessionImpacts,
   getFocusSessionsPenaltyTime,
   getFocusSessionsTotalTime,
-  durationToAstro,
+  remainingDurationToAstro,
 } from 'utils'
 import { FocusSession } from 'types'
 import { Duration } from 'luxon'
@@ -61,18 +61,20 @@ function FocusSessionProgressBar(props: FocusSessionProgressBarProps) {
       })
 
       const currentSessionDuration = elapsedDuration.minus(penaltyDuration)
-      const dayTotalProgressDuration = currentSessionDuration.plus(completedSessionsTotalDuration)
+      const dayTotalProgressDuration = currentSessionDuration
+        .plus(completedSessionsTotalDuration)
+        .shiftTo('seconds').seconds
 
       // Remaining minutes to achieve next star
       const durationToStarOne = durationToStar(currentSessionDuration, '1')
       const durationToStarTwo = durationToStar(currentSessionDuration, '2')
       const durationToStarThree = durationToStar(currentSessionDuration, '3')
 
-      const durationToWhiteDwarf = durationToAstro(dayTotalProgressDuration, 'WHITE_DWARF')
-      const durationToRedGiant = durationToAstro(dayTotalProgressDuration, 'RED_GIANT')
-      const durationToSuperNova = durationToAstro(dayTotalProgressDuration, 'SUPER_NOVA')
-      const durationToNeutronStar = durationToAstro(dayTotalProgressDuration, 'NEUTRON_STAR')
-      const durationToBlackHole = durationToAstro(dayTotalProgressDuration, 'BLACK_HOLE')
+      const durationToWhiteDwarf = remainingDurationToAstro(dayTotalProgressDuration, 'WHITE_DWARF')
+      const durationToRedGiant = remainingDurationToAstro(dayTotalProgressDuration, 'RED_GIANT')
+      const durationToSuperNova = remainingDurationToAstro(dayTotalProgressDuration, 'SUPER_NOVA')
+      const durationToNeutronStar = remainingDurationToAstro(dayTotalProgressDuration, 'NEUTRON_STAR')
+      const durationToBlackHole = remainingDurationToAstro(dayTotalProgressDuration, 'BLACK_HOLE')
 
       setTimeToStar(
         `${durationToStarOne.toFormat('m')} min, ${durationToStarTwo.toFormat(

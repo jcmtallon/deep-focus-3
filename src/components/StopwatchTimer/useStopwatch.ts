@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react'
 
-/** Breakdowns time units */
-const getReturnValues = (countUp: number) => {
+/**
+ * Breakdowns current time value into days, hours, minutes, and seconds.
+ */
+const getTimeBreakdown = (countUp: number) => {
   const days = Math.floor(countUp / (1000 * 60 * 60 * 24))
   const hours = Math.floor((countUp % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
   const minutes = Math.floor((countUp % (1000 * 60 * 60)) / (1000 * 60))
@@ -14,6 +16,10 @@ const getElapsedTime = (startDateTime: number) => {
   return new Date().getTime() - startDateTime
 }
 
+/**
+ * Returns the time elapsed since the start timestamp.
+ * @returns { days: number, hours: number, minutes: number, seconds: number }
+ */
 const useStopwatch = (startTimestamp: number) => {
   const startDateTime = new Date(startTimestamp).getTime()
   const [countUp, setCountUp] = useState(getElapsedTime(startDateTime))
@@ -26,7 +32,7 @@ const useStopwatch = (startTimestamp: number) => {
     return () => clearInterval(interval)
   }, [startDateTime])
 
-  return getReturnValues(countUp)
+  return getTimeBreakdown(countUp)
 }
 
 export { useStopwatch }

@@ -1,6 +1,14 @@
 import { AstroName } from 'types'
 import { Duration } from 'luxon'
-import { BLACK_HOLE, MAX_DAY_POINTS, NEUTRON_STAR, RED_GIANT, SUPER_NOVA, WHITE_DWARF } from './constants'
+import {
+  SECONDS_TO_ASTRO,
+  BLACK_HOLE,
+  MAX_DAY_POINTS,
+  NEUTRON_STAR,
+  RED_GIANT,
+  SUPER_NOVA,
+  WHITE_DWARF,
+} from './constants'
 
 function calculateAstroRightPosition(width: number) {
   return {
@@ -66,11 +74,28 @@ const astroDurationCriteria: Record<AstroName, number> = {
 }
 
 /**
+ * Get the next astro name in line based on the number of seconds elapsed in the current day.
  *
+ * @param elapsedSeconds The number of seconds elapsed in the current day.
+ * @returns AstroName. Null represents that all the astros have been achieved.
  */
-function durationToAstro(currentDuration: Duration, targetAstro: AstroName): Duration {
-  const targetDuration = Duration.fromObject({ seconds: astroDurationCriteria[targetAstro] })
-  const diff = targetDuration.minus(currentDuration)
+function getNextAchievableAstroName(elapsedSeconds: number): AstroName | null {
+  if (SECONDS_TO_ASTRO.WHITE_DWARF > elapsedSeconds) return 'WHITE_DWARF'
+  if (SECONDS_TO_ASTRO.RED_GIANT > elapsedSeconds) return 'RED_GIANT'
+  if (SECONDS_TO_ASTRO.SUPER_NOVA > elapsedSeconds) return 'SUPER_NOVA'
+  if (SECONDS_TO_ASTRO.NEUTRON_STAR > elapsedSeconds) return 'NEUTRON_STAR'
+  if (SECONDS_TO_ASTRO.BLACK_HOLE > elapsedSeconds) return 'BLACK_HOLE'
+  return null
+}
+
+/**
+ * Get the remaining duration necessary to achieve a given Astro.
+ *
+ * @returns Duration.
+ */
+function remainingDurationToAstro(elapsedSeconds: number, targetAstroName: AstroName): Duration {
+  const targetDuration = Duration.fromObject({ seconds: astroDurationCriteria[targetAstroName] })
+  const diff = targetDuration.minus(Duration.fromObject({ seconds: elapsedSeconds }))
   return diff.as('milliseconds') < 0 ? Duration.fromMillis(0) : diff
 }
 
@@ -78,6 +103,7 @@ export {
   calculateAchievedAstro,
   calculateAstroRightPosition,
   checkNewlyAchievedAstro,
-  durationToAstro,
+  remainingDurationToAstro,
   getAstroLabel,
+  getNextAchievableAstroName,
 }

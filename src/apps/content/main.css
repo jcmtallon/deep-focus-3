@@ -33,3 +33,13 @@ code {
     opacity: 0;
   }
 }
+
+/* TODO: Possibly not necessary, consider removing */
+@keyframes progress-animation {
+  from {
+    --progress: 0;
+  }
+  to {
+    --progress: 100;
+  }
+}

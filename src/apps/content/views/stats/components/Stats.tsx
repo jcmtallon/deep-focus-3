@@ -97,7 +97,7 @@ function Stats() {
 
     if (criteria === 'tasks') {
       return Object.keys(dataSet)
-        .map(key => dataSet[key].focusSessions.reduce((acc, curr) => acc + curr.tasks.length, 0))
+        .map(key => dataSet[key].focusSessions.reduce((acc, curr) => acc + (curr.tasks ?? []).length, 0))
         .reverse()
     }
 

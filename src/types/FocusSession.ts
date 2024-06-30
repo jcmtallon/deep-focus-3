@@ -1,13 +1,25 @@
 import { Task } from './Task'
 
 interface FocusSession {
-  sessionId?: string
-  startDate: number
-  endDate?: number
   /**
-   * A Record of siteIds and number of impacts received on each site.
+   * Session's unique identifier.
    */
-  impacts?: Record<string, number>
+  sessionId: string
+
+  /**
+   * Start date time of the session in milliseconds.
+   */
+  startDate: number
+
+  /**
+   * End date time of the session in milliseconds.
+   */
+  endDate: number
+
+  /**
+   * A Record of blockedSiteIds and number of impacts received on each site.
+   */
+  impacts: Record<string, number>
 
   /**
    * Id of the category selected for this session.
@@ -23,7 +35,7 @@ interface FocusSession {
   /**
    * @deprecated TODO: Remove this property.
    */
-  tasks: Task[]
+  tasks?: Task[]
 }
 
 export type { FocusSession }

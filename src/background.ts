@@ -10,9 +10,10 @@ import {
   finishActiveFocusSession,
   getFocusSessionsByDay,
   updateActiveFocusSessionTasks,
+  updateActiveFocusSessionCategoryId,
 } from 'services/focusSessions'
 import { DateTime } from 'luxon'
-import { Category, FocusSession, Task } from 'types'
+import { FocusSession, Task } from 'types'
 import { checkNewlyAchievedAstro, getFocusSessionsPointsBreakdown } from 'utils'
 import { addAstro } from 'services/astros'
 
@@ -45,10 +46,11 @@ async function addImpact(props: { payload: { siteId: string }; sendResponse: (pa
 }
 
 async function startFocusMode(props: {
-  payload: { category: Category | undefined }
+  payload: { categoryId: number | undefined }
   sendResponse: (payload: any) => {}
 }) {
-  const focusSession = await startActiveFocusSessions({ category: props.payload.category })
+  const { categoryId } = props.payload
+  const focusSession = await startActiveFocusSessions({ categoryId })
   enableRules()
   showFocusModeBadge()
 
@@ -61,6 +63,19 @@ async function startFocusMode(props: {
   }
 
   props.sendResponse(focusSession)
+}
+
+/**
+ *
+ *
+ */
+async function updateActiveFocusSessionCategory(props: {
+  payload: { categoryId: number | undefined }
+  sendResponse: (payload: any) => {}
+}) {
+  const { categoryId } = props.payload
+  const activeFocusSession = await updateActiveFocusSessionCategoryId({ categoryId })
+  props.sendResponse(activeFocusSession)
 }
 
 async function extendFocusSession(props: {
@@ -135,6 +150,7 @@ listenToMessages({
   startFocusMode: payload => startFocusMode(payload),
   stopFocusMode: payload => stopFocusMode(payload),
   updateTasks: payload => updateTasks(payload),
+  updateActiveFocusSessionCategory: payload => updateActiveFocusSessionCategory(payload),
 })
 
 export {}

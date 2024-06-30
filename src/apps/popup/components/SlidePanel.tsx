@@ -1,7 +1,7 @@
+import { IconX } from 'components'
+import { useDelayUnmount } from 'hooks'
 import React from 'react'
 import styled from 'styled-components'
-import { useDelayUnmount } from 'hooks'
-import { IconX } from './icons'
 
 const Backdrop = styled.div`
   position: fixed;

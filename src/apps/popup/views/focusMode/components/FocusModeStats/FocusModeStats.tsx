@@ -51,7 +51,7 @@ function FocusModesStats(props: FocusModeStatsProps) {
   const { completedSessions = [], activeFocusSession } = props
 
   const sessionCount = completedSessions.length
-  const questsCount = completedSessions.flatMap(s => s.tasks.map(t => t.status === 'COMPLETED')).length
+  const questsCount = completedSessions.flatMap(s => s.tasks?.map(t => t.status === 'COMPLETED')).length
   const impactCount = completedSessions.reduce(
     (acc, session) => acc + countFocusSessionImpacts(session.impacts),
     0,
@@ -69,7 +69,7 @@ function FocusModesStats(props: FocusModeStatsProps) {
     return (
       <Wrapper>
         <Date>{today.toLocaleString()}</Date>
-        <TimerDisplay formattedTime={totalSessionTime.toFormat('hh:mm:ss')} />
+        <TimerDisplay formattedTime={totalSessionTime.toFormat('h:mm:ss')} />
         <StatsWrapper endAlign={false}>
           <Sessions>{`${sessionCount} sessions`}</Sessions>
           <Quests>{`${questsCount} quests`}</Quests>
@@ -86,7 +86,7 @@ function FocusModesStats(props: FocusModeStatsProps) {
       <Date>{`Session ${sessionCount + 1}`}</Date>
       <StopwatchTimer startTimestamp={activeFocusSession.startDate} />
       <StatsWrapper endAlign>
-        <Quests>{`${activeFocusSession?.tasks.filter(t => t.status === 'COMPLETED').length} quests`}</Quests>
+        <Quests>{`${activeFocusSession?.tasks?.filter(t => t.status === 'COMPLETED').length} quests`}</Quests>
         <Impacts>{`${impacts} impacts`}</Impacts>
       </StatsWrapper>
       <FocusSessionProgressBar

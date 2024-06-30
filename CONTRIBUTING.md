@@ -15,6 +15,9 @@
 - Open background page inspector. 
 - Local storage won't show in the Application tab. Use instead a command like the following one in the Chrome console.
 
+## Working with Background scripts
+- In Chrome extensions, reload extension so changes in background are applied. Not necessary for changes in the client sides. 
+
 ```js
 chrome.storage.local.get(function(result){console.log(result)})
 ```

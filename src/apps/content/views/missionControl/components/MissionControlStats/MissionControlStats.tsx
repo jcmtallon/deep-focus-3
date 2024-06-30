@@ -15,7 +15,7 @@ function MissionControlStats(props: MissionControlStatsProps) {
   const { focusSessions } = props
 
   const sessionCount = focusSessions.length
-  const tasksCount = focusSessions.flatMap(s => s.tasks.map(t => t.status === 'COMPLETED')).length
+  const tasksCount = focusSessions.flatMap(s => s.tasks?.map(t => t.status === 'COMPLETED')).length
   const impactCount = focusSessions.reduce(
     (acc, session) => acc + countFocusSessionImpacts(session.impacts),
     0,

@@ -1,5 +1,5 @@
 import { Duration } from 'luxon'
-import { FOCUS_SESSION_MAX_ACCOUNTED_TIME, MAX_FOCUS_SESSION_POINTS } from './constants'
+import { FOCUS_SESSION_MAX_ACCOUNTABLE_SECONDS, MAX_FOCUS_SESSION_POINTS } from './constants'
 
 const MAX_PROGRESS = 100
 
@@ -39,13 +39,13 @@ function getStarCountByFocusSessionTotalPoints(points: number): number {
 }
 
 /** Amount of time required to obtain the first star of a focus session */
-const ONE_STAR_TIME_CRITERIA = FOCUS_SESSION_MAX_ACCOUNTED_TIME * ONE_STAR_CRITERIA
+const ONE_STAR_TIME_CRITERIA = FOCUS_SESSION_MAX_ACCOUNTABLE_SECONDS * ONE_STAR_CRITERIA
 
 /** Amount of time required to obtain the second star of a focus session */
-const TWO_STAR_TIME_CRITERIA = FOCUS_SESSION_MAX_ACCOUNTED_TIME * TWO_STAR_CRITERIA
+const TWO_STAR_TIME_CRITERIA = FOCUS_SESSION_MAX_ACCOUNTABLE_SECONDS * TWO_STAR_CRITERIA
 
 /** Amount of time required to obtain the third star of a focus session */
-const THREE_STAR_TIME_CRITERIA = FOCUS_SESSION_MAX_ACCOUNTED_TIME * THREE_STAR_CRITERIA
+const THREE_STAR_TIME_CRITERIA = FOCUS_SESSION_MAX_ACCOUNTABLE_SECONDS * THREE_STAR_CRITERIA
 
 const criteria = { '1': ONE_STAR_TIME_CRITERIA, '2': TWO_STAR_TIME_CRITERIA, '3': THREE_STAR_TIME_CRITERIA }
 

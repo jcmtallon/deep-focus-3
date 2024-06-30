@@ -44,6 +44,7 @@ type Action =
   | 'stopFocusMode' // TODO: deprecate
   | 'updateTasks'
   | 'addImpact'
+  | 'updateActiveFocusSessionCategory'
 
 // TODO: Properly type sendMessage response
 async function sendMessage(action: Action, payload?: unknown) {
@@ -78,6 +79,10 @@ function listenToMessages(callbacks: MessageCallbacks) {
 
       case 'stopFocusMode':
         callbacks.stopFocusMode({ sender, sendResponse })
+        break
+
+      case 'updateActiveFocusSessionCategory':
+        callbacks.updateActiveFocusSessionCategory({ payload: request.payload, sender, sendResponse })
         break
 
       case 'updateTasks':

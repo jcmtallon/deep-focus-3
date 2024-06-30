@@ -48,7 +48,7 @@ function FocusModeActions(props: FocusModeActionsProps) {
   const [categories, setCategories] = useState<Category[]>([])
   const [selectedCategory, setSelectedCategory] = useState<Category | undefined>(undefined)
 
-  const allSessionTasksCompleted = session?.tasks.every(t => t.status === 'COMPLETED')
+  const allSessionTasksCompleted = session?.tasks?.every(t => t.status === 'COMPLETED')
 
   useEffect(() => {
     const fetchCategoryData = async () => {

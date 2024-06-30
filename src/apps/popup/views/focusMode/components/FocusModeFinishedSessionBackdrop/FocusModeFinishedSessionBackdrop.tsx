@@ -133,7 +133,7 @@ function FocusModeFinishedSessionBackdrop(props: FocusModeFinishedSessionBackdro
           <span>{`${pointsBreakdown.gained}pts`}</span>
         </TimePoints>
         <Quests>
-          <span>{`${focusSession.tasks.filter(t => t.status === 'COMPLETED').length ?? 0} quests`}</span>
+          <span>{`${focusSession.tasks?.filter(t => t.status === 'COMPLETED').length ?? 0} quests`}</span>
           {/* TODO: Delete me */}
           <span>0 pts</span>
         </Quests>

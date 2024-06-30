@@ -10,7 +10,7 @@ function MissionControlTasks(props: MissionControlTasksProps) {
   const { focusSessions } = props
 
   const tasks: Task[] = useMemo(
-    () => focusSessions.flatMap(focusSession => focusSession.tasks.map(t => t)),
+    () => focusSessions.flatMap(focusSession => focusSession.tasks?.map(t => t) ?? []),
     [focusSessions],
   )
 

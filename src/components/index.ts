@@ -1,7 +1,13 @@
 export * from './icons'
 
+export { ActiveFocusSessionProgressStats } from './ActiveFocusSessionProgressStats'
+export type { ActiveFocusSessionProgressStatsProps } from './ActiveFocusSessionProgressStats'
+
 export { Button } from './Button'
 export type { ButtonProps } from './Button'
+
+export { CircularProgress } from './CircularProgress'
+export type { CircularProgressProps } from './CircularProgress'
 
 export { Chip } from './Chip'
 export type { ChipProps } from './Chip'
@@ -16,9 +22,6 @@ export type { InputProps } from './Input'
 
 export { NavButton } from './NavButton'
 export type { NavButtonProps } from './NavButton'
-
-export { SlidePanel } from './SlidePanel'
-export type { SlidePanelProps } from './SlidePanel'
 
 export { StopwatchTimer } from './StopwatchTimer/StopwatchTimer'
 export type { StopwatchTimerProps } from './StopwatchTimer/StopwatchTimer'

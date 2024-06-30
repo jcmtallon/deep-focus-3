@@ -40,7 +40,7 @@ function MissionControlSessionsTimelineSession(props: MissionControlSessionsTime
           <S.Star style={{ fill: starCount > 2 ? '#E8BB3F' : '#2d1b6c' }} />
         </S.StarContainer>
         <S.TasksWrapper>
-          {session.tasks.map(task => (
+          {session.tasks?.map(task => (
             <S.TaskContainer>
               <S.TaskLabel>{task.title}</S.TaskLabel>
               <S.Checked />

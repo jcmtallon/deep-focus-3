@@ -1,16 +1,16 @@
 import { indexedDb } from 'services/indexedDb'
 import { LOCAL_STORAGE_KEY, readLocalStorage, removeStorage, setLocalStorage } from 'services/localStorage'
-import { Category, FocusSession, Task } from 'types'
+import { ActiveFocusSession, FocusSession, Task } from 'types'
 import { DateTime } from 'luxon'
 
 const { ACTIVE_FOCUS_SESSION } = LOCAL_STORAGE_KEY
 
-async function startActiveFocusSessions(props: { category: Category | undefined }): Promise<FocusSession> {
-  const payload: FocusSession = {
+async function startActiveFocusSessions(props: {
+  categoryId: number | undefined
+}): Promise<ActiveFocusSession> {
+  const payload: ActiveFocusSession = {
     startDate: new Date().getTime(),
-    categoryId: props.category?.id,
-    // FIXME: deprecate tasks
-    tasks: [],
+    categoryId: props.categoryId,
   }
 
   await setLocalStorage({ [ACTIVE_FOCUS_SESSION]: JSON.stringify(payload) })
@@ -22,6 +22,22 @@ async function getActiveFocusSession(): Promise<FocusSession | undefined> {
   return activeFocusSession !== undefined ? JSON.parse(activeFocusSession as string) : undefined
 }
 
+async function updateActiveFocusSessionCategoryId(props: { categoryId: number | undefined }) {
+  const response = await readLocalStorage(ACTIVE_FOCUS_SESSION)
+  if (!response) throw new Error('No active focus session found')
+  const existingSession = JSON.parse(response as string) as ActiveFocusSession
+  const payload: ActiveFocusSession = {
+    ...existingSession,
+    categoryId: props.categoryId,
+  }
+  await setLocalStorage({ [ACTIVE_FOCUS_SESSION]: JSON.stringify(payload) })
+  return payload
+}
+
+/**
+ *
+ * @deprecated
+ */
 async function updateActiveFocusSessionTasks(props: { tasks: Task[] }) {
   const response = await readLocalStorage(ACTIVE_FOCUS_SESSION)
   if (!response) throw new Error('No active focus session found')
@@ -40,7 +56,10 @@ async function addTaskToActiveFocusSessions(props: { taskTitle: string }) {
   const existingSession = JSON.parse(response as string) as FocusSession
   const payload: FocusSession = {
     ...existingSession,
-    tasks: [...existingSession.tasks, { id: crypto.randomUUID(), title: props.taskTitle, status: 'PENDING' }],
+    tasks: [
+      ...(existingSession.tasks ?? []),
+      { id: crypto.randomUUID(), title: props.taskTitle, status: 'PENDING' },
+    ],
   }
 
   await setLocalStorage({ [ACTIVE_FOCUS_SESSION]: JSON.stringify(payload) })
@@ -111,4 +130,5 @@ export {
   listFocusSessions,
   startActiveFocusSessions,
   updateActiveFocusSessionTasks,
+  updateActiveFocusSessionCategoryId,
 }
