@@ -69,7 +69,7 @@ function FocusModesStats(props: FocusModeStatsProps) {
     return (
       <Wrapper>
         <Date>{today.toLocaleString()}</Date>
-        <TimerDisplay formattedTime={totalSessionTime.toFormat('h:mm:ss')} />
+        <TimerDisplay time={totalSessionTime.toFormat('h:mm:ss')} />
         <StatsWrapper endAlign={false}>
           <Sessions>{`${sessionCount} sessions`}</Sessions>
           <Quests>{`${questsCount} quests`}</Quests>

@@ -40,8 +40,7 @@ function FocusControlsIdle(props: FocusControlsIdleProps) {
         body={
           <CircularProgress>
             <TimerContainer>
-              {/* TODO: This formatting is not the one we need */}
-              <TimerDisplay formattedTime={totalDuration.toFormat('h:mm:ss')} />
+              <TimerDisplay time={totalDuration} />
               <DurationToAstroLabel totalSeconds={totalDuration.shiftTo('seconds').seconds} />
             </TimerContainer>
           </CircularProgress>

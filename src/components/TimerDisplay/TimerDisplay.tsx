@@ -1,4 +1,5 @@
-import React, { HTMLAttributes, useMemo } from 'react'
+import { Duration } from 'luxon'
+import React, { HTMLAttributes } from 'react'
 import styled from 'styled-components'
 
 const Timer = styled.div`
@@ -14,25 +15,29 @@ function padTime(time: number) {
 }
 
 interface TimerDisplayProps extends HTMLAttributes<HTMLDivElement> {
-  time?: { days?: number; hours: number; minutes: number; seconds: number }
-  formattedTime?: string
+  time?: { days?: number; hours: number; minutes: number; seconds: number } | string | Duration
 }
 
 function TimerDisplay(props: TimerDisplayProps) {
-  const {
-    formattedTime: propsFormattedTime,
-    time = { days: 0, hours: 0, minutes: 0, seconds: 0 },
-    ...otherProps
-  } = props
+  const { time = { days: 0, hours: 0, minutes: 0, seconds: 0 }, ...otherProps } = props
 
-  const formattedTime = useMemo(() => {
+  if (typeof time === 'string') {
+    return <Timer {...otherProps}>{time}</Timer>
+  }
+
+  if (time instanceof Duration) {
+    const { hours } = time.shiftTo('hours')
+    return <Timer {...otherProps}>{hours > 0 ? time.toFormat('h:mm:ss') : time.toFormat('mm:ss')}</Timer>
+  }
+
+  const formattedTime = (() => {
     if (time.hours > 0) {
       return `${padTime(time.hours)}:${padTime(time.minutes)}:${padTime(time.seconds)}`
     }
     return `${padTime(time.minutes)}:${padTime(time.seconds)}`
-  }, [time])
+  })()
 
-  return <Timer {...otherProps}>{propsFormattedTime ?? formattedTime}</Timer>
+  return <Timer {...otherProps}>{formattedTime}</Timer>
 }
 
 export { TimerDisplay }

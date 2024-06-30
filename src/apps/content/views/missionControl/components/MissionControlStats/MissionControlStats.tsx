@@ -37,7 +37,7 @@ function MissionControlStats(props: MissionControlStatsProps) {
   return (
     <S.Wrapper>
       <S.Date>{today.toLocaleString()}</S.Date>
-      <TimerDisplay formattedTime={totalSessionTime.toFormat('hh:mm:ss')} />
+      <TimerDisplay time={totalSessionTime.toFormat('hh:mm:ss')} />
       <S.StatsWrapper endAlign={false}>
         <S.Sessions>{`${sessionCount} sessions`}</S.Sessions>
         <S.Quests>{`${tasksCount} quests`}</S.Quests>
