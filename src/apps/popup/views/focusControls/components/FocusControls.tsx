@@ -5,6 +5,7 @@ import { getActiveFocusSession, getFocusSessionsByDay } from 'services/focusSess
 import { DateTime } from 'luxon'
 import { FocusControlsActiveSession } from './FocusControlsActiveSession'
 import { FocusControlsIdle } from './FocusControlsIdle'
+import { FocusControlsSkeleton } from './FocusControlsSkeleton'
 
 function FocusControls() {
   /**
@@ -19,7 +20,7 @@ function FocusControls() {
   /**
    * Completed focus session in the current day
    */
-  const [focusSessions, setFocusSessions] = useState<FocusSession[]>([])
+  const [focusSessions, setFocusSessions] = useState<FocusSession[] | undefined>(undefined)
 
   /**
    * Undefined: No data fetched yet, or no category selected in the store.
@@ -83,7 +84,9 @@ function FocusControls() {
     fetchFocusSessions()
   }, [fetchActiveFocusSession, fetchFocusSessions])
 
-  // TODO: Consider including a loading state.
+  if (!focusSessions) {
+    return <FocusControlsSkeleton />
+  }
 
   return activeFocusSession ? (
     <FocusControlsActiveSession
